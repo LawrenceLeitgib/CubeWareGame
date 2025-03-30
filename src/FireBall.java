@@ -49,6 +49,7 @@ public class FireBall {
 
         angleOfShout=angle;
         this.speed=speed;
+       // this.speed=4;
         this.size=size;
         this.damage=damage;
         zPosition=zPos;

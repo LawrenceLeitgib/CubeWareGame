@@ -147,6 +147,8 @@ public class GameGrid {
         fireBallContainer.draw(g);
         cubeContainer.draw(g);
         //Player.draw1(g);
+        //Player.draw2(g);
+        //Player.draw3(g);
         enemiesContainer.draw(g);
 
 

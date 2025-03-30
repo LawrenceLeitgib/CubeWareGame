@@ -55,6 +55,7 @@ public class Stats {
         g.drawString("FPS: "+(int)(GamePanel.FPS+.5),15,130);
         g.drawString("entities: "+EnemiesContainer.enemies.size(),15,150);
         g.drawString("level: "+Stats.currentLevel,15,170);
+        g.drawString("ball: "+FireBallContainer.fireBalls.size(),15,190);
 
 
 

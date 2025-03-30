@@ -16,7 +16,7 @@ public class EnemiesContainer {
     public static void createEnemy(){
 
 
-        double r=Math.random()*32+8;
+        double r=Math.random()*32+12;
         double a=Math.random()*Math.PI*2;
         if(Math.sqrt(Math.pow(Math.cos(a) * r + Player.xPosition,2)+Math.pow(Math.sin(a) * r + Player.yPosition,2))>GameGrid.safeZone) {
             enemies.add(new Enemy(Math.cos(a) * r + Player.xPosition, Math.sin(a) * r + Player.yPosition, 2));
@@ -29,9 +29,8 @@ public class EnemiesContainer {
         EnemyCreationSpawnTime=0.0005*Math.pow(Player.distanceFromMiddle -150,2)+2;
 
 
-
         if(Player.distanceFromMiddle>GameGrid.safeZone) {
-            EnemyCreationCount += deltaTime*0;
+            EnemyCreationCount += deltaTime;
             if (EnemyCreationCount >= EnemyCreationSpawnTime) {
                 createEnemy();
                 EnemyCreationCount -= EnemyCreationSpawnTime;
