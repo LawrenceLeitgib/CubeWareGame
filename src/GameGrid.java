@@ -7,12 +7,15 @@ public class GameGrid {
 
     Cube cube;
 
+    Cube cube2;
+
     int squareLength=40;
     GameGrid(int GAME_WIDTH,int GAME_HEIGHT){
         this.GAME_WIDTH=GAME_WIDTH;
         this.GAME_HEIGHT=GAME_HEIGHT;
         player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0);
         cube = new Cube(GAME_WIDTH,GAME_HEIGHT,0,0);
+        cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,100,0);
 
     }
 
@@ -27,6 +30,8 @@ public class GameGrid {
     }
     public void draw(Graphics g){
         int[] grillCoord=playerCoordToGrillCoord(player.xPosition, player.yPosition);
+        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
+        //cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
 
         g.setColor(Color.black);
 
@@ -80,7 +85,7 @@ public class GameGrid {
          */
         g.setColor(Color.RED);
         g.fillOval(GAME_WIDTH/2-4,GAME_HEIGHT/3-4,8,8);
-        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
+
 
     }
     public void drawChunk(Graphics g,int[] grillCoord, int xPosChunkInt,int yPosChunkInt,int chunkSize){

@@ -3,17 +3,16 @@ import java.awt.*;
 public class Cube {
     int xPosition;
     int yPosition;
-
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
-
     int width=100;
     int height=100;
     int depth=100;
-
-    double ratio=1/3.0;
+    double depthRatio=1/3.0;
     double PFX;
     double PFY;
+    double PVX;
+    double PVY;
 
     double[][] corners;
 
@@ -26,37 +25,49 @@ public class Cube {
         Cube.GAME_HEIGHT =GAME_HEIGHT;
         PFX=GAME_WIDTH/2.0;
         PFY=GAME_HEIGHT/3.0;
+        PVX=GAME_WIDTH/2.0;
+        PVY=GAME_HEIGHT;
 
 
     }
 
     public void draw(Graphics g, int[] grillCoord,double playerPosX,double playerPosY){
+
         double b=200;
         double a = Math.pow(b,1/2.0)*10;
-
         int difPosX=(int)(playerPosX-xPosition);
         int difPosY=(int)(playerPosY-yPosition+GAME_HEIGHT/3);
-
         if (difPosY+height<0)difPosY=-height;
-
         int distance=(int)Math.sqrt(Math.pow(difPosX,2.0)+Math.pow(difPosY,2.0));
-        ratio=30.0/distance;
-        int newWidth= (int) (width*a/(distance+a));
-        int newHeight= (int) (height*a/(distance+a));
-        System.out.println(newWidth);
+
+        depthRatio=1/3.0;
+
+        //System.out.println(newWidth);
+
+        double angleCenter;
+        //int deltaXCenter=corners[i][0]-PFX;
+        //int deltaYCenter=corners[i][1]-PFY;
 
         int newPosX;
         int newPosY;
-        /*
-        if (difPosX>0)
-        newPosX=(int)(GAME_WIDTH/2.0-(GAME_WIDTH/2)*(difPosX/(difPosX+b)));
-        else newPosX=(int)(GAME_WIDTH/2.0+(GAME_WIDTH/2)*(-difPosX/(-difPosX+b)));
-        newPosY=(int)(GAME_HEIGHT-(2*GAME_HEIGHT/3)*(difPosY/(difPosY+b)));
-        */
 
 
-        newPosY=yPosition+grillCoord[1];
         newPosX=xPosition+grillCoord[0];
+        newPosY=yPosition+grillCoord[1];
+
+
+
+
+
+        int distancePFToC=(int)Math.sqrt(Math.pow(newPosX-PFX,2.0)+Math.pow(newPosY-PFY,2.0));
+        int distancePVToC=(int)Math.sqrt(Math.pow(newPosX-PVX,2.0)+Math.pow(newPosY-PVY,2.0));
+        int distancePVToPF=(int)Math.sqrt(Math.pow(PFX-PVX,2.0)+Math.pow(PFY-PVY,2.0));
+
+        int newWidth= (int) (width*(distancePFToC)/distancePVToPF);
+        int newHeight= (int) (height*(distancePFToC)/distancePVToPF);
+        int newDepth= (int) (depth*(distancePFToC)/distancePVToPF);
+
+
         corners=getCorners(newPosX,newPosY,newWidth,newHeight);
 
         g.setColor(new Color(7, 252, 3));
@@ -90,7 +101,7 @@ public class Cube {
         int[][] xPointsList = new int[4][4];
         int[][] yPointsList = new int[4][4];
         int closestCorner=closestCorner(corners);
-        double[][] newCorners=getCornersB(corners,angleList,closestCorner,ratio,newWidth,newHeight);
+        double[][] newCorners=getCornersB(corners,angleList,closestCorner,depthRatio,newWidth,newHeight,newDepth);
         for(var i=0;i<4;i++){
             int xNum=1+i;
             if (xNum==4)xNum=0;
@@ -158,7 +169,7 @@ public class Cube {
 
         return corners;
     }
-    public double[][] getCornersB(double[][] corners, double[] angleList, int closest, double ratio,double newWidth,double newHeight){
+    public double[][] getCornersB(double[][] corners, double[] angleList, int closest, double ratio,double newWidth,double newHeight,double newDepth){
         double[][] newCorners = new double[4][2];
 
         int xSign=1;
@@ -186,14 +197,14 @@ public class Cube {
         else{a1=0;a2=1;a3=2;a4=3;}
         //System.out.println(ySign*newHeight*(distanceP-ratio*depth)/distanceP);
 
-        newCorners[a1][0] = corners[a1][0] -ratio * depth * Math.cos(angleList[closest]);
-        newCorners[a1][1] = corners[a1][1] - ratio * depth * Math.sin(angleList[closest]);
-        newCorners[a2][0] = newCorners[a1][0]+upSign*xSign*newWidth*(distanceP-ratio*depth)/distanceP;
-        newCorners[a2][1] = newCorners[a1][1]+upSign*ySign*newHeight*(distanceP-ratio*depth)/distanceP;
-        newCorners[a3][0] =newCorners[a2][0]-upSign*ySign*newWidth*(distanceP-ratio*depth)/distanceP;
-        newCorners[a3][1] = newCorners[a2][1]+upSign*xSign*newHeight*(distanceP-ratio*height)/distanceP;
-        newCorners[a4][0] =  newCorners[a3][0]-upSign*xSign*newWidth*(distanceP-ratio*depth)/distanceP;
-        newCorners[a4][1] = newCorners[a3][1]-upSign*ySign*newWidth*(distanceP-ratio*depth)/distanceP;
+        newCorners[a1][0] = corners[a1][0] -ratio * newDepth * Math.cos(angleList[closest]);
+        newCorners[a1][1] = corners[a1][1] - ratio * newDepth * Math.sin(angleList[closest]);
+        newCorners[a2][0] = newCorners[a1][0]+upSign*xSign*newWidth*(distanceP-ratio*newHeight)/distanceP;
+        newCorners[a2][1] = newCorners[a1][1]+upSign*ySign*newHeight*(distanceP-ratio*newHeight)/distanceP;
+        newCorners[a3][0] =newCorners[a2][0]-upSign*ySign*newWidth*(distanceP-ratio*newWidth)/distanceP;
+        newCorners[a3][1] = newCorners[a2][1]+upSign*xSign*newHeight*(distanceP-ratio*newHeight)/distanceP;
+        newCorners[a4][0] =  newCorners[a3][0]-upSign*xSign*newWidth*(distanceP-ratio*newWidth)/distanceP;
+        newCorners[a4][1] = newCorners[a3][1]-upSign*ySign*newHeight*(distanceP-ratio*newHeight)/distanceP;
 
 
         return newCorners;
