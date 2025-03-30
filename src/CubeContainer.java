@@ -270,8 +270,8 @@ public class CubeContainer {
 
         drawBasicStructure(0,0,14,30,30,2);
         */
-        fillCircle2(0,0,2,6);
-        drawCircle2(0,0,2,20);
+        fillCircle2(0,0,2,GameGrid.regenZone);
+        drawCircle2(0,0,2,GameGrid.safeZone);
       //  drawCircle2(0,0,3,20);
 
         newCube(0,0,3);

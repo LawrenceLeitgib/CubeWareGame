@@ -14,7 +14,7 @@ public class Stats {
     static double xp=0;
     static double xpUntilNextLevelBase=100;
     static double xpUntilNextLevel=xpUntilNextLevelBase;
-    static double currentLevel=0;
+    static int currentLevel=0;
     Stats(int GAME_WIDTH, int GAME_HEIGHT){
 
         this.GAME_WIDTH=GAME_WIDTH;
@@ -44,8 +44,8 @@ public class Stats {
         g.setColor(new Color(0,0,255));
         g.fillRect(10,30, (int) (200*mana/maxMana),15);
 
-        g.setColor(new Color(100,100,100,100));
-        g.fillRect(10,50,200,100);
+        g.setColor(new Color(100,100,100,200));
+        g.fillRect(10,50,200,200);
         g.setColor(Color.black);
         g.setFont(new Font("Arial",Font.PLAIN,24));
         g.setColor(Color.red);
@@ -53,6 +53,9 @@ public class Stats {
         g.drawString("y: "+Player.yPosition,15,90);
         g.drawString("z: "+Player.zPosition,15,110);
         g.drawString("FPS: "+(int)(GamePanel.FPS+.5),15,130);
+        g.drawString("entities: "+EnemiesContainer.enemies.size(),15,150);
+        g.drawString("level: "+Stats.currentLevel,15,170);
+
 
 
 
@@ -79,8 +82,13 @@ public class Stats {
 
 
     public void updateData(double deltaTime){
-        mana+=deltaTime*1000;
+        mana+=deltaTime;
+        if(Player.distanceFromMiddle<GameGrid.regenZone){
+            mana+=deltaTime*4;
+            health+=4*deltaTime;
+        }
         if(mana>=maxMana)mana=maxMana;
+        if(health>=maxHealth)health=maxHealth;
 
         if(xp>=xpUntilNextLevel){
             xp-=xpUntilNextLevel;

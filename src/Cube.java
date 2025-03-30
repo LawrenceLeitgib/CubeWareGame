@@ -408,6 +408,7 @@ public class Cube {
 
         g.setColor(new Color(21, 92, 5));
         if (drawCube){
+            Color color1=new Color(5, 168, 30);
 
             if(GameGrid.angleForXRotation<Math.PI/4) {
                 if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
@@ -460,7 +461,7 @@ public class Cube {
             }
 
             if (blockTopEmpty&&newPosY-newHeight>GameGrid.PFY) {
-                fillPolygonB(g,polygonTop[0],polygonTop[1],Color.GREEN  );
+                fillPolygonB(g,polygonTop[0],polygonTop[1],color1);
 
 
             }

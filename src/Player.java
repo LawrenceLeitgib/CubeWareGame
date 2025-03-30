@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Player {
     static double xPosition;
@@ -65,6 +66,7 @@ public class Player {
     double flyingTime=.2;
 
     boolean spaceHasBeenReleased;
+    static double distanceFromMiddle;
 
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
@@ -77,6 +79,7 @@ public class Player {
         chunkIn[1]=(int)(yPosition/Chunk.numOfCubeY);
         if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
         if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
+        distanceFromMiddle =Math.sqrt(Math.pow(Player.xPosition,2)+Math.pow(Player.yPosition,2));
 
         newChunkAround();
 
@@ -98,6 +101,8 @@ public class Player {
         Stats.xp=0;
         GamePanel.gameState=GamePanel.GameStates.get("Running");
         newChunkAround();
+        EnemiesContainer.enemies = new ArrayList<Enemy>();
+        FireBallContainer.fireBalls=new ArrayList<FireBall>();
 
 
 
@@ -126,6 +131,7 @@ public class Player {
         cubeIn[2]=(int)(zPosition);
         if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
         if(yPosition<0)cubeIn[1]=(int)(yPosition-0.5);
+        distanceFromMiddle =Math.sqrt(Math.pow(Player.xPosition,2)+Math.pow(Player.yPosition,2));
        // System.out.println(cubeIn[0]+", "+cubeIn[1]+", "+cubeIn[2]);
 
         if(flyingCount>0){
@@ -446,12 +452,12 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
         }
 
 
-            for(int i=0;i<EnemiesContainer.enemies.length;i++){
-                if(EnemiesContainer.enemyList[i]&&(zPosition<EnemiesContainer.enemies[i].zPosition+EnemiesContainer.enemies[i].height/Cube.defaultSize&&zPosition+height/Cube.defaultSize>EnemiesContainer.enemies[i].zPosition))
-                if(Math.sqrt(Math.pow(EnemiesContainer.enemies[i].xPosition-xPosition,2)+Math.pow(EnemiesContainer.enemies[i].yPosition-yPosition,2))<(EnemiesContainer.enemies[i].width/2+width/2)/Cube.defaultSize){
-                    xPosition-=Math.cos(EnemiesContainer.enemies[i].angleWithPlayer)*speed*20*deltaTime;
-                    yPosition-=Math.sin(EnemiesContainer.enemies[i].angleWithPlayer)*speed*20*deltaTime;
-                    Stats.health-=EnemiesContainer.enemies[i].damage;
+            for(int i=0;i<EnemiesContainer.enemies.size();i++){
+                if(zPosition<EnemiesContainer.enemies.get(i).zPosition+EnemiesContainer.enemies.get(i).height/Cube.defaultSize&&zPosition+height/Cube.defaultSize>EnemiesContainer.enemies.get(i).zPosition)
+                if(Math.sqrt(Math.pow(EnemiesContainer.enemies.get(i).xPosition-xPosition,2)+Math.pow(EnemiesContainer.enemies.get(i).yPosition-yPosition,2))<(EnemiesContainer.enemies.get(i).width/2+width/2)/Cube.defaultSize){
+                    xPosition-=Math.cos(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                    yPosition-=Math.sin(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                    Stats.health-=EnemiesContainer.enemies.get(i).damage;
                 }
             }
 

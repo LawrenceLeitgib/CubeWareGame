@@ -7,6 +7,8 @@ public class GameGrid {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
     Player player;
+    static int safeZone=20;
+    static int regenZone=6;
 
 
 

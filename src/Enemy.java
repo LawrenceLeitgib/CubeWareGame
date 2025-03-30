@@ -57,6 +57,21 @@ public class Enemy {
 
        xPosition-=Math.cos(angleWithPlayer)*speed*deltaTime;
          yPosition-=Math.sin(angleWithPlayer)*speed*deltaTime;
+        for(var i = 0; i< FireBallContainer.fireBalls.size(); i++){
+
+                if(detectionCollisionWithBall(FireBallContainer.fireBalls.get(i).xPosition, FireBallContainer.fireBalls.get(i).yPosition, FireBallContainer.fireBalls.get(i).zPosition, FireBallContainer.fireBalls.get(i).size)){
+                    yPosition+= FireBallContainer.fireBalls.get(i).yVelocity/2*deltaTime;
+                    xPosition+= FireBallContainer.fireBalls.get(i).xVelocity/2*deltaTime;
+                    if(HP< FireBallContainer.fireBalls.get(i).damage){
+                        FireBallContainer.fireBalls.get(i).damage-=HP;
+                        HP=0;
+                    }else{
+                        HP-= FireBallContainer.fireBalls.get(i).damage;
+                        FireBallContainer.fireBalls.remove(i);
+                    }
+                }
+
+        }
 
          /*
          for(var i = 0; i< FireBallContainer.fireBallsList.length; i++){
@@ -361,7 +376,10 @@ public class Enemy {
                 }
 
             }
-        return Math.sqrt(Math.pow(ballXPos - xPosition, 2) + Math.pow(ballYPos - yPosition, 2)) < Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Cube.defaultSize;
+        if( Math.sqrt(Math.pow(ballXPos - xPosition, 2) + Math.pow(ballYPos - yPosition, 2)) < Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Cube.defaultSize){
+            return ballzPos > zPosition && ballzPos < zPosition + height / Cube.defaultSize;
+        }
+        return false;
     }
 
 }
