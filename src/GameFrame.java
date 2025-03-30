@@ -8,7 +8,7 @@ public class GameFrame extends JFrame {
         panel = new GamePanel();
         this.add(panel);
         this.setTitle("Video Game");
-        this.setResizable(false);
+        this.setResizable(true);
         this.setBackground(new Color(163, 210, 227));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack(); //fit the size of the pannel

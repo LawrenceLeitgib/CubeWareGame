@@ -22,6 +22,13 @@ public class Stats {
         maxMana=20;
         mana=20;
     }
+    public static void setGameWidth(int gameWidth) {
+        GAME_WIDTH = gameWidth;
+    }
+
+    public static void setGameHeight(int gameHeight) {
+        GAME_HEIGHT = gameHeight;
+    }
     public void draw(Graphics g){
 
 

@@ -23,8 +23,8 @@ public class Player {
         this.xPosition=positionX;
         this.yPosition=positionY;
         this.zPosition=PositionZ;
-        this.GAME_WIDTH=GAME_WIDTH;
-        this.GAME_HEIGHT=GAME_HEIGHT;
+        Player.GAME_WIDTH =GAME_WIDTH;
+        Player.GAME_HEIGHT =GAME_HEIGHT;
 
 
 
@@ -48,6 +48,13 @@ public class Player {
         this.yVelocity = yVelocity;
     }
 
+    public static void setGameWidth(int gameWidth) {
+        GAME_WIDTH = gameWidth;
+    }
+
+    public static void setGameHeight(int gameHeight) {
+        GAME_HEIGHT = gameHeight;
+    }
 
     public void draw(Graphics g){
         g.setColor(new Color(3, 40, 252));

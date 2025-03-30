@@ -17,9 +17,10 @@ public class GameGrid {
     double PFY;
 
 
+
     GameGrid(int GAME_WIDTH,int GAME_HEIGHT){
-        this.GAME_WIDTH=GAME_WIDTH;
-        this.GAME_HEIGHT=GAME_HEIGHT;
+        GameGrid.GAME_WIDTH =GAME_WIDTH;
+        GameGrid.GAME_HEIGHT =GAME_HEIGHT;
         player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0,0);
         cube = new Cube(GAME_WIDTH,GAME_HEIGHT,0,0,0);
         cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,0,-100,0);
@@ -27,6 +28,16 @@ public class GameGrid {
         PFX=GAME_WIDTH/2.0;
         PFY=GAME_HEIGHT/3.0;
 
+
+
+    }
+
+    public static void setGameHeight(int gameHeight) {
+        GAME_HEIGHT = gameHeight;
+    }
+
+    public static void setGameWidth(int gameWidth) {
+        GAME_WIDTH = gameWidth;
     }
 
     public void newPlayer(){
@@ -39,14 +50,22 @@ public class GameGrid {
 
     }
     public void draw(Graphics g){
+        PFX=GAME_WIDTH/2.0;
+        PFY=GAME_HEIGHT/3.0;
+
+
+
+
+
+
         int[] grillCoord=playerCoordToGrillCoord(player.xPosition, player.yPosition);
         int numOfBlocksXaxis=100;
-        int numOfBlocksYaxis=100;
+        int numOfBlocksYaxis=1000;
         int sizeOfBlocks=100;
         int xGrillNumToAdd= (int) player.xPosition;
         int yGrillNumToAdd= (int) player.yPosition;
-        int yValue;
-        double depthRatio=1/3.0;
+        double yValue;
+        double depthRatio=1/2.0;
 
 
         while(xGrillNumToAdd>sizeOfBlocks){
@@ -66,20 +85,21 @@ public class GameGrid {
             yGrillNumToAdd+=sizeOfBlocks;
 
         }
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(147, 196, 49));
+        g.fillRect(0, (int) PFY,GAME_WIDTH,2*GAME_HEIGHT/3);
+        //g.fillOval();
+
+        g.setColor(new Color(119, 133, 17));
 
         for(var i=-numOfBlocksXaxis+1;i<=numOfBlocksXaxis;i++ ){
             g.drawLine(GAME_WIDTH/2+sizeOfBlocks/2+i*sizeOfBlocks-xGrillNumToAdd,GAME_HEIGHT, (int) PFX, (int) PFY);
         }
         //double sum=0;
         for(var i=0;i<numOfBlocksYaxis;i++ ){
-            yValue=(int)(2*GAME_HEIGHT/((i+3.0))/depthRatio+GAME_HEIGHT/3);
-            g.drawLine(0,(int)(yValue), (int) GAME_WIDTH, (int) ( yValue));
-            //if(i==1)System.out.println(yValue);
-            //g.drawLine(0,(int)(GAME_HEIGHT-sum), (int) GAME_WIDTH, (int) ( GAME_HEIGHT-sum));
-            //sum+=sizeOfBlocks*depthRatio*(GAME_HEIGHT/(i*1.0*sizeOfBlocks+GAME_HEIGHT));
-            //yValue= (int) (GAME_HEIGHT-2/3.0*sizeOfBlocks*(i+1)*(GAME_HEIGHT/(i*1.0*sizeOfBlocks+GAME_HEIGHT)));
-            //g.drawLine(0,(int)(yValue), (int) GAME_WIDTH, (int) ( yValue));
+
+            yValue=  (2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((sizeOfBlocks*(i-10.0)+yGrillNumToAdd)*depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0);
+            //g.drawLine(0,(yValue),  GAME_WIDTH,  ( yValue));
+            g.fillRect(0, (int)(yValue), GAME_WIDTH , 2);
 
 
         }
@@ -89,9 +109,9 @@ public class GameGrid {
         //g.drawLine(0,(int)(GAME_HEIGHT-sizeOfBlocks*3*depthRatio*(GAME_HEIGHT/(2.0*sizeOfBlocks+GAME_HEIGHT))), (int) GAME_WIDTH, (int) (GAME_HEIGHT-sizeOfBlocks*3*depthRatio*(GAME_HEIGHT/(2.0*sizeOfBlocks+GAME_HEIGHT))));
         //System.out.println(GAME_HEIGHT);
 
-        //Cube[] cubes=new Cube[100];
-        cube3.draw(g,grillCoord,player.xPosition,player.yPosition);
-        cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
+        Cube[] cubes=new Cube[100];
+        //cube3.draw(g,grillCoord,player.xPosition,player.yPosition);
+        //cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
         cube.draw(g,grillCoord,player.xPosition,player.yPosition);
 
         g.setColor(Color.red);

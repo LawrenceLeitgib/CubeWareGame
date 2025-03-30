@@ -41,10 +41,21 @@ public class GamePanel extends JPanel implements Runnable {
         image=createImage(getWidth(),getHeight());
         graphics = image.getGraphics();
         draw(graphics);
+
         g.drawImage(image,0,0,this);
 
     }
     public void draw(Graphics g){
+        Rectangle r = getBounds();
+        GameGrid.setGameHeight(r.height);
+        GameGrid.setGameWidth(r.width);
+        Stats.setGameHeight(r.height);
+        Stats.setGameWidth(r.width);
+        Player.setGameHeight(r.height);
+        Player.setGameWidth(r.width);
+        Cube.setGameHeight(r.height);
+        Cube.setGameWidth(r.width);
+
         gameGrid.draw(g);
         stats.draw(g);
 
@@ -64,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
         long lastTime = System.nanoTime();
-        double amountOfTicks=60;
+        double amountOfTicks=30;
         double ns=1000000000/amountOfTicks;
         double delta= 0;
         newGameGrid();
@@ -73,9 +84,11 @@ public class GamePanel extends JPanel implements Runnable {
             delta+=(now-lastTime)/ns;
             lastTime=System.nanoTime();
             if(delta >=1){
-                updateData(1/amountOfTicks);
+                updateData(2/amountOfTicks);
+                removeAll();
                 repaint();
                 delta--;
+
             }
 
         }

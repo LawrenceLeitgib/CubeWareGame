@@ -29,9 +29,22 @@ public class Cube {
         PVX=GAME_WIDTH/2.0;
         PVY=GAME_HEIGHT;
     }
+    public static void setGameWidth(int gameWidth) {
+        GAME_WIDTH = gameWidth;
+    }
+
+    public static void setGameHeight(int gameHeight) {
+        GAME_HEIGHT = gameHeight;
+    }
 
     public void draw(Graphics g, int[] grillCoord,double playerPosX,double playerPosY){
-        depthRatio=3.0/1.0;
+        depthRatio=1.0/2.0;
+        PFX=GAME_WIDTH/2.0;
+        PFY=GAME_HEIGHT/3.0;
+        PVX=GAME_WIDTH/2.0;
+        PVY=GAME_HEIGHT;
+
+
         int difPosX=(int)(playerPosX-xPosition);
         int difPosY=(int)((playerPosY-yPosition));
         int distance=(int)Math.sqrt(Math.pow(difPosX,2.0)+Math.pow(difPosY,2.0));
@@ -84,10 +97,11 @@ public class Cube {
             if (deltaXList[i]==0 && deltaYList[i]>0)angleList[i]=Math.PI/2;
             if (deltaXList[i]==0 && deltaYList[i]<0)angleList[i]=-Math.PI/2;
         }
+        /*
         g.setColor(Color.red);
         g.setFont(new Font("Arial",Font.PLAIN,18));
         g.drawString(String.valueOf((int)newPosY),15,(int)newPosY*2-GAME_HEIGHT);
-        /*
+
         g.setColor(Color.red);
         g.drawString(String.valueOf(angleList[0]),15,110);
         g.drawString(String.valueOf(angleList[1]),15,130);
@@ -147,17 +161,13 @@ public class Cube {
     */
         /*
         g.setColor(Color.yellow);
-        g.fillOval((int) (newCorners[0][0]-5), (int) (newCorners[0][1]-5),10,10);
         g.setColor(Color.red);
+        g.fillOval((int) (newCorners[0][0]-5), (int) (newCorners[0][1]-5),10,10);
         g.fillOval((int) (newCorners[1][0]-5), (int) (newCorners[1][1]-5),10,10);
         g.fillOval((int) (newCorners[2][0]-5), (int) (newCorners[2][1]-5),10,10);
         g.fillOval((int) (newCorners[3][0]-5), (int) (newCorners[3][1]-5),10,10);
-       
+
          */
-
-
-
-        //g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
 
     }
     public int[] listDoubleToInt(double[] l){
@@ -207,81 +217,15 @@ public class Cube {
         int upSign=1;
         if(closest==2 || closest==3)upSign=-1;
 
-        /*
-        for(var i=0;i<4;i++) {
-            newCorners[i][0] = corners[i][0] - xSign * ratio * depth * Math.cos(angleList[i]);
-            newCorners[i][1] = corners[i][1] - ySign * ratio * depth * Math.sin(angleList[i]);
-        }
-        */
-        double distanceP;
 
-
-        //ratio=sizeRatio*depth/newDepth;
-        //System.out.println(depthRatio +" | "+ratio);
-
-        /*
-        distanceP=Math.sqrt(Math.pow(corners[closest][0]-PFX,2)+Math.pow(corners[closest][1]-PFY,2));
-        if (closest==1){a1=1;a2=2;a3=3;a4=0;}
-        else if (closest==2){a1=2;a2=3;a3=0;a4=1;}
-        else if (closest==3){a1=3;a2=0;a3=1;a4=2;}
-        else{a1=0;a2=1;a3=2;a4=3;}
-        newCorners[a1][0] = corners[a1][0] -ratio * newDepth * Math.cos(angleList[closest]);
-        newCorners[a1][1] = corners[a1][1] - ratio * newDepth * Math.sin(angleList[closest]);
-        newCorners[a2][0] = newCorners[a1][0]+upSign*xSign*newWidth*(distanceP-ratio*newHeight)/distanceP;
-        newCorners[a2][1] = newCorners[a1][1]+upSign*ySign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-        newCorners[a3][0] =newCorners[a2][0]-upSign*ySign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a3][1] = newCorners[a2][1]+upSign*xSign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-        newCorners[a4][0] =  newCorners[a3][0]-upSign*xSign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a4][1] = newCorners[a3][1]-upSign*ySign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-        */
         if (closest==1){a1=2;a2=3;a3=0;a4=1;}
         else if (closest==2){a1=1;a2=2;a3=3;a4=0;}
         else if (closest==3){a1=0;a2=1;a3=2;a4=3;}
         else{a1=3;a2=0;a3=1;a4=2;}
-        //System.out.println(ySign*newHeight*(distanceP-ratio*depth)/distanceP);
         double DeltaY=(2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((difPosY)*1.0*depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0)-(2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((difPosY+depth)*1.0*depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0);
-        DeltaY=DeltaY;
-
-       // System.out.println(DeltaY*depth);
-        //System.out.println(DeltaY);
-
         double DeltaX=DeltaY/Math.tan(angleList[a1]);
         double ratio=Math.sqrt(Math.pow(DeltaX,2)+Math.pow(DeltaY,2));
-        //System.out.println(ratio);
-
-        distanceP=Math.sqrt(Math.pow(corners[a1][0]-PFX,2)+Math.pow(corners[a1][1]-PFY,2));
-
-        /*
-        distanceP=Math.sqrt(Math.pow(middleX-PFX,2)+Math.pow(middleY-PFY,2));
-        double DeltaXM=middleX-PFX;
-        double DeltaYM=middleY-PFY;
-        double angleM=Math.atan(DeltaYM/DeltaXM);
-        if(DeltaXM<0)angleM=Math.PI+Math.atan(DeltaYM/DeltaXM);
-        System.out.println(ratio * newDepth * Math.cos(angleM));
-        newCorners[a1][0] = corners[a1][0] -ratio * depth * Math.cos(angleList[a1]);
-        newCorners[a1][1] = corners[a1][1] - ratio * depth * Math.sin(angleList[a1]);
-        newCorners[a2][0] = newCorners[a1][0]- upSign*ySign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a2][1] = newCorners[a1][1]-upSign*xSign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-        newCorners[a3][0] =newCorners[a2][0]+upSign*xSign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a3][1] = newCorners[a2][1]-upSign*ySign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-        newCorners[a4][0] =  newCorners[a3][0]+upSign*ySign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a4][1] = newCorners[a3][1]+upSign*xSign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-
-        newCorners[a1][0] = corners[a1][0] -ratio *depth * Math.cos(angleList[a1]);
-        newCorners[a1][1] = corners[a1][1] - ratio  *depth* Math.sin(angleList[a1]);
-        newCorners[a2][0] = newCorners[a1][0]- upSign*ySign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a2][1] = newCorners[a1][1]-upSign*xSign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-        newCorners[a3][0] =newCorners[a2][0]+upSign*xSign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a3][1] = newCorners[a2][1]-upSign*ySign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-        newCorners[a4][0] =  newCorners[a3][0]+upSign*ySign*newWidth*(distanceP-ratio*newWidth)/distanceP;
-        newCorners[a4][1] = newCorners[a3][1]+upSign*xSign*newHeight*(distanceP-ratio*newHeight)/distanceP;
-
-         */
-
         double sizeRatioAtPosition=GAME_HEIGHT/((difPosY+depth)*depthRatio+GAME_HEIGHT);
-
-        System.out.println(sizeRatioAtPosition);
-
 
         newCorners[a1][0] = corners[a1][0] -ratio  * Math.cos(angleList[a1]);
         newCorners[a1][1] = corners[a1][1] - ratio  * Math.sin(angleList[a1]);
@@ -291,8 +235,6 @@ public class Cube {
         newCorners[a3][1] = newCorners[a2][1]-upSign*ySign*sizeRatioAtPosition*height;
         newCorners[a4][0] =  newCorners[a3][0]+upSign*ySign*sizeRatioAtPosition*width;
         newCorners[a4][1] = newCorners[a3][1]+upSign*xSign*sizeRatioAtPosition*height;
-
-
 
 
         return newCorners;
