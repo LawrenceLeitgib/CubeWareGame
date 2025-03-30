@@ -52,7 +52,7 @@ public class Cube {
     }
     public void updateData(double deltaTime) {
         double difPosX=(Player.xPosition-xPosition*width);
-        double difPosY= ((Player.yPosition-yPosition*depth));
+        double difPosY= ((Player.yPosition-(yPosition-Player.cubeAway)*depth));
         double difPosZ=(Player.zPosition-zPosition*height);
         //if (difPosY<-GAME_HEIGHT/depthRatio+5)difPosY= (int) (-GAME_HEIGHT/depthRatio+5);
         //int distance=(int)(Math.sqrt(Math.pow(difPosZ,2.0)+Math.pow(difPosY,2.0))*Math.abs(difPosY)/difPosY);
@@ -80,7 +80,7 @@ public class Cube {
          newDepth=  (depth*sizeRatio);
          newPosX=  (GAME_WIDTH/2.0-(Player.xPosition-xPosition*width)*sizeRatio);
 
-        if (Math.abs(difPosX)<=width/2&&newPosY>GAME_HEIGHT&&difPosZ<0){
+        if (Math.abs(difPosX)<=width/2&&newPosY>GAME_HEIGHT*2&&difPosZ<0){
             drawCube=false;
         }else(drawCube)=true;
 
@@ -177,11 +177,13 @@ public class Cube {
         double newPosX=  (GAME_WIDTH/2.0-(playerPosX+xPosition)*sizeRatio);
         */
 
-        g.setColor(new Color(7, 252, 3));
-        if (blockBackEmpty && drawCube)
+        if (blockBackEmpty && drawCube) {
+            g.setColor(Color.BLACK);
+            g.fillRect((int) (corners[0][0] - 0.5), (int) (corners[0][1] - 0.5), (int) (newWidth + 2.5), (int) (newHeight + 2.5));
+            g.setColor(new Color(7, 252, 3));
             g.fillRect((int) (corners[0][0] + 0.5), (int) (corners[0][1] + 0.5), (int) (newWidth + 0.5), (int) (newHeight + 0.5));
 
-
+        }
 
         /*
         g.setColor(Color.red);

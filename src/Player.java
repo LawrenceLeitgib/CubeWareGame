@@ -9,10 +9,12 @@ public class Player {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
 
-    int width=40;
-    int height=40;
+    static int cubeAway=5;
 
-    double speed=50.0;
+    int width=100;
+    int height=100;
+
+    double speed=10.0;
 
     double xVelocity;
     double yVelocity;
@@ -23,6 +25,7 @@ public class Player {
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=positionX;
         Player.yPosition=positionY;
+        Player.yPosition=positionZ;
         Player.zPosition=positionZ;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
@@ -41,7 +44,24 @@ public class Player {
             zPosition += this.zVelocity;
         }
 
-    }
+        for(var i=0;i<CubeContainer.cubePositionX.length;i++){
+            if(CubeContainer.cubePositionX[i])
+                for (var j = 0; j < CubeContainer.cubePositionY.length; j++) {
+                    if(CubeContainer.cubePositionY[j])
+                        for (var k = 0; k <CubeContainer.cubePositionZ.length ; k++) {
+                            if (CubeContainer.cubePosition[i][j][k]) {
+                                detectionCollision(i-CubeContainer.numberOfCubes,j-CubeContainer.numberOfCubes,k-CubeContainer.numberOfCubesZ);
+                                //System.out.println(detectionCollision(i,j,k));
+
+
+                                }
+
+                            }
+                        }
+                }
+        }
+
+
 
     public void setXVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
@@ -64,10 +84,20 @@ public class Player {
     }
 
     public void draw(Graphics g){
+        double sizeRatio=GAME_HEIGHT/(cubeAway*GameGrid.depthRatio+GAME_HEIGHT);
+
+        double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio);
+        //newPosY+=zPosition*depth*sizeRatio;
+        double newWidth=  (width*sizeRatio);
+        double newHeight=  (height*sizeRatio);
+        double newPosX=  (GAME_WIDTH/2.0);
+
+
+
         g.setColor(new Color(3, 40, 252));
         //g.fillRect(GAME_WIDTH/2-width/2,2*GAME_HEIGHT/3-height/2,width,height);
-        g.fillOval(GAME_WIDTH/2-width/2, (int) (2*GAME_HEIGHT/3-height*CubeContainer.depthRatio/4),width, (int) (height*CubeContainer.depthRatio/2));
-
+        //g.fillOval(GAME_WIDTH/2-width/2, (int) (3*GAME_HEIGHT/4-height*CubeContainer.depthRatio/4),width, (int) (height*CubeContainer.depthRatio/2));
+        g.fillRect((int) (newPosX-newWidth/2.0), (int) (newPosY-newHeight), (int) newWidth, (int) newHeight);
 
         g.setColor(Color.black);
         g.setFont(new Font("Arial",Font.PLAIN,16));
@@ -76,6 +106,25 @@ public class Player {
         g.drawString(Double.toString(xPosition),15,70);
         g.drawString(Double.toString(zPosition),15,110);
     }
+
+    public boolean detectionCollision(int x,int y,int z){
+        double playerLeft=xPosition;
+        double playerRight=xPosition+width;
+        double playerFront=yPosition;
+        double playerBack=yPosition+height;
+        //System.out.println(yPosition>(y)*Cube.depth&&yPosition<(y+1)*Cube.depth);
+        //System.out.println( xPosition+width>(x-0.5)*Cube.width&&xPosition-width<(x+0.5)*Cube.width);
+        if(xPosition+width>(x-0.5)*Cube.width&&xPosition-width<(x+0.5)*Cube.width){
+            if(yPosition>y*Cube.depth&&yPosition<(y+1)*Cube.depth){
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+
+
 
 
     public void keyPressed(KeyEvent e) {
