@@ -50,6 +50,45 @@ public class Chunk {
         cubes[x][y][z]=new Cube(x+xPosition*numOfCubeX,y+yPosition*numOfCubeY,z,GameGrid.depthRatio,this);
         cubePositions[x][y][z]=true;
     }
+    public void drawLabyrinth(){
+
+        //int[][] List1={}
+        //comme dans square battle
+
+        int[][] List1={
+                {1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1},
+                {1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
+                {0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0},
+                {1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1},
+                {0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0},
+                {1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1},
+                {0,0,1,1,0,1,1,1,0,1,0,0,0,0,0,0},
+                {1,0,1,1,0,1,1,0,0,1,0,1,0,1,0,1},
+                {1,0,0,0,0,0,0,0,1,1,0,1,0,1,0,1},
+                {1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1},
+                {0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0},
+                {1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1},
+                {1,0,1,1,0,1,1,0,1,1,0,1,0,1,1,0},
+                {1,0,1,1,0,1,1,0,1,0,0,0,0,0,0,0},
+                {1,0,1,1,0,1,1,0,1,0,1,1,0,1,1,1},
+                {1,0,0,0,0,1,1,0,1,0,1,1,0,0,0,0}
+        };
+
+        for (var k=1;k<4;k++){
+            for(var i=15;i>=0;i--){
+                for(var j=15;j>=0;j--){
+                    if(List1[i][j]==1){
+                        newCube(j,i,k);
+                    }
+
+                }
+            }
+        }
+    }
+
+    void drawLineY(int[] list,int numY){
+    }
+
     public void createCubes(){
         //drawMap(0,0,0);
         /*
@@ -75,8 +114,40 @@ public class Chunk {
             }
         }
 
-     */
 
+
+     */
+        for(var i=0;i<numOfCubeX;i++) {
+            for (var j = 0; j < numOfCubeX; j++){
+                newCube(i, j, 0);
+                 newCube(i, j, 1);
+
+            }
+        }
+        newCube(0, 0, 0);
+
+        if(xPosition==0&&yPosition==0){
+            newCube(5, 5, 8);
+            newCube(5, 5, 9);
+            newCube(4, 5, 9);
+            newCube(6, 5, 9);
+            newCube(5, 6, 9);
+            newCube(5, 4, 9);
+            newCube(5, 5, 10);
+
+        }
+        /*{
+
+            for(var i=0;i<numOfCubeX;i++) {
+                for (var j = 0; j < numOfCubeX; j++){
+                    newCube(i, j, 2);
+
+                }
+            }
+
+        }*/
+        drawLabyrinth();
+        /*
         for(var k=0;k<numOfCubeX;k++){
             for(var i=k;i<numOfCubeX-k;i++) {
                 for (var j = k; j < numOfCubeX-k; j++){
@@ -86,11 +157,8 @@ public class Chunk {
 
         }
 
-
-
-
-
-/*
+ */
+        /*
         newCube(6,6,12);
         newCube(6,6,13);
         newCube(5,6,13);
@@ -120,16 +188,19 @@ public class Chunk {
                         for (var k = 0; k < numOfCubeX; k++) {
                             if (cubePositions[k][j][i]) {
                                 cubes[k][j][i].draw(g);
-                                /*
+                                if(Player.chunkIn[0]==xPosition&&Player.chunkIn[1]==yPosition)
                                 if((Player.yPosition+1-(1-Player.depth/Cube.defaultSize)/2.0-(cubes[k][j][i].yPosition))>0){
                                     Player.draw(g);
                                 }
-                                
-                                 */
-
-
-
                             }
+                            /*
+                            if(Player.chunkIn[0]==xPosition&&Player.chunkIn[1]==yPosition) {
+                                if ((Player.yPosition + 1 - (1 - Player.depth / Cube.defaultSize) / 2.0 - (yPosition*numOfCubeY)) > 0) {
+                                    Player.draw(g);
+                                }
+                            }
+
+                             */
                         }
                 }
         }
@@ -137,9 +208,13 @@ public class Chunk {
         for (var i= numOfCubeZ-1; i >-1; i--) {
              for (var j = 0; j < numOfCubeY; j++) {
                         for (var k = 0; k < numOfCubeX; k++) {
-                            if (cubePositions[k][j][i]&&(i+1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition*Cube.defaultSize) {
+                            /*if (cubePositions[k][j][i]&&(i-1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition*Cube.defaultSize) {
                                 cubes[k][j][i].draw(g);
                                //System.out.println("test");
+                            }*/
+                            if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                                cubes[k][j][i].draw(g);
+
                             }
                         }
                 }

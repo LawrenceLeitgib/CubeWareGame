@@ -45,6 +45,8 @@ public class Stats {
         //g.drawString("Health",15,22);
 
 
+
+
     }
 
     public int getHealth() {
@@ -64,6 +66,7 @@ public class Stats {
     }
 
     public void updateData(double deltaTime){
+
 
     }
 

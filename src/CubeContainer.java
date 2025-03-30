@@ -186,7 +186,7 @@ public class CubeContainer {
     public void draw(Graphics g){
 
         g.setColor(new Color(147, 196, 49));
-        g.fillRect(0, (int) GameGrid.PFY,GAME_WIDTH,2*GAME_HEIGHT/3);
+        g.fillRect(0, (int) GameGrid.PFY,GAME_WIDTH,GAME_HEIGHT);
 
 
         int xNum=0;
@@ -201,32 +201,8 @@ public class CubeContainer {
 
             }
         }
-/*
-        for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<=Player.chunkIn[1]+Player.numOfChunkToDraw;i++){
-            for(var j=0;j<numOfChunkX*2;j++){
-                if(chunksPosition[j][i+numOfChunkY])
-                    chunks[j][i+numOfChunkY].draw(g);
-            }
-        }
 
- */
-
-        /*
-        for(var i=0;i<numOfChunkY*2;i++){
-            for(var j=0;j<numOfChunkX*2;j++){
-                if(chunksPosition[j][i])
-                chunks[j][i].draw(g);
-            }
-        }
-
-         */
-        Player.draw(g);
-        /*
-        //System.out.println(drawGrid);
-        drawGrillage(g);//DO NOT DELET
-        Player.draw(g);
-        drawCubes(g ,0,2*numberOfCubesZ+1,0);
-        */
+        //Player.draw(g);
 
     }
 

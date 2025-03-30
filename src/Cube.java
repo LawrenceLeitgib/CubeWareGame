@@ -7,7 +7,7 @@ public class Cube {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
 
-    static int defaultSize=100;
+    static int defaultSize=50;
     int width=defaultSize;
     int height=defaultSize;
     int depth=defaultSize;
@@ -69,6 +69,7 @@ public class Cube {
 
 
     public void updateData(double deltaTime) {
+        depthRatio=GameGrid.depthRatio;
         double difPosX=((Player.xPosition-xPosition)*width);
         double difPosY= ((Player.yPosition-(yPosition-Player.cubeAway))*depth);
         double difPosZ=((Player.zPosition-zPosition)*height);
@@ -82,7 +83,7 @@ public class Cube {
          newWidth=  (width*sizeRatio);
          newHeight=  (height*sizeRatio);
          newDepth=  (depth*sizeRatio);
-         newPosX=  (GAME_WIDTH/2.0-((Player.xPosition-xPosition)*width)*sizeRatio);
+         newPosX=  (GameGrid.PVX-((Player.xPosition-xPosition)*width)*sizeRatio);
 
         if (Math.abs(difPosX)<=width/2&&newPosY>GAME_HEIGHT*2&&difPosZ<0){
             drawCube=false;

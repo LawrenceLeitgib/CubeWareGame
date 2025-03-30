@@ -47,20 +47,21 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void draw(Graphics g){
         Rectangle r = getBounds();
-        //r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
-
-        GameGrid.setGameHeight(r.height);
-        GameGrid.setGameWidth(r.width);
-        Stats.setGameHeight(r.height);
-        Stats.setGameWidth(r.width);
-        Player.setGameHeight(r.height);
-        Player.setGameWidth(r.width);
-        Cube.setGameHeight(r.height);
-        Cube.setGameWidth(r.width);
-        CubeContainer.setGameHeight(r.height);
-        CubeContainer.setGameWidth(r.width);
-        Chunk.GAME_WIDTH =r.width;
-        Chunk.GAME_HEIGHT =r.height;
+        r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
+        if(GameGrid.GAME_HEIGHT!=r.height) {
+            GameGrid.setGameHeight(r.height);
+            GameGrid.setGameWidth(r.width);
+            Stats.setGameHeight(r.height);
+            Stats.setGameWidth(r.width);
+            Player.setGameHeight(r.height);
+            Player.setGameWidth(r.width);
+            Cube.setGameHeight(r.height);
+            Cube.setGameWidth(r.width);
+            CubeContainer.setGameHeight(r.height);
+            CubeContainer.setGameWidth(r.width);
+            Chunk.GAME_WIDTH = r.width;
+            Chunk.GAME_HEIGHT = r.height;
+        }
 
 
 
@@ -73,11 +74,13 @@ public class GamePanel extends JPanel implements Runnable {
         public void keyPressed(KeyEvent e){
             //System.out.println(e.getKeyCode()+" = "+e.getKeyChar());
             gameGrid.player.keyPressed(e);
+            gameGrid.keyPressed(e);
 
 
         }
         public void keyReleased(KeyEvent e){
             gameGrid.player.keyReleased(e);
+            gameGrid.keyReleased(e);
 
         }
     }

@@ -9,12 +9,12 @@ public class Player {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
 
-    static int cubeAway=2;
+    static double cubeAway=2;
 
-    static double width=80;
-    static double height=180;
+    static double width=.8*Cube.defaultSize;
+    static double height=1.8*Cube.defaultSize;
 
-    static double depth=80;
+    static double depth=.8*Cube.defaultSize;
     double speed=0.2;
     double gravityAcceleration=0.05;
     double xVelocity;
@@ -34,6 +34,8 @@ public class Player {
     boolean isMovingLeft=false;
     boolean isMovingRight=false;
 
+    boolean isJumping=false;
+
     static int[] chunkIn=new int[2];
 
     static int numOfChunkToDraw=3;
@@ -42,8 +44,8 @@ public class Player {
     boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
-        Player.xPosition=100;
-        Player.yPosition=1000;
+        Player.xPosition=0;
+        Player.yPosition=0;
         Player.zPosition=20;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
@@ -66,22 +68,27 @@ public class Player {
 
     }
     public void updateData(double deltaTime){
-        chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX);
-        chunkIn[1]=(int)(yPosition/Chunk.numOfCubeY);
+        Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX);
+        Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
+        if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
+        if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
+        //System.out.println(Player.chunkIn[0]+" "+Player.chunkIn[1]);
         updateMegaChunk();
-        if(xPosition<0){
-            chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX-1);
-        }
-        if(yPosition<0){
-            chunkIn[1]=(int)(yPosition/Chunk.numOfCubeY-1);
-        }
+
         double multiplierOfSpeed=1;
         if(isSlowing)multiplierOfSpeed=slowMultiplier;
         if(!isFlying){
+
+            if(isJumping){
+                zVelocity=0.3;
+                isJumping=false;
+            }
            setZVelocity(zVelocity-gravityAcceleration);
            if(zVelocity<-0.6)zVelocity+=gravityAcceleration;
            zPosition+=zVelocity;
            detectionCollision(1);
+
+
         }
         else{
             if(isMovingUp) {
@@ -392,11 +399,9 @@ public class Player {
                    cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosAboveForOther]||
                    cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPos][zPosAboveForOther];
 
-
        double sensitivity=0.5;
       // System.out.println( collision[3]);
       // System.out.println(collision[5]+" "+xRightPosForOther+" "+xPosition);
-
 
        if(collision[1]&&zPosUnder+1-zPosition<sensitivity&&(isMovingDown||zVelocity<0)){
            zPosition=zPosUnder+1.00000001;
@@ -693,7 +698,6 @@ public class Player {
 
 
 
-
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
             case 65:
@@ -721,8 +725,7 @@ public class Player {
                 flySwitch();
                 break;
             case 32:
-                if(!isFlying)
-                setZVelocity(.4);
+                if(!isFlying)isJumping=true;
                 break;
 
             case 16:
@@ -756,6 +759,9 @@ public class Player {
 
             case 88:
                 if(isFlying)isMovingUp=false;
+                break;
+            case 32:
+                if(!isFlying)isJumping=false;
                 break;
             case 16:
                 isSlowing=false;

@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class GameGrid {
     static int GAME_WIDTH;
@@ -15,7 +16,7 @@ public class GameGrid {
     static double PVY;
     CubeContainer cubeContainer;
 
-    static double depthRatio=2.0;
+    static double depthRatio=1.0;
 
 
 
@@ -35,8 +36,8 @@ public class GameGrid {
 
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
-        PFY=GAME_HEIGHT/2.0;
-        PVY=GAME_HEIGHT;
+        PFY=0*GAME_HEIGHT/8.0;
+        PVY=3*GAME_HEIGHT/3;
     }
     public void newPlayer(){
         player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0,0);
@@ -56,11 +57,44 @@ public class GameGrid {
         g.setColor(Color.RED);
         g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
 
-
     }
 
 
+    public void keyReleased(KeyEvent e) {
+        switch(e.getKeyCode()){
+            case 75:
+                PFY+=10;
+                depthRatio+=0.01;
+               // PFX+=10;
+                break;
+            case 79:
+                PFY-=10;
+                depthRatio-=0.01;
+                //PFX-=10;
+                break;
+            case 73:
+                PVY+=10;
+                Player.cubeAway+=0.3;
+                //PVX+=10;
+                break;
+            case 74:
+                PVY-=10;
+                Player.cubeAway-=0.3;
+               // PVX-=10;
+                break;
+            case 85:
+                PFX+=10;
+                PVX+=10;
+                break;
+            case 72:
+                PFX-=10;
+                PVX-=10;
+                break;
 
+        }
 
+    }
 
+    public void keyPressed(KeyEvent e) {
+    }
 }
