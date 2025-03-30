@@ -51,7 +51,7 @@ public class GameGrid {
 
         cubeContainer.draw(g);
         g.setColor(Color.red);
-        player.draw(g);
+        //Player.draw(g);
         g.setColor(Color.RED);
         g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
 

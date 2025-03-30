@@ -63,6 +63,9 @@ public class Cube {
         GAME_HEIGHT = gameHeight;
 
     }
+
+
+
     public void updateData(double deltaTime) {
         double difPosX=(Player.xPosition-xPosition*width);
         double difPosY= ((Player.yPosition-(yPosition-Player.cubeAway)*depth));
@@ -86,18 +89,8 @@ public class Cube {
 
 
         corners=getCorners(newPosX,newPosY,newWidth,newHeight);
-        for(var i=0;i<4;i++){
-            deltaXList[i]=corners[i][0]-GameGrid.PFX;
-            deltaYList[i]=corners[i][1]-GameGrid.PFY;
-            angleList[i]=Math.atan(deltaYList[i]/deltaXList[i]);
+        angleList=getAngleList();
 
-            if (deltaXList[i]>0&&deltaYList[i]<0){
-                angleList[i]=Math.PI*2+Math.atan(deltaYList[i]/deltaXList[i]);
-            }
-            else  if(deltaXList[i]<0) angleList[i]=Math.PI+Math.atan(deltaYList[i]/deltaXList[i]);
-            if (deltaXList[i]==0 && deltaYList[i]<0)angleList[i]=3*Math.PI/2;
-            if (deltaXList[i]==0 && deltaYList[i]>0)angleList[i]=Math.PI/2;
-        }
         xPointsList = new int[4][4];
         yPointsList = new int[4][4];
         closestCorner=closestCorner(corners);
@@ -241,12 +234,6 @@ public class Cube {
     }
     public double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight){
         double [][] corners=new double[4][2];
-/*
-        corners[0][0]=newPosX-newWidth;
-        corners[1][0]=newPosX;
-        corners[2][0]=newPosX;
-        corners[3][0]=newPosX-newWidth;
-        */
         corners[0][1]=newPosY-newHeight;
         corners[1][1]=newPosY-newHeight;
         corners[2][1]=newPosY;
@@ -259,16 +246,25 @@ public class Cube {
         corners[3][0]=newPosX-newWidth/2.0;
 
 
-        /*
-        corners[0][1]=newPosY-newHeight/2.0;
-        corners[1][1]=newPosY-newHeight/2.0;
-        corners[2][1]=newPosY+newHeight/2.0;
-        corners[3][1]=newPosY+newHeight/2.0;
-        */
 
 
         return corners;
     }
+    public double[] getAngleList() {
+        for (var i = 0; i < 4; i++) {
+            deltaXList[i] = corners[i][0] - GameGrid.PFX;
+            deltaYList[i] = corners[i][1] - GameGrid.PFY;
+            angleList[i] = Math.atan(deltaYList[i] / deltaXList[i]);
+
+            if (deltaXList[i] > 0 && deltaYList[i] < 0) {
+                angleList[i] = Math.PI * 2 + Math.atan(deltaYList[i] / deltaXList[i]);
+            } else if (deltaXList[i] < 0) angleList[i] = Math.PI + Math.atan(deltaYList[i] / deltaXList[i]);
+            if (deltaXList[i] == 0 && deltaYList[i] < 0) angleList[i] = 3 * Math.PI / 2;
+            if (deltaXList[i] == 0 && deltaYList[i] > 0) angleList[i] = Math.PI / 2;
+        }
+        return angleList;
+    }
+
     public double[][] getCornersB(double[][] corners, double[] angleList, int closest, double depthRatio,double difPosZ,double difPosY){
             double[][] newCorners = new double[4][2];
             //double[][] newGroundCorners = new double[4][2];
