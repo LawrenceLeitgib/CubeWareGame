@@ -4,8 +4,8 @@ public class EnemiesContainer {
     static Enemy[] enemies=new Enemy[100];
     static boolean[] enemyList =new boolean[100];
     EnemiesContainer(){
-       // enemies[0] = new Enemy(0,-50, 2);
-        //enemyList[0] = true;
+        //enemies[0] = new Enemy(0,-5, 2);
+       // enemyList[0] = true;
     }
 
     double EnemyCreationTime=3;

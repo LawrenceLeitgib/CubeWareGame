@@ -29,19 +29,24 @@ public class FireBall {
     double xVelocity;
 
     int[] cubeIn=new int[3];
+    int newXpos=cubeIn[0];
+    int newYpos=cubeIn[1];
+
+    int xChunkNum=0;
+    int yChunkNum=0;
 
 
 
 
 
-    FireBall(double xPos, double yPos, double angle, double speed, int size, double damage ){
+    FireBall(double xPos, double yPos,double zPos, double angle, double speed, int size, double damage ){
         xPosition=xPos;
         yPosition=yPos-0.5;
         angleOfShout=angle;
         this.speed=speed;
         this.size=size;
         this.damage=damage;
-        zPosition=Player.zPosition+1.2;
+        zPosition=zPos;
 
 
     }
@@ -60,13 +65,13 @@ public class FireBall {
         cubeIn[2]=(int)(zPosition);
         if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
         if(yPosition<0)cubeIn[1]=(int)(yPosition);
-        System.out.println(cubeIn[0]+", "+cubeIn[1]+", "+cubeIn[2]);
+       // System.out.println(cubeIn[0]+", "+cubeIn[1]+", "+cubeIn[2]);
 
-        int newXpos=cubeIn[0];
-        int newYpos=cubeIn[1];
+        newXpos=cubeIn[0];
+        newYpos=cubeIn[1];
 
-        int xChunkNum=0;
-        int yChunkNum=0;
+        xChunkNum=0;
+        yChunkNum=0;
         while(newXpos<0){
             newXpos+=Chunk.numOfCubeX;
             xChunkNum-=1;

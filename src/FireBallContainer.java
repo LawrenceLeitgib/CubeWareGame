@@ -1,8 +1,9 @@
 import java.awt.*;
 
 public class FireBallContainer {
-    FireBall[] fireBalls =new FireBall[500000];
-    boolean[] fireBallsList =new boolean[500000];
+    static int numOfBall=500000;
+    static FireBall[] fireBalls =new FireBall[numOfBall];
+    static boolean[] fireBallsList =new boolean[numOfBall];
 
     double shoutTime=0.2;
     double shoutCount=0;
@@ -18,8 +19,10 @@ public class FireBallContainer {
                     Stats.mana+=1;
                     return;
                 }
-                fireBalls[i]=new FireBall(Player.xPosition,Player.yPosition,GameGrid.mouseAngleInGame,20,20,4*Stats.strength);
+                fireBalls[i]=new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+1.2,GameGrid.mouseAngleInGame,20,20,4*Stats.strength);
                 fireBallsList[i]=true;
+                //fireBalls[i+1]=new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+.2,GameGrid.mouseAngleInGame,20,20,4*Stats.strength);
+                //fireBallsList[i+1]=true;
 
                 return;
             }
@@ -36,8 +39,10 @@ public class FireBallContainer {
             double ang=2*Math.PI/100.0*j;
             for(var i=0;i<fireBallsList.length;i++){
                 if(!fireBallsList[i]){
-                    fireBalls[i]=new FireBall(Player.xPosition,Player.yPosition,ang,20,20,Stats.strength*4);
+                    fireBalls[i]=new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+1.2,ang,20,20,Stats.strength*4);
                     fireBallsList[i]=true;
+                   // fireBalls[i+1]=new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+.2,ang,20,20,Stats.strength*4);
+                    //fireBallsList[i+1]=true;
                     break;
 
                 }
@@ -47,6 +52,7 @@ public class FireBallContainer {
     }
     public void updateData(double deltaTime) {
         //attackSpecial();
+        //if(Player.yPosition<0)GameGrid.oneDown=true;
         if(GameGrid.oneDown){
             attackSpecial1();
             GameGrid.oneDown=false;

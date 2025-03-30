@@ -227,7 +227,12 @@ public class CubeContainer {
     }
     public void createCubes(){
         //
+        /*
         drawBasicStructure(0,0,2,30,30,2);
+        drawBasicStructure(0,0,7,30,30,1);
+
+        drawBasicStructure(0,0,14,30,30,2);
+        */
         newCube(0,-30,8);
         newCube(0,-51,3);
         newCube(0,-51,2);
@@ -235,7 +240,7 @@ public class CubeContainer {
        // drawCircle(0,0,52+4,50);
         //fillircle(0,0,50+4,25);
         //drawBall(0,0,76,70);
-        drawBall(0,0,36,30);
+      // drawBall(0,0,36,30);
         /*
         for(var i=0;i<20;i++){
             drawCircle(0,-5-i,20,i);
@@ -244,7 +249,7 @@ public class CubeContainer {
 
          */
        // drawBall(-25,0,25+4,25);
-     //  drawBall(25,0,25+4,25);
+      // drawBall(25,0,25+4,25);
 
         for(int i=0;i<100;i++){
             //drawCircle2(0,0,25+i,25);
@@ -274,6 +279,9 @@ public class CubeContainer {
         drawMap(0,0,4);
         drawMap(0,-20,4);
         drawMap(0,-40,4);
+
+         */
+        /*
         for(var k=0;k<100;k++){
             for(var i=k;i<100-k;i++){
                 for(var j=k;j<100-k;j++){
@@ -281,7 +289,11 @@ public class CubeContainer {
                 }
             }
         }
+
          */
+
+
+
 
 
 
@@ -306,8 +318,8 @@ public class CubeContainer {
     }
     public void CreateNewChunks(){
         //System.out.println("test1");
-        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw-2;i<=Player.chunkIn[0]+Player.numOfChunkToDraw+2;i++){
-            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw-2;j<=Player.chunkIn[1]+Player.numOfChunkToDraw+2;j++){
+        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw-1;i<=Player.chunkIn[0]+Player.numOfChunkToDraw+1;i++){
+            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw-1;j<=Player.chunkIn[1]+Player.numOfChunkToDraw+1;j++){
                 if(!chunksPosition[numOfChunkX+i][numOfChunkY+j])
                 //System.out.println("test");
                 newChunk(i,j);
@@ -334,180 +346,35 @@ public class CubeContainer {
         }
 
     }
-
-    /*
-    public void updateDataT(double deltaTime,String PasTOuche){
-
-        countChunkCreation+=deltaTime;
-        if(countChunkCreation>=timeChunkCreation){
-            CreateNewChunks();
-            createCubes();
-            countChunkCreation-=timeChunkCreation;
-        }
-
-        int xNum=0;
-        for(var i=Player.cameraChunkIn[1]-Player.numOfChunkToDraw;i<=Player.cameraChunkIn[1]+Player.numOfChunkToDraw;i++){
-            for(var j=0;j<=Player.numOfChunkToDraw*2;j++){
-                if(j%2==0)xNum=-Player.numOfChunkToDraw+j/2+Player.cameraChunkIn[0];
-                if(j%2==1)xNum=Player.numOfChunkToDraw-j/2+Player.cameraChunkIn[0];
-                {
-                    if(chunksPosition[numOfChunkX+xNum][i+numOfChunkY])
-                        chunks[numOfChunkX+xNum][i+numOfChunkY].updateData(deltaTime);
-                }
-
-            }
-        }
-
-        }*/
-    /*
-    public void updateDataT(double deltaTime, int[] PASTOUCHE) {
-        countChunkCreation+=deltaTime;
-        if(countChunkCreation>=timeChunkCreation){
-            CreateNewChunks();
-            createCubes();
-            updateMegaChunk();
-
-            countChunkCreation-=timeChunkCreation;
-        }
-        int[] newChunkIn=new int[2];
-
-        newChunkIn[0]=Player.cameraChunkIn[0];
-        newChunkIn[1]=Player.cameraChunkIn[1];
-       // newChunkIn[0]=Player.chunkIn[0];
-       // newChunkIn[1]=Player.chunkIn[1];
-
-        if(GameGrid.angleForXRotation<Math.PI/4){
-            for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-
-            }
-
-        }
-        else if(GameGrid.angleForXRotation<Math.PI/2){
-            for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-
-
-            }
-        }
-        else if(GameGrid.angleForXRotation<3*Math.PI/4){
-            for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<Math.PI){
-            for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<5*Math.PI/4){
-            for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<3*Math.PI/2){
-            for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-
-
-            }
-        }
-        else if(GameGrid.angleForXRotation<7*Math.PI/4){
-            for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);;
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-
-
-            }
-        }
-        else if(GameGrid.angleForXRotation<2*Math.PI){
-            for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].updateData(deltaTime);
-                    }
-                }
-
-            }
-
-        }
-
-    }*/
     public void updateData(double deltaTime){
         countChunkCreation+=deltaTime;
-        newChunkIn = Player.chunkIn;
-        if(countChunkCreation>=timeChunkCreation) {
+
+        if((newChunkIn[0]!=Player.chunkIn[0])||(newChunkIn[1]!=Player.chunkIn[1])){
             CreateNewChunks();
+        }
+
+        newChunkIn[0] = Player.chunkIn[0];
+        newChunkIn[1] = Player.chunkIn[1];
+        if(countChunkCreation>=timeChunkCreation) {
             //createCubes();
             //updateMegaChunk();
             countChunkCreation -= timeChunkCreation;
+        }
+
+
+        for(var k=0;k<Chunk.numOfCubeZ;k++){
+                bigZLayer[k]=false;
+
+        }
+        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<=Player.chunkIn[0]+Player.numOfChunkToDraw;i++){
+            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw;j<=Player.chunkIn[1]+Player.numOfChunkToDraw;j++){
+                for(var k=0;k<Chunk.numOfCubeZ;k++){
+                    if(chunks[i+numOfChunkX][j+numOfChunkY].zLayer[k]){
+                        //System.out.println(k);
+                        bigZLayer[k]=true;
+                    }
+                }
+            }
         }
 
             int jNum=0;
@@ -537,15 +404,7 @@ public class CubeContainer {
             }
         }
 
-        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<=Player.chunkIn[0]+Player.numOfChunkToDraw;i++){
-            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw;j<=Player.chunkIn[1]+Player.numOfChunkToDraw;j++){
-              for(var k=0;k<Chunk.numOfCubeZ;k++){
-                  if(chunks[i+numOfChunkX][j+numOfChunkY].zLayer[k]){
-                      bigZLayer[k]=true;
-                  }
-              }
-            }
-        }
+
 /*
         for(var k=0;k<Chunk.numOfCubeZ;k++){
 
@@ -564,8 +423,36 @@ public class CubeContainer {
         int jNum=0;
         int kNum=0;
 
+
+        int newXPosPlayer=Player.cubeIn[0];
+        int newYPosPlayer=Player.cubeIn[1];
+
+        int xChunkNumPlayer=0;
+        int yChunkNumPlayer=0;
+        while(newXPosPlayer<0){
+            newXPosPlayer+=Chunk.numOfCubeX;
+            xChunkNumPlayer-=1;
+
+        }
+        while(newXPosPlayer>=Chunk.numOfCubeX){
+            newXPosPlayer-=Chunk.numOfCubeX;
+            xChunkNumPlayer+=1;
+
+        }
+
+        while(newYPosPlayer<0){
+            newYPosPlayer+=Chunk.numOfCubeY;
+            yChunkNumPlayer-=1;
+
+        }
+        while(newYPosPlayer>=Chunk.numOfCubeY){
+            newYPosPlayer-=Chunk.numOfCubeY;
+            yChunkNumPlayer+=1;
+
+        }
         for(var i=0;i<Chunk.numOfCubeZ;i++){
-            if(!bigZLayer[i])continue;
+            if(!bigZLayer[i]&&!(Player.cubeIn[2]==i)&&!(Player.cubeIn[2]+1==i))continue;
+
         if(GameGrid.angleForXRotation<Math.PI/4){
             for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
                 jNum=j;
@@ -583,10 +470,39 @@ public class CubeContainer {
 
                     }
                     // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
+                       /* if(xNum-Player.numOfChunkToDraw+newChunkIn[0]==xChunkNumPlayer&&yNum-Player.numOfChunkToDraw+newChunkIn[1]==yChunkNumPlayer){
+                            //System.out.println("test2");
+                            //if(Player.cubeIn[2]==i)System.out.println("test");
+                            if(kNum==newXPosPlayer&&jNum==newYPosPlayer&&Player.cubeIn[2]==i){
+                                //Player.draw(g);
+                            }
 
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
+                            if(kNum==newXPosPlayer&&jNum==newYPosPlayer&&Player.cubeIn[2]+1==i){
+                                //Player.draw(g);
+                            }
 
+                            if(kNum==newXPosPlayer&&jNum-1==newYPosPlayer&&Player.cubeIn[2]==i){
+                                //Player.draw(g);
+                            }
+                            if(kNum==newXPosPlayer&&jNum-1==newYPosPlayer&&Player.cubeIn[2]+1==i){
+                               // Player.draw(g);
+                            }
+                        }*/
+                    /*
+                    for(var l=0;l<200;l++){
+                        if(FireBallContainer.fireBallsList[l])
+                        if(xNum-Player.numOfChunkToDraw+newChunkIn[0]==FireBallContainer.fireBalls[l].xChunkNum&&yNum-Player.numOfChunkToDraw+newChunkIn[1]==FireBallContainer.fireBalls[l].yChunkNum) {
+                            if(kNum==FireBallContainer.fireBalls[l].newXpos&&jNum==FireBallContainer.fireBalls[l].newYpos&&FireBallContainer.fireBalls[l].cubeIn[2]==i){
+                                FireBallContainer.fireBalls[l].draw(g);
+                            }
+                        }
+                    }
+
+                     */
+                    if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
+                        chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
+
+                    }
 
                 }
             }
@@ -1001,543 +917,8 @@ public class CubeContainer {
         }
 
 
-        g.setFont(new Font("Arial",Font.PLAIN,30));
-        g.setColor(Color.red);
-        g.drawString(GameGrid.angleForXRotation+"",GAME_WIDTH/2,23);
-
 
     }
-
-    /*
-    public void drawPresque(Graphics g) {
-        g.setColor(new Color(147, 196, 49));
-        g.fillRect(0, (int) GameGrid.PFY, GAME_WIDTH, GAME_HEIGHT);
-        int jNum=0;
-
-        int playerPosInChunkX=(int)(Player.xPosition+0.5);
-        int playerPosInChunkY=(int)(Player.yPosition+0.5);
-        if(Player.xPosition<0) playerPosInChunkX=(int)(Player.xPosition+0.5-1);
-        if(Player.yPosition<0) playerPosInChunkY=(int)(Player.yPosition+0.5-1);
-
-        while(playerPosInChunkX<Chunk.numOfCubeX){
-            playerPosInChunkX+=Chunk.numOfCubeX;
-        }
-        while(playerPosInChunkX>Chunk.numOfCubeX-1){
-            playerPosInChunkX-=Chunk.numOfCubeX;
-        }
-        while(playerPosInChunkY<Chunk.numOfCubeY){
-            playerPosInChunkY+=Chunk.numOfCubeY;
-        }
-        while(playerPosInChunkY>Chunk.numOfCubeY-1){
-            playerPosInChunkY-=Chunk.numOfCubeY;
-        }
-
-        if(GameGrid.angleForXRotation<Math.PI/4){
-            for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
-                jNum=j;
-                int yNum=0;
-                while(jNum>=Chunk.numOfCubeY){
-                    yNum+=1;
-                    jNum-=Chunk.numOfCubeY;
-
-                }
-                int kNum=0;
-                for(var k=Chunk.numOfCubeX*(Player.numOfChunkToDraw*2+1)-1;k>=0;k--){
-                    kNum=k;
-                    int xNum=0;
-                    while(kNum>=Chunk.numOfCubeX){
-                        xNum+=1;
-                        kNum-=Chunk.numOfCubeX;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for(var i=0;i<Chunk.numOfCubeZ;i++){
-
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<Math.PI/2){
-            int kNum=0;
-            for(var k=Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k>=0;k--) {
-                kNum = k;
-                int xNum = 0;
-                while (kNum >= Chunk.numOfCubeX) {
-                    xNum += 1;
-                    kNum -= Chunk.numOfCubeX;
-
-                }
-                for (var j = 0; j < Chunk.numOfCubeY * (1 + Player.numOfChunkToDraw * 2); j++) {
-                    jNum = j;
-                    int yNum = 0;
-                    while (jNum >= Chunk.numOfCubeY) {
-                        yNum += 1;
-                        jNum -= Chunk.numOfCubeY;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for (var i = 0; i < Chunk.numOfCubeZ; i++) {
-
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<3*Math.PI/4){
-            int kNum=0;
-            for(var k=Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k>=0;k--) {
-                kNum = k;
-                int xNum = 0;
-                while (kNum >= Chunk.numOfCubeX) {
-                    xNum += 1;
-                    kNum -= Chunk.numOfCubeX;
-
-                }
-                for (var j =  Chunk.numOfCubeY * (1 + Player.numOfChunkToDraw * 2)-1; j >=0; j--) {
-                    jNum = j;
-                    int yNum = 0;
-                    while (jNum >= Chunk.numOfCubeY) {
-                        yNum += 1;
-                        jNum -= Chunk.numOfCubeY;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for (var i = 0; i < Chunk.numOfCubeZ; i++) {
-
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<Math.PI){
-            for(var j=Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2)-1;j>=0;j--){
-                jNum=j;
-                int yNum=0;
-                while(jNum>=Chunk.numOfCubeY){
-                    yNum+=1;
-                    jNum-=Chunk.numOfCubeY;
-
-                }
-                int kNum=0;
-                for(var k=Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2)-1;k>=0;k--){
-                    kNum=k;
-                    int xNum=0;
-                    while(kNum>=Chunk.numOfCubeX){
-                        xNum+=1;
-                        kNum-=Chunk.numOfCubeX;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for(var i=0;i<Chunk.numOfCubeZ;i++){
-
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<5*Math.PI/4){
-            for(var j=Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2)-1;j>=0;j--){
-                jNum=j;
-                int yNum=0;
-                while(jNum>=Chunk.numOfCubeY){
-                    yNum+=1;
-                    jNum-=Chunk.numOfCubeY;
-
-                }
-                int kNum=0;
-                for(var k=0;k<Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k++){
-                    kNum=k;
-                    int xNum=0;
-                    while(kNum>=Chunk.numOfCubeX){
-                        xNum+=1;
-                        kNum-=Chunk.numOfCubeX;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for(var i=0;i<Chunk.numOfCubeZ;i++){
-
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<3*Math.PI/2){
-            int kNum=0;
-            for(var k=0;k<Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k++) {
-                kNum = k;
-                int xNum = 0;
-                while (kNum >= Chunk.numOfCubeX) {
-                    xNum += 1;
-                    kNum -= Chunk.numOfCubeX;
-
-                }
-                for (var j =  Chunk.numOfCubeY * (1 + Player.numOfChunkToDraw * 2)-1; j >=0; j--) {
-                    jNum = j;
-                    int yNum = 0;
-                    while (jNum >= Chunk.numOfCubeY) {
-                        yNum += 1;
-                        jNum -= Chunk.numOfCubeY;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for (var i = 0; i < Chunk.numOfCubeZ; i++) {
-
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<7*Math.PI/4){
-            int kNum=0;
-            for(var k=0;k<Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k++) {
-                kNum = k;
-                int xNum = 0;
-                while (kNum >= Chunk.numOfCubeX) {
-                    xNum += 1;
-                    kNum -= Chunk.numOfCubeX;
-
-                }
-                for (var j =  0; j <Chunk.numOfCubeY * (1 + Player.numOfChunkToDraw * 2); j++) {
-                    jNum = j;
-                    int yNum = 0;
-                    while (jNum >= Chunk.numOfCubeY) {
-                        yNum += 1;
-                        jNum -= Chunk.numOfCubeY;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for (var i = 0; i < Chunk.numOfCubeZ; i++) {
-
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<2*Math.PI){
-            for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
-                jNum=j;
-                int yNum=0;
-                while(jNum>=Chunk.numOfCubeY){
-                    yNum+=1;
-                    jNum-=Chunk.numOfCubeY;
-
-                }
-                int kNum=0;
-                for(var k=0;k<Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k++){
-                    kNum=k;
-                    int xNum=0;
-                    while(kNum>=Chunk.numOfCubeX){
-                        xNum+=1;
-                        kNum-=Chunk.numOfCubeX;
-
-                    }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                    for(var i=0;i<Chunk.numOfCubeZ;i++){
-
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                }
-            }
-        }
-    }*/
-
-   /* public void drawT(Graphics g, String essay) {
-
-        g.setColor(new Color(147, 196, 49));
-        g.fillRect(0, (int) GameGrid.PFY, GAME_WIDTH, GAME_HEIGHT);
-
-        int[] newChunkIn=new int[2];
-
-        newChunkIn[0]=Player.cameraChunkIn[0];
-        newChunkIn[1]=Player.cameraChunkIn[1];
-       // newChunkIn[0]=Player.chunkIn[0];
-        //newChunkIn[1]=Player.chunkIn[1];
-
-        for(var i=0;i<Chunk.numOfCubeZ;i++){
-            if(GameGrid.angleForXRotation<Math.PI/4){
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
-                    for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-
-                }
-
-            }
-            else if(GameGrid.angleForXRotation<Math.PI/2){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
-                    for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-
-
-                }
-            }
-            else if(GameGrid.angleForXRotation<3*Math.PI/4){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
-                    for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                }
-            }
-            else if(GameGrid.angleForXRotation<Math.PI){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
-                    for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                }
-            }
-            else if(GameGrid.angleForXRotation<5*Math.PI/4){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
-                    for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                }
-            }
-            else if(GameGrid.angleForXRotation<3*Math.PI/2){
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
-                    for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-
-
-                }
-            }
-            else if(GameGrid.angleForXRotation<7*Math.PI/4){
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
-                    for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-
-
-                }
-            }
-            else if(GameGrid.angleForXRotation<2*Math.PI){
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
-                    for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-                    for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                        if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                            chunks[k+numOfChunkX][j+numOfChunkY].drawLayer(g,i);
-                        }
-                    }
-
-                }
-
-            }
-
-
-        }
-
-
-    }*/
-  /*  public void drawT(Graphics g, int[] PASTOUCHE) {
-
-        g.setColor(new Color(147, 196, 49));
-        g.fillRect(0, (int) GameGrid.PFY, GAME_WIDTH, GAME_HEIGHT);
-
-        int[] newChunkIn=new int[2];
-
-        newChunkIn[0]=Player.cameraChunkIn[0];
-        newChunkIn[1]=Player.cameraChunkIn[1];
-       // newChunkIn[0]=Player.chunkIn[0];
-        //newChunkIn[1]=Player.chunkIn[1];
-
-        if(GameGrid.angleForXRotation<Math.PI/4){
-            for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-
-            }
-
-        }
-        else if(GameGrid.angleForXRotation<Math.PI/2){
-            for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-
-
-            }
-        }
-        else if(GameGrid.angleForXRotation<3*Math.PI/4){
-            for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<Math.PI){
-            for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<5*Math.PI/4){
-            for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-            }
-        }
-        else if(GameGrid.angleForXRotation<3*Math.PI/2){
-            for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-
-
-            }
-        }
-        else if(GameGrid.angleForXRotation<7*Math.PI/4){
-            for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
-                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-
-
-            }
-        }
-        else if(GameGrid.angleForXRotation<2*Math.PI){
-            for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
-                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
-                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
-                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
-                    }
-                }
-
-            }
-
-        }
-
-
-    }*/
-
-
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
     }
