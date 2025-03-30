@@ -12,6 +12,10 @@ public class FireBallContainer {
 
     static int numOfFireBall=FireBall.diSpawnDistance+20;
     static ArrayList<FireBall>[][][] fireBalls3D = new ArrayList[numOfFireBall*2][numOfFireBall*2][200];
+    static boolean[] zLayers =new boolean[Chunk.numOfCubeZ];
+
+
+    static double fireBallHeight=1.2;
 
     // ArrayList<Integer>[] al = new ArrayList[n];
     private boolean HaveBeenUpdated;
@@ -26,21 +30,26 @@ public class FireBallContainer {
             Stats.mana+=1;
             return;
         }
-        fireBalls.add(new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+1.2,GameGrid.mouseAngleInGame,20,20,Stats.strength));
+        fireBalls.add(new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+fireBallHeight,GameGrid.mouseAngleInGame,20,20,Stats.strength));
         //updateFireBalls3D();
     }
 
     public void updateFireBalls3D(){
+        zLayers =new boolean[Chunk.numOfCubeZ];
+
+
         if(fireBalls.size()>0){
             HaveBeenUpdated=false;
         }
         if(HaveBeenUpdated)return;
         fireBalls3D = new ArrayList[numOfFireBall*2][numOfFireBall*2][200];
         for(var i=0;i<fireBalls.size();i++){
+            zLayers[fireBalls.get(i).cubeIn[2]]=true;
             int x=fireBalls.get(i).cubeIn[0];
             int y=fireBalls.get(i).cubeIn[1];
             int z=fireBalls.get(i).cubeIn[2];
             //System.out.println(x+100-Player.chunkIn[0]*Chunk.numOfCubeX+", "+(y+100-Player.chunkIn[1]*Chunk.numOfCubeY)+","+);
+            if(z<0)continue;
             if(fireBalls3D[x+numOfFireBall-Player.cubeIn[0]][y+numOfFireBall-Player.cubeIn[1]][z]==null)   {
                  ArrayList<FireBall> fireBallsSub = new ArrayList<FireBall>();
                  fireBallsSub.add(fireBalls.get(i));
@@ -64,7 +73,7 @@ public class FireBallContainer {
         }
         for(var j=0;j<100;j++){
             double ang=2*Math.PI/100.0*j;
-            fireBalls.add(new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+1.2,ang,20,20,Stats.strength));
+            fireBalls.add(new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+fireBallHeight,ang,20,20,Stats.strength));
 
         }
         //updateFireBalls3D();

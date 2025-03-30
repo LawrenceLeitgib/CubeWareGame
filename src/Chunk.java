@@ -93,35 +93,9 @@ public class Chunk {
     void drawLineY(int[] list, int numY) {
     }
     public void createCubes() {
-        //drawMap(0,0,0);
-        /*
-        newCube(1,1,1);
-        newCube(2,1,1);
-        newCube(3,1,1);
-        newCube(4,1,1);
-        */
-/*
-        for(var i=0;i<numOfCubeX;i++){
-            newCube(i,0,2);
-            newCube(i,numOfCubeX-1,2);
-            newCube(0,i,2);
-            newCube(numOfCubeX-1,i,2);
-
-
-        }
-
- */
-
-    /*
-        for(var i=0;i<numOfCubeX;i++) {
-            for (var j = 0; j < numOfCubeX; j++){
-                newCube(i, j, 0);
-            }
-        }
 
 
 
-     */
         for (var i = 0; i < numOfCubeX; i++) {
             for (var j = 0; j < numOfCubeX; j++) {
                 newCube(i, j, 0);
@@ -135,93 +109,9 @@ public class Chunk {
 
             }
         }
-/*
-        newCube(0, 0, 3);
-        newCube(1, 0, 3);
-        newCube(0, 1, 3);
-        newCube(1, 1, 3);
-        newCube(0, 0, 4);
-        newCube(1, 0, 4);
-        newCube(0, 1, 4);
-        newCube(1, 1, 4);
 
-
-*/
-/*
 
         if (xPosition == 0 && yPosition == 0) {
-            for(var i=0;i<15;i++){
-                newCube(0, 0, 2+i);
-                newCube(1, 0, 2+i);
-                newCube(1, 1, 2+i);
-                newCube(0, 1, 2+i);
-            }
         }
-
- */
-
-        if (xPosition == 0 && yPosition == 0) {
-           // cubes[3][3][0]=null;
-            //cubes[3][3][1]=null;
-            //cubePositions[3][3][0]=false;
-            //cubePositions[3][3][1 ]=false;
-
-
-
-
-
-            // newCube(5,0,5);
-
-            //newCube(5,5,0);
-            //newCube(6,5,0);
-            // newCube(7,5,0);
-            //newCube(8,5,0);
-
-            //newCube(2,7,0);
-            //newCube(8,7,0);
-
-/*
-            newCube(5, 5, 8);
-            newCube(5, 5, 9);
-            newCube(4, 5, 9);
-            newCube(6, 5, 9);
-            newCube(5, 6, 9);
-            newCube(5, 4, 9);
-            newCube(5, 5, 10);
-
- */
-
-
-        }
-        /*{
-
-            for(var i=0;i<numOfCubeX;i++) {
-                for (var j = 0; j < numOfCubeX; j++){
-                    newCube(i, j, 2);
-
-                }
-            }
-
-        }*/
-      //  drawLabyrinth();
-        /*
-        for(var k=0;k<numOfCubeX;k++){
-            for(var i=k;i<numOfCubeX-k;i++) {
-                for (var j = k; j < numOfCubeX-k; j++){
-                    newCube(i, j, k);
-                }
-            }
-
-        }
-
- */
-        /*
-        newCube(6,6,12);
-        newCube(6,6,13);
-        newCube(5,6,13);
-        newCube(7,6,13);
-        newCube(6,6,14);
-*/
-
     }
 }

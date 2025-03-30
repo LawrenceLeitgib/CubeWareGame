@@ -69,6 +69,10 @@ public class Player {
     static double jumpSpeed=15;
 
 
+    double pushCount=0;
+    double pushTime=.05;
+
+
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=0;
         Player.yPosition=0;
@@ -358,12 +362,12 @@ public class Player {
                 xVelocity<0&&(CubeContainer.chunks[XChunkNumLeft+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposLeft][newYpos][(int)(cubeIn[2]+height/Cube.defaultSize+.5)]);
 
 
-    //System.out.println( yPosHistoric[yPosCount]);
-    int beforeCount=yPosCount-3;
-    if(beforeCount<0)beforeCount+=10;
-    double deltaYPos=yPosHistoric[yPosCount]-yPosHistoric[beforeCount];
-    //System.out.println(deltaYPos);
-if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
+        //System.out.println( yPosHistoric[yPosCount]);
+        int beforeCount=yPosCount-3;
+        if(beforeCount<0)beforeCount+=10;
+        double deltaYPos=yPosHistoric[yPosCount]-yPosHistoric[beforeCount];
+        //System.out.println(deltaYPos);
+        if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
 
     if(xVelocity>0){
         detectionCollision(4);
@@ -378,7 +382,6 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
         detectionCollision(5);
     }
 }
-
         else if((xVelocity>0&&cubeRight&&yVelocity<0&&cubeFront)||(xVelocity<0&&cubeLeft&&yVelocity<0&&cubeFront)){
             if(deltaYPos>0){
                 if(xVelocity>0)detectionCollision(4);
@@ -394,7 +397,6 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
                 if(xVelocity>0)detectionCollision(4);
             }
         }
-
         else if((xVelocity>0&&cubeRight&&yVelocity>0&&cubeBack)||(xVelocity<0&&cubeLeft&&yVelocity>0&&cubeBack)){
             if(deltaYPos<0){
                 if(xVelocity>0)detectionCollision(4);
@@ -411,9 +413,6 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
 
             }
         }
-
-
-
         else if(yVelocity<0&&cubeFront){
             if(yVelocity>0){
                 detectionCollision(6);
@@ -429,7 +428,6 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
             }
 
         }
-
         else if(yVelocity>0&&cubeBack){
 
             if(yVelocity>0){
@@ -445,7 +443,7 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
                 detectionCollision(3);
             }
         }
-            else{
+        else{
             if(xVelocity>0){
                 detectionCollision(4);
             }
@@ -459,17 +457,24 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
                 detectionCollision(5);
             }
         }
-
-
-            for(int i=0;i<EnemiesContainer.enemies.size();i++){
-                if(zPosition<EnemiesContainer.enemies.get(i).zPosition+EnemiesContainer.enemies.get(i).height/Cube.defaultSize&&zPosition+height/Cube.defaultSize>EnemiesContainer.enemies.get(i).zPosition)
-                if(Math.sqrt(Math.pow(EnemiesContainer.enemies.get(i).xPosition-xPosition,2)+Math.pow(EnemiesContainer.enemies.get(i).yPosition-yPosition,2))<(EnemiesContainer.enemies.get(i).width/2+width/2)/Cube.defaultSize){
-                    xPosition-=Math.cos(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                    yPosition-=Math.sin(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                    Stats.health-=EnemiesContainer.enemies.get(i).damage;
+        pushCount+=deltaTime;
+        if(pushCount>=pushTime){
+                for(int i=0;i<EnemiesContainer.enemies.size();i++){
+                    if(zPosition<EnemiesContainer.enemies.get(i).zPosition+EnemiesContainer.enemies.get(i).height/Cube.defaultSize&&zPosition+height/Cube.defaultSize>EnemiesContainer.enemies.get(i).zPosition)
+                        if(Math.sqrt(Math.pow(EnemiesContainer.enemies.get(i).xPosition-xPosition,2)+Math.pow(EnemiesContainer.enemies.get(i).yPosition-yPosition,2))<(EnemiesContainer.enemies.get(i).width/2+width/2)/Cube.defaultSize){
+                            xPosition-=Math.cos(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                            xVelocity=-Math.cos(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                            yPosition-=Math.sin(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                            yVelocity=-Math.sin(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                            detectionCollision(3);
+                            detectionCollision(4);
+                            detectionCollision(5);
+                            detectionCollision(6);
+                            Stats.health-=EnemiesContainer.enemies.get(i).damage;
+                            pushCount = 0;
+                        }
                 }
             }
-
         yPosHistoric[yPosCount]=yPosition;
             yPosCount++;
             if(yPosCount>=10){

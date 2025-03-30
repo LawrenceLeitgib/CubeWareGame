@@ -49,7 +49,7 @@ public class GameGrid {
 
    static boolean oneHaveBeenRelesed=true;
 
-    //Enemy enemy;
+    //Enemy enemy
 
 
 
@@ -165,7 +165,7 @@ public class GameGrid {
 
         }
 
-        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY-80);
+        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY- FireBallContainer.fireBallHeight *Cube.defaultSize);
         //double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY);
         double difPosYRForMouse=((GAME_HEIGHT/sizeRatioForMouse-GAME_HEIGHT)/depthRatio);
 

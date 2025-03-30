@@ -11,6 +11,7 @@ public class EnemiesContainer {
 
     static ArrayList<Enemy>[][][] enemies3D = new ArrayList[numOfEnemies*2][numOfEnemies*2][200];
     boolean HaveBeenUpdated;
+    static boolean[] zLayers=new boolean[Chunk.numOfCubeZ];
 
     EnemiesContainer(){
         //enemies[0] = new Enemy(0,-5, 2);
@@ -38,6 +39,10 @@ public class EnemiesContainer {
         if(HaveBeenUpdated)return;
         enemies3D = new ArrayList[numOfEnemies*2][numOfEnemies*2][200];
         for(var i=0;i<enemies.size();i++){
+            zLayers[enemies.get(i).cubeIn[2]]=true;
+            zLayers[enemies.get(i).cubeIn[2]+1]=true;
+            zLayers[enemies.get(i).cubeIn[2]+2]=true;
+
             int x=enemies.get(i).cubeIn[0];
             int y=enemies.get(i).cubeIn[1];
             int z=enemies.get(i).cubeIn[2];

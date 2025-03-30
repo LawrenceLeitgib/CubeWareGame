@@ -43,13 +43,14 @@ public class FireBall {
 
 
 
+
     FireBall(double xPos, double yPos,double zPos, double angle, double speed, int size, double damage ){
         xPosition=xPos;
         yPosition=yPos-0.5;
 
         angleOfShout=angle;
         this.speed=speed;
-       // this.speed=4;
+       // this.speed=1;
         this.size=size;
         this.damage=damage;
         zPosition=zPos;

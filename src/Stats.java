@@ -12,13 +12,19 @@ public class Stats {
     static double mana;
 
     static double xp=0;
-    static double xpUntilNextLevelBase=100;
+    static double xpUntilNextLevelBase=25;
     static double xpUntilNextLevel=xpUntilNextLevelBase;
     static int currentLevel=0;
+
+    static int numOfPFS=100;
+
+    static double[] LastPFSList =new double[numOfPFS];
+
+    int LastPFSCount=0;
     Stats(int GAME_WIDTH, int GAME_HEIGHT){
 
-        this.GAME_WIDTH=GAME_WIDTH;
-        this.GAME_HEIGHT=GAME_HEIGHT;
+        Stats.GAME_WIDTH =GAME_WIDTH;
+        Stats.GAME_HEIGHT =GAME_HEIGHT;
 
         strength=10;
         maxHealth=10;
@@ -34,6 +40,19 @@ public class Stats {
         GAME_HEIGHT = gameHeight;
     }
     public void draw(Graphics g){
+
+        if(LastPFSCount>=numOfPFS)LastPFSCount=0;
+        LastPFSList[LastPFSCount]=GamePanel.FPS;
+        LastPFSCount++;
+
+        double mean=0;
+
+        for(var i=0;i<numOfPFS;i++){
+            mean+=LastPFSList[i];
+        }
+        mean/=numOfPFS;
+
+
 
 
 
@@ -52,7 +71,7 @@ public class Stats {
         g.drawString("x: "+Player.xPosition,15,70);
         g.drawString("y: "+Player.yPosition,15,90);
         g.drawString("z: "+Player.zPosition,15,110);
-        g.drawString("FPS: "+(int)(GamePanel.FPS+.5),15,130);
+        g.drawString("FPS: "+(int)(mean+.5),15,130);
         g.drawString("entities: "+EnemiesContainer.enemies.size(),15,150);
         g.drawString("level: "+Stats.currentLevel,15,170);
         g.drawString("ball: "+FireBallContainer.fireBalls.size(),15,190);

@@ -418,6 +418,12 @@ public class CubeContainer {
                 bigZLayer[k]=false;
 
         }
+        for(var k=0;k<Chunk.numOfCubeZ;k++){
+            if(FireBallContainer.zLayers[k]||EnemiesContainer.zLayers[k]){
+                bigZLayer[k]=true;
+            }
+
+        }
 
         for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<=Player.chunkIn[0]+Player.numOfChunkToDraw;i++){
             for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw;j<=Player.chunkIn[1]+Player.numOfChunkToDraw;j++){
@@ -425,9 +431,13 @@ public class CubeContainer {
                     if(chunks[i+numOfChunkX][j+numOfChunkY].zLayer[k]){
                         //System.out.println(k);
                         bigZLayer[k]=true;
+                        /*
                         bigZLayer[k+1]=true;
                         bigZLayer[k+2]=true;
                         bigZLayer[k+3]=true;
+
+                         */
+
                     }
                 }
             }
@@ -480,20 +490,22 @@ public class CubeContainer {
 
 
 
+
+
         if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
             chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-           // if(i>0)if(chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i-1]!=null)chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i-1].drawTop(g);
-
-
         }
-        /*
+
+/*
         if(i>0)
         if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i-1]){
-            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i-1].drawTop(g);
+           // chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i-1].drawTop(g);
 
         }
 
-         */
+ */
+
+
         if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
             if(Player.cubeIn[2]==i)Player.draw1(g);
             if(Player.cubeIn[2]+1==i)Player.draw2(g);
