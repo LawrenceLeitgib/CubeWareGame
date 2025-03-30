@@ -12,7 +12,7 @@ public class Player {
     int width=40;
     int height=40;
 
-    double speed=10;
+    double speed=40.0;
 
     double xVelocity;
     double yVelocity;

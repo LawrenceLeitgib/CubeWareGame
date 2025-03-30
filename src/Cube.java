@@ -10,18 +10,17 @@ public class Cube {
     static int height=100;
     static int depth=100;
     static double depthRatio=1/2.0;
-    static double PFX;
-    static double  PFY;
-    static  double PVX;
-    static double PVY;
+
     boolean blockLeftEmpty=true;
     boolean blockRightEmpty=true;
     boolean blockFrontEmpty=true;
     boolean blockBackEmpty=true;
+
+    boolean blockTopEmpty=true;
+    boolean blockBottomEmpty=true;
     double[] deltaXList=new double[4];
     double[] deltaYList=new double[4];
     double[] angleList=new double[4];
-
     double newPosY;
     double newWidth;
     double newHeight;
@@ -35,55 +34,54 @@ public class Cube {
     double[][] newCorners;
 
 
-
-
     Cube(int xPosition, int yPosition, int zPosition, double depthRatio){
         this.xPosition=xPosition;
         this.yPosition=yPosition;
         this.zPosition=zPosition;
         Cube.depthRatio=depthRatio;
-
-
     }
     public static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
-        PFX=GAME_WIDTH/2.0;
-        PVX=GAME_WIDTH/2.0;
     }
-
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
-        PFY=GAME_HEIGHT/3.0;
-        PVY=GAME_HEIGHT;
+
     }
     public void updateData(double deltaTime) {
         int difPosX=(int)(Player.xPosition-xPosition*width);
         int difPosY=(int)((Player.yPosition-yPosition*depth));
         int difPosZ=(int)(Player.zPosition-zPosition*height);
-        int distance=(int)Math.sqrt(Math.pow(difPosX,2.0)+Math.pow(difPosY,2.0));
         if (difPosY<-GAME_HEIGHT*4.0/3)difPosY= (int) (-GAME_HEIGHT*4.0/3);
+        int distance=(int)(Math.sqrt(Math.pow(difPosZ,2.0)+Math.pow(difPosY,2.0))*Math.abs(difPosY)/difPosY);
+
+
 
          sizeRatio=GAME_HEIGHT/(difPosY*1.0*depthRatio+GAME_HEIGHT);
          newPosY=(2*GAME_HEIGHT/3.0*sizeRatio+GAME_HEIGHT/3.0-zPosition*depth*sizeRatio);
+         //newPosY+=zPosition*depth*sizeRatio;
          newWidth=  (width*sizeRatio);
          newHeight=  (height*sizeRatio);
          newDepth=  (depth*sizeRatio);
          newPosX=  (GAME_WIDTH/2.0-(Player.xPosition-xPosition*width)*sizeRatio);
 
+
         corners=getCorners(newPosX,newPosY,newWidth,newHeight);
         for(var i=0;i<4;i++){
-            deltaXList[i]=corners[i][0]-PFX;
-            deltaYList[i]=corners[i][1]-PFY;
-            if (deltaXList[i]>0)
-                angleList[i]=Math.atan(deltaYList[i]/deltaXList[i]);
-            else angleList[i]=Math.PI+Math.atan(deltaYList[i]/deltaXList[i]);
+            deltaXList[i]=corners[i][0]-GameGrid.PFX;
+            deltaYList[i]=corners[i][1]-GameGrid.PFY;
+            angleList[i]=Math.atan(deltaYList[i]/deltaXList[i]);
+
+            if (deltaXList[i]>0&&deltaYList[i]<0){
+                angleList[i]=Math.PI*2+Math.atan(deltaYList[i]/deltaXList[i]);
+            }
+            else  if(deltaXList[i]<0) angleList[i]=Math.PI+Math.atan(deltaYList[i]/deltaXList[i]);
+            if (deltaXList[i]==0 && deltaYList[i]<0)angleList[i]=3*Math.PI/2;
             if (deltaXList[i]==0 && deltaYList[i]>0)angleList[i]=Math.PI/2;
-            if (deltaXList[i]==0 && deltaYList[i]<0)angleList[i]=-Math.PI/2;
         }
         xPointsList = new int[4][4];
         yPointsList = new int[4][4];
         closestCorner=closestCorner(corners);
-        newCorners=getCornersB(corners,angleList,closestCorner,depthRatio,difPosY,newWidth,newHeight,newDepth);
+        newCorners=getCornersB(corners,angleList,closestCorner,depthRatio,difPosZ,difPosY);
         for(var i=0;i<4;i++){
             int xNum=1+i;
             if (xNum==4)xNum=0;
@@ -92,29 +90,34 @@ public class Cube {
             yPointsList[i]=listDoubleToInt(new double[]{corners[i][1],newCorners[i][1],
                     newCorners[xNum][1],corners[xNum][1]});
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition-1][CubeContainer.numberOfCubes+yPosition]){
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition-1][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition]){
             blockLeftEmpty=false;
 
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition+1][CubeContainer.numberOfCubes+yPosition]){
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition+1][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition]){
             blockRightEmpty=false;
 
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition-1]){
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition-1][CubeContainer.numberOfCubesZ+zPosition]){
             blockFrontEmpty=false;
 
 
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition+1]){
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition+1][CubeContainer.numberOfCubesZ+zPosition]){
             blockBackEmpty=false;
 
 
         }
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition+1]){
+            blockTopEmpty=false;
 
 
+        }
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition-1]){
+            blockBottomEmpty=false;
 
 
-
+        }
     }
     public void draw(Graphics g){
 
@@ -168,14 +171,14 @@ public class Cube {
          */
 
         g.setColor(new Color(21, 92, 5));
-        if (deltaYList[0]>0) {
+        if (deltaYList[0]>0&&blockTopEmpty) {
             fillPolygonB(g,xPointsList[0],yPointsList[0],closestCorner);
             g.setColor(Color.RED);
             //g.drawLine((int) corners[0][0], (int) corners[0][1], (int) PFX, (int) PFY);
             //g.drawLine((int) corners[1][0], (int) corners[1][1], (int) PFX, (int) PFY);
 
         }
-        if (deltaYList[2]<0) {
+        if (deltaYList[2]<0&&blockBottomEmpty) {
             fillPolygonB(g, xPointsList[2], yPointsList[2], closestCorner);
             g.setColor(Color.RED);
             //g.drawLine((int) corners[2][0], (int) corners[2][1], (int) PFX, (int) PFY);
@@ -215,6 +218,8 @@ public class Cube {
 
          */
 
+
+
     }
     public int[] listDoubleToInt(double[] l){
         int[] newList= new int[l.length];
@@ -253,8 +258,9 @@ public class Cube {
 
         return corners;
     }
-    public double[][] getCornersB(double[][] corners, double[] angleList, int closest, double depthRatio,double difPosY,double newWidth,double newHeight,double newDepth){
+    public double[][] getCornersB(double[][] corners, double[] angleList, int closest, double depthRatio,double difPosZ,double difPosY){
         double[][] newCorners = new double[4][2];
+        //double[][] newGroundCorners = new double[4][2];
         int a1;
         int a2;
         int a3;
@@ -262,29 +268,71 @@ public class Cube {
 
         int xSign=1;
         int ySign=1;
-        if(closest==3 || closest==1)xSign=0;
-        if(closest==0 || closest==2)ySign=0;
+        if(closest==2 || closest==1)xSign=0;
+        if(closest==0 || closest==3)ySign=0;
         int upSign=1;
-        if(closest==2 || closest==3)upSign=-1;
+        //if(closest==2 || closest==3)upSign=-1;
 
 
-        if (closest==1){a1=2;a2=3;a3=0;a4=1;}
-        else if (closest==2){a1=1;a2=2;a3=3;a4=0;}
-        else if (closest==3){a1=0;a2=1;a3=2;a4=3;}
-        else{a1=3;a2=0;a3=1;a4=2;}
+
+        if (closest==1||closest==2){a1=2;a2=3;a3=0;a4=1;}
+        //else if (closest==2){a1=1;a2=2;a3=3;a4=0;interestingCorner=2;}
+        //else if (closest==3){a1=0;a2=1;a3=2;a4=3;interestingCorner=3;}
+        else  {a1=3;a2=0;a3=1;a4=2;}
+
+
+
+
         double DeltaY=(2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((difPosY)*1.0*depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0)-(2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((difPosY+depth)*1.0*depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0);
-        double DeltaX=DeltaY/Math.tan(angleList[a1]);
-        double ratio=Math.sqrt(Math.pow(DeltaX,2)+Math.pow(DeltaY,2));
-        double sizeRatioAtPosition=GAME_HEIGHT/((difPosY+depth)*depthRatio+GAME_HEIGHT);
 
-        newCorners[a1][0] = corners[a1][0] -ratio  * Math.cos(angleList[a1]);
-        newCorners[a1][1] = corners[a1][1] - ratio  * Math.sin(angleList[a1]);
+
+
+        //DeltaX=1;
+        double groundAngle;
+        double CornerForAngleX=corners[a1][0];
+        double CornerForAngleY=corners[a1][1]+zPosition*depth*sizeRatio;
+        double deltaXAngle=CornerForAngleX-GameGrid.PFX;
+        double deltaYAngle=CornerForAngleY-GameGrid.PFY;
+
+        groundAngle=Math.atan(deltaYAngle/deltaXAngle);
+
+        if (deltaXAngle>0&&deltaYAngle<0){
+            groundAngle=Math.PI*2.0+Math.atan(deltaYAngle/deltaXAngle);
+        }
+        else  if(deltaXAngle<0) groundAngle=Math.PI+Math.atan(deltaYAngle/deltaXAngle);
+        if (deltaXAngle==0 && deltaYAngle<0)groundAngle=3*Math.PI/2;
+        if (deltaXAngle==0 && deltaYAngle>0)groundAngle=Math.PI/2;
+
+
+        double GroundDeltaX=DeltaY/Math.tan(groundAngle);
+        double ratio=DeltaY/Math.sin(angleList[a1]);
+        double groundRatio=DeltaY/Math.sin(groundAngle);
+
+
+        double sizeRatioAtPosition=GAME_HEIGHT/((difPosY+depth)*depthRatio+GAME_HEIGHT);
+        /*
+        if(groundAngle==Math.PI/2 );
+        if(groundAngle==3*Math.PI/2);
+
+        double LimitValue=groundRatio * Math.cos(groundAngle)*Math.tan(angleList[a1]);
+        groundRatio*Math.cos(Math.atan(deltaYAngle/deltaXAngle))*(GameGrid.PFY-corners[a1][1])/(GameGrid.PFX-corners[a1][0]);
+        double LimitValue=groundRatio*Math.cos(groundAngle)*(GameGrid.PFY-corners[a1][1])/(GameGrid.PFX-corners[a1][0]);
+        if (zPosition==0)LimitValue=groundRatio * Math.cos(groundAngle)*Math.tan(angleList[a1]);
+        */
+        double LimitValue=groundRatio * Math.cos(groundAngle)*Math.tan(angleList[a1]);
+        if(groundAngle==Math.PI/2 )LimitValue=-groundRatio*(GameGrid.PFY-corners[a1][1])/(Math.abs(deltaYAngle));
+        if(groundAngle==3*Math.PI/2)LimitValue=-groundRatio*(GameGrid.PFY-corners[a1][1])/(Math.abs(deltaYAngle));;
+
+        newCorners[a1][0] = corners[a1][0] -groundRatio  * Math.cos(groundAngle);
+        newCorners[a1][1] = corners[a1][1] -LimitValue;
         newCorners[a2][0] = newCorners[a1][0]- upSign*ySign*sizeRatioAtPosition*width;
         newCorners[a2][1] = newCorners[a1][1]-upSign*xSign*sizeRatioAtPosition*height;
         newCorners[a3][0] =newCorners[a2][0]+upSign*xSign*sizeRatioAtPosition*width;
         newCorners[a3][1] = newCorners[a2][1]-upSign*ySign*sizeRatioAtPosition*height;
         newCorners[a4][0] =  newCorners[a3][0]+upSign*ySign*sizeRatioAtPosition*width;
         newCorners[a4][1] = newCorners[a3][1]+upSign*xSign*sizeRatioAtPosition*height;
+
+
 
 
         return newCorners;
@@ -316,14 +364,19 @@ public class Cube {
 
     }
     public int closestCorner(double[][] corners){
+        /*
         int closest=0;
-        double distance=Math.sqrt(Math.pow(corners[0][0]-PFX,2)+Math.pow(corners[0][1]-PFY,2));
+        double distance=Math.sqrt(Math.pow(corners[0][0]-GameGrid.PFX,2)+Math.pow(corners[0][1]-GameGrid.PFY,2));
         for(var i=0;i<4;i++){
-            if(Math.sqrt(Math.pow(corners[i][0]-PFX,2)+Math.pow(corners[i][1]-PFY,2))<distance){
-                distance=Math.sqrt(Math.pow(corners[i][0]-PFX,2)+Math.pow(corners[i][1]-PFY,2));
+            if(Math.sqrt(Math.pow(corners[i][0]-GameGrid.PFX,2)+Math.pow(corners[i][1]-GameGrid.PFY,2))<distance){
+                distance=Math.sqrt(Math.pow(corners[i][0]-GameGrid.PFX,2)+Math.pow(corners[i][1]-GameGrid.PFY,2));
                 closest=i;
             }
         }
+        */
+        int closest=0;
+        if(newPosX<GameGrid.PFX)closest=2;
+        else closest=1;
         return closest;
     }
 
