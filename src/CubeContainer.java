@@ -113,13 +113,21 @@ public class CubeContainer {
 
     }
     public void createCubes(){
-        drawMap(0,0,0);
+      drawMap(0,0,0);
+       // newCube(0,1,0);
 
+        /*
+        newCube(0,-2,0);
+        newCube(0,-3,0);
+        newCube(1,-1,0);
+        newCube(2,-1,0);
+
+         */
 /*
         newCube(-5,0,-1);
         newCube(-6,0,-2);
         newCube(-7,0,-3);*/
-
+/*
         for(var i=2;i<5;i++){
             for(var j=2;j<5;j++){
                 for(var k=2;k<5;k++){
@@ -132,6 +140,8 @@ public class CubeContainer {
 
         }
 
+ */
+       // newCube(0,0,0);
         /*
         newCube(-10,0,-1);
 

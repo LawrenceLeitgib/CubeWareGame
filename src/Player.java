@@ -27,114 +27,81 @@ public class Player {
     double slowMultiplier=0.1;
     double runningMultiplier=5;
 
+    boolean isMovingUp=false;
+    boolean isMovingDown=false;
+    boolean isMovingForward =false;
+    boolean isMovingBackward =false;
+    boolean isMovingLeft=false;
+    boolean isMovingRight=false;
+
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
-        Player.xPosition=positionX;
+        Player.xPosition=0;
         Player.yPosition=0;
         Player.zPosition=0;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
 
-
-
     }
     public void updateData(double deltaTime){
 
-        boolean[]collision=detectionCollision();
+       // boolean[]collision=detectionCollision();
+        //System.out.println(collision[5]);
        // System.out.println(collisionLeft);
         //!isFlying&&!collision[1]
+        double multiplierOfSpeed=1;
+        if(isSlowing)multiplierOfSpeed=slowMultiplier;
+
+
+
+
+        //double zSpeed=;
         if(!isFlying){
-            setZVelocity(zVelocity-gravityAcceleration);
+           setZVelocity(zVelocity-gravityAcceleration);
+          // System.out.println(zPosition);
+           zPosition+=zVelocity;
+           detectionCollision(1);
+
         }
-        if (isSlowing) {
-            xPosition += this.xVelocity/10.0;
-            yPosition += this.yVelocity/10.0;
-
-                if (isFlying)
-                    zPosition += this.zVelocity / 10.0;
-                else zPosition += this.zVelocity;
-
-
-        }else{
-
-            xPosition += this.xVelocity;
-            yPosition += this.yVelocity;
-            zPosition += this.zVelocity;
-        }
-        collision=detectionCollision();
-        /*
-        if(collision[0]){
-            if (isSlowing) {
-                if(collision[3]&&this.xVelocity<0||collision[4]&&this.xVelocity>0)xPosition -= this.xVelocity/10.0;
-                if(collision[5]&&this.yVelocity<0||collision[6]&&this.yVelocity>0)yPosition -= this.yVelocity/10.0;
-
-                if(collision[1]&&this.zVelocity<0||collision[2]&&this.zVelocity>0){
-                    if(isFlying)zPosition -= this.zVelocity/10.0;
-                    else zPosition -= this.zVelocity;
-                }
-
-            }else{
-                if(collision[3]&&this.xVelocity<0||collision[4]&&this.xVelocity>0)xPosition -= this.xVelocity;
-                if(collision[5]&&this.yVelocity<0||collision[6]&&this.yVelocity>0)yPosition -= this.yVelocity;
-                if(collision[1]&&this.zVelocity<0||collision[2]&&this.zVelocity>0)
-                zPosition -= this.zVelocity;
+        else{
+            if(isMovingUp) {
+                zPosition+=speed*multiplierOfSpeed;
+                detectionCollision(2);
             }
-        }
-        detectionCollision();
-*/
-        /*
-        boolean[][] collisionListe=detectionCollisionForAllCube();
-        boolean collisionAll=false;
-        boolean collisionLeft = false;
-        boolean collisionRight=false;
-        boolean collisionFront=false;
-        boolean collisionBack=false;
-        boolean collisionTop=false;
-        boolean collisionBottom=false;
-        for(var i=0;i<collisionListe.length;i++){
-            if (collisionListe[i][0])collisionAll=true;
-            if (collisionListe[i][1])collisionLeft=true;
-            if (collisionListe[i][2])collisionRight=true;
-            if (collisionListe[i][3])collisionFront=true;
-            if (collisionListe[i][4])collisionBack=true;
-            if (collisionListe[i][5])collisionTop=true;
-            if (collisionListe[i][6])collisionBottom=true;
-
-        }
-
-        if(!isFlying&&!collisionBottom){
-            setZVelocity(zVelocity-gravityAcceleration);
-        }
-
-
-
-        if(collisionAll){
-            if (isSlowing) {
-                if((collisionLeft||collisionRight))
-                    xPosition -= this.xVelocity/10.0;
-                if((collisionFront||collisionBack))
-                    yPosition -= this.yVelocity/10.0;
-                if((collisionTop||collisionBottom)){
-                    if(isFlying)
-                        zPosition -= this.zVelocity/10.0;
-                    else zPosition -= this.zVelocity;
-
-                }
-            }else{
-                if((collisionLeft||collisionRight))
-                    xPosition -= this.xVelocity;
-                if((collisionFront||collisionBack))
-                    yPosition -= this.yVelocity;
-                if((collisionTop||collisionBottom))
-                    zPosition -= this.zVelocity;
+            if(isMovingDown){
+                zPosition-=speed*multiplierOfSpeed;
+                detectionCollision(1);
             }
-            setZVelocity(0);
 
-        }*/
+        }
+
+        if(isMovingRight) {
+            xPosition+=speed*multiplierOfSpeed;
+            detectionCollision(4);
+        }
+       if(isMovingLeft){
+           xPosition-=speed*multiplierOfSpeed;
+           detectionCollision(3);
+       }
+       if(isMovingBackward){
+           yPosition+=speed*multiplierOfSpeed;
+           detectionCollision(6);
+       }
+       if(isMovingForward) {
+           yPosition-=speed*multiplierOfSpeed;
+           detectionCollision(5);
+
+       }
+
+
+      // System.out.println(xPosition);
+
+
+
+        detectionCollision(0);
+       // System.out.println(collision[5]);
         xPosition=  (int)((xPosition)*1000)/1000.0;
         yPosition=  (int)((yPosition)*1000)/1000.0;
         zPosition=  (int)((zPosition)*1000)/1000.0;
-       // System.out.println(zVelocity);
-
         }
     public void setXVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
@@ -237,70 +204,7 @@ public class Player {
         g.drawString(Double.toString(xPosition),15,70);
         g.drawString(Double.toString(zPosition),15,110);
     }
-   /*
-    public boolean[][] detectionCollisionForAllCube(){
-        boolean[][] listOfCollision=new boolean[10][7];
-
-        int collisionCount=0;
-
-
-
-        for(var i=0;i<CubeContainer.cubePositionX.length;i++){
-            if(CubeContainer.cubePositionX[i])
-                for (var j = 0; j < CubeContainer.cubePositionY.length; j++) {
-                    if(CubeContainer.cubePositionY[j])
-                        for (var k = 0; k <CubeContainer.cubePositionZ.length ; k++) {
-                            if (CubeContainer.cubePosition[i][j][k]) {
-                                if(detectionCollision(i-CubeContainer.numberOfCubes,j-CubeContainer.numberOfCubes,k-CubeContainer.numberOfCubesZ)[0]){
-                                    listOfCollision[collisionCount]=detectionCollision(i-CubeContainer.numberOfCubes,j-CubeContainer.numberOfCubes,k-CubeContainer.numberOfCubesZ);
-                                    collisionCount++;
-                                }
-                            }
-                        }
-                }
-        }
-
-        return listOfCollision;
-    }*/
-    /*
-    public boolean[] detectionCollision(int x,int y,int z){
-        double playerLeft=xPosition;
-        double playerRight=xPosition+width;
-        double playerFront=yPosition;
-        double playerBack=yPosition+height;
-        boolean[] collision=new boolean[7];
-
-        //System.out.println(yPosition+height>y*Cube.defaultSize&&yPosition<(y+1)*Cube.defaultSize);
-        //System.out.println(xPosition+width>(x)*Cube.defaultSize&&xPosition<(x+1)*Cube.defaultSize);
-        //System.out.println(yPosition+height>y*Cube.defaultSize&&yPosition<(y+1)*Cube.defaultSize);
-        //System.out.println(xPosition+width>(x)*Cube.width&&xPosition<(x+1)*Cube.width);
-
-
-
-
-
-        if(xPosition+1-(1-width/Cube.defaultSize)/2.0>x&&xPosition+(1-width/Cube.defaultSize)/2.0<(x+1)){
-            if((yPosition+1)-(1-depth/Cube.defaultSize)/2.0>y&&yPosition+(1-depth/Cube.defaultSize)/2.0<(y+1)){
-                if  (zPosition+height/Cube.defaultSize>z&&zPosition<(z+1)){
-                    collision[0]=true;
-                }
-
-            }
-
-        }
-        collision[1]=xPosition+1-(1-width/Cube.defaultSize)/2.0>x&&collision[0] ;//left
-        collision[2]=xPosition+(1-width/Cube.defaultSize)/2.0<(x+1) &&collision[0];//right
-        collision[3]=yPosition+1-(1-depth/Cube.defaultSize)/2.0>y&&collision[0];//front
-        collision[4]=yPosition+(1-depth/Cube.defaultSize)/2.0<(y+1)&&collision[0];//back
-        collision[5]=zPosition+height/Cube.defaultSize>z&&collision[0];//top
-        collision[6]=zPosition<(z+1)&&collision[0];//bottom
-       // System.out.println(collision[1]);
-
-
-        return collision;
-    }
-    */
-   public boolean[] detectionCollision(){
+   public boolean[] detectionCollision(int num){
        boolean[] collision=new boolean[7];
 
        int xPosUnder=(int)(xPosition+0.5);
@@ -309,13 +213,11 @@ public class Player {
        if(yPosition<0)yPosUnder=(int)(yPosition-0.5);
        int zPosUnder=(int)(zPosition);
        if(zPosition<0)zPosUnder=(int)(zPosition-1);
-
-
        int zPosAbove=(int)(zPosition+height/Cube.defaultSize);
        if(zPosition<0)zPosAbove=(int)(zPosition+height/Cube.defaultSize-1);
 
 
-       double forOtherSensitivity=0.10;
+       double forOtherSensitivity=0.04;
 
 
 
@@ -344,11 +246,11 @@ public class Player {
        int yBackPosForOther=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2+1-forOtherSensitivity);
        if(yPosition<-0.5)yBackPosForOther=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2-forOtherSensitivity);
 
-       int zPosUnderForOther=(int)(zPosition+forOtherSensitivity*3);
-       if(zPosition<0)zPosUnderForOther=(int)(zPosition-1+forOtherSensitivity*3);
+       int zPosUnderForOther=(int)(zPosition+forOtherSensitivity);
+       if(zPosition<0)zPosUnderForOther=(int)(zPosition-1+forOtherSensitivity);
 
-       int zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-forOtherSensitivity*3);
-       if(zPosition<0)zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-1-forOtherSensitivity*3);
+       int zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-forOtherSensitivity);
+       if(zPosition<0)zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-1-forOtherSensitivity);
 
        //System.out.println(zPosUnder);
 
@@ -360,111 +262,106 @@ public class Player {
        int numCubZ=CubeContainer.numberOfCubesZ;
 
 
+       if(Math.abs(xLeftPosForOther)>numCub-5)xLeftPosForOther=numCub-5;
+       if(Math.abs(xRightPosForOther)>numCub-5)xRightPosForOther=numCub-5;
+       if(Math.abs(yFrontPosForOther)>numCub-5)yFrontPosForOther=numCub-5;
+       if(Math.abs(yBackPosForOther)>numCub-5)yBackPosForOther=numCub-5;
+       if(Math.abs(zPosUnderForOther)>numCubZ-5)zPosUnderForOther=numCub-5;
+       if(Math.abs(zPosAboveForOther)>numCubZ-5)zPosAboveForOther=numCub-5;
+
+       if(Math.abs(xLeftPos)>numCub-5)xLeftPos=numCub-5;
+       if(Math.abs(xRightPos)>numCub-5)xRightPos=numCub-5;
+       if(Math.abs(yFrontPos)>numCub-5)yFrontPos=numCub-5;
+       if(Math.abs(yBackPos)>numCub-5)yBackPos=numCub-5;
+       if(Math.abs(zPosUnder)>numCubZ-5)zPosUnder=numCub-5;
+       if(Math.abs(zPosAbove)>numCubZ-5)zPosAbove=numCub-5;
+
+
+
+
+
+    if(num==1 ||num==0)
        collision[1]= CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPosForOther][numCubZ+zPosUnder]||
                CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPosForOther][numCubZ+zPosUnder]||
                CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPosForOther][numCubZ+zPosUnder]||
                CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPosForOther][numCubZ+zPosUnder];
 
-
+    if(num==2 ||num==0)
        collision[2]= CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPosForOther][numCubZ+zPosAbove]||
                CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPosForOther][numCubZ+zPosAbove]||
                CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPosForOther][numCubZ+zPosAbove]||
                CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPosForOther][numCubZ+zPosAbove];
 
 
-       /*
-       collision[1]= CubeContainer.cubePosition[numCub+xPosUnder][numCub+yPosUnder][numCubZ+zPosUnder];
-       collision[2]= CubeContainer.cubePosition[numCub+xPosUnder][numCub+yPosUnder][numCubZ+zPosAbove];
-
-       collision[3]= CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPos][numCubZ+zPosAbove]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPos][numCubZ+zPosAbove];
-       collision[4]= CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPos][numCubZ+zPosAbove]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPos][numCubZ+zPosAbove];
-
-       collision[5]= CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPos][numCubZ+zPosAbove]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPos][numCubZ+zPosAbove];
-       collision[6]= CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPos][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPos][numCubZ+zPosAbove]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPos][numCubZ+zPosAbove];
-
-       */
+       if(num==3 ||num==0)
        collision[3]= CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPosForOther][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPosForOther][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPosForOther][numCubZ+zPosAboveForOther]||
                CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPosForOther][numCubZ+zPosAboveForOther];
-       collision[4]= CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPosForOther][numCubZ+zPosUnderForOther]||
+       if(num==4 ||num==0)
+
+           collision[4]= CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPosForOther][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPosForOther][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPosForOther][numCubZ+zPosAboveForOther]||
                CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPosForOther][numCubZ+zPosAboveForOther];
+       if(num==5 ||num==0)
 
-       collision[5]= CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPos][numCubZ+zPosUnderForOther]||
+           collision[5]= CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPos][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPos][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPos][numCubZ+zPosAboveForOther]||
                CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPos][numCubZ+zPosAboveForOther];
-       collision[6]= CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPos][numCubZ+zPosUnderForOther]||
+       if(num==6 ||num==0)
+           collision[6]= CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPos][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPos][numCubZ+zPosUnderForOther]||
                CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPos][numCubZ+zPosAboveForOther]||
                CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPos][numCubZ+zPosAboveForOther];
 
 
-       double sensitivity=0.7;
+       double sensitivity=0.5;
+       //System.out.println( collision[5]);
+      // System.out.println(collision[5]+" "+xRightPosForOther+" "+xPosition);
 
-      // System.out.println(zPosUnder+1-zPosition);
 
-
-       if(collision[1]&&zPosUnder+1-zPosition<sensitivity){
+       if(collision[1]&&zPosUnder+1-zPosition<sensitivity&&(isMovingDown||zVelocity<0)){
            zPosition=zPosUnder+1.00000001;
            zVelocity=0;
+          // isMovingDown=false;
        }
-       if(collision[2]&&zPosition-zPosAbove+height/Cube.defaultSize<sensitivity){
+       if(collision[2]&&zPosition-zPosAbove+height/Cube.defaultSize<sensitivity&&(isMovingUp||zVelocity>0)){
            zPosition=zPosAbove-height/Cube.defaultSize;
            zVelocity=0;
+          //isMovingUp=false;
        }
-
-       //System.out.println(collision[3]);
-
-       if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity){
+       if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity&&isMovingLeft){
 
            xPosition=xLeftPos+1-(1-width/Cube.defaultSize)/2;
-           if(xVelocity<0)
-           xVelocity=0;
+         // isMovingLeft=false;
 
        }
-       if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity){
+       if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity&&isMovingRight){
 
            xPosition=xRightPos-1+(1-width/Cube.defaultSize)/2;
-           if(xVelocity>0)
-           xVelocity=0;
+        //   isMovingRight=false;
        }
-       if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity){
+       if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity&&isMovingForward){
 
            yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
-           yVelocity=0;
+         // isMovingForward=false;
        }
-       if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity){
+       if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&isMovingBackward){
 
            yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
-           yVelocity=0;
+        //   isMovingBackward=false;
        }
-       /*
-       if(collision[2])zPosition=zPosAbove;
-       if(collision[3])zPosition=xLeftPos;
-       if(collision[4])zPosition=xRightPos;
-       if(collision[5])zPosition=yFrontPos;
-       if(collision[6])zPosition=yBackPos;
 
-        */
+
 
 
        for(var i=1;i<7;i++){
-           if( collision[i])collision[0]=true;
+           if (collision[i]) {
+               collision[0] = true;
+               break;
+           }
        }
        return collision;
    }
@@ -538,7 +435,7 @@ public class Player {
 
     }
 
-    public void flySwicth(){
+    public void flySwitch(){
         if(isFlying){
             isFlying=false;
             setZVelocity(0);
@@ -555,31 +452,28 @@ public class Player {
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
             case 65:
-                setXVelocity(-speed);
+                isMovingLeft=true;
                 break;
-
 
             case 68:
-                setXVelocity(speed);
+                isMovingRight = true;
                 break;
             case 83:
-                setYVelocity(speed);
+                isMovingBackward=true;
                 break;
 
             case 87:
-                setYVelocity(-speed);
+                isMovingForward=true;
                 break;
             case 89:
-                if(isFlying)
-                setZVelocity(-speed);
+                if(isFlying)isMovingDown=true;
                 break;
 
             case 88:
-                if(isFlying)
-                setZVelocity(speed);
+                if(isFlying)isMovingUp=true;
                 break;
             case 70:
-                flySwicth();
+                flySwitch();
                 break;
             case 32:
                 if(!isFlying)
@@ -598,31 +492,25 @@ public class Player {
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()){
             case 65:
-                if(xVelocity<0)
-                setXVelocity(0);
+                isMovingLeft=false;
                 break;
 
             case 68:
-                if(xVelocity>0)
-                setXVelocity(0);
+                isMovingRight=false;
                 break;
             case 83:
-                if(yVelocity>0)
-                setYVelocity(0);
+                isMovingBackward=false;
                 break;
 
             case 87:
-                if(yVelocity<0)
-                setYVelocity(0);
+                isMovingForward=false;
                 break;
             case 89:
-                if(zVelocity<0)
-                    setZVelocity(0);
+                if(isFlying)isMovingDown=false;
                 break;
 
             case 88:
-                if(zVelocity>0)
-                    setZVelocity(0);
+                if(isFlying)isMovingUp=false;
                 break;
             case 16:
                 isSlowing=false;
