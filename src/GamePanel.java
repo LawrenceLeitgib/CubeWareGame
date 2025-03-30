@@ -1,14 +1,15 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.util.*;
 import javax.swing.*;
 
 
 public class GamePanel extends JPanel implements Runnable {
-    static final int GAME_WIDTH=1000;
-    static final int GAME_HEIGHT=(int)(GAME_WIDTH*(9.0/16 ));
+    static int GAME_WIDTH=1000;
+    static int GAME_HEIGHT=(int)(GAME_WIDTH*(9.0/16 ));
     static final Dimension SCREEN_SIZE = new Dimension(GAME_WIDTH,GAME_HEIGHT);
     Thread gameThread;
     static Image image;
@@ -17,12 +18,20 @@ public class GamePanel extends JPanel implements Runnable {
 
     GameGrid gameGrid;
 
+
 //    static BufferedImage smiley;
+    static double xPos;
+    static double yPos;
 
+    static double FPS;
+    BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+    // Create a new blank cursor.
+    Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
+    static Dictionary<String, Integer> GameStates = new Hashtable<>();
+    static int gameState;
 
-
-
+    static Rectangle[] rectForDraw=new Rectangle[100];
 
 
     GamePanel() {
@@ -31,32 +40,27 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseListener(new ML());
         this.addMouseMotionListener(new ML());
         this.setPreferredSize(SCREEN_SIZE);
-
-        //smiley =new ImageIcon("pictures/smiley.png");
+        try{
+        yPos=this.getLocationOnScreen().getY() ;
+        xPos=this.getLocationOnScreen().getX();} catch (Exception ignored) {
+        }
         stats=new Stats(GAME_WIDTH,GAME_HEIGHT);
-
         gameThread=new Thread(this);
         gameThread.start();
-/*
-        try{
-            smiley= ImageIO.read(getClass().getResourceAsStream("/pictures/smiley.png"));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        GameStates.put("Menu",0);
+        GameStates.put("Running",1);
+        GameStates.put("Paused",2);
+        GameStates.put("Dead",3);
+        gameState=GameStates.get("Menu");
+        rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
 
- */
 
 
 
     }
     public void newGameGrid(){
         gameGrid = new GameGrid();
-
     }
-
-
-
-
     public void paint(Graphics g){
         image=createImage(getWidth(),getHeight());
         graphics = image.getGraphics();
@@ -64,10 +68,52 @@ public class GamePanel extends JPanel implements Runnable {
         g.drawImage(image,0,0,this);
 
     }
+    public boolean isInisdeRect(int xPos,int yPos,Rectangle rect){
+
+        if(xPos>rect.getX()&&xPos< rect.getX()+ rect.getWidth()&&yPos>rect.getY()&&yPos<rect.getY()+rect.getHeight())return true;
+        return false;
+    }
+    public void drawRect(Graphics g, Rectangle rect,Color color){
+        g.setColor(color);
+        g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
+    }
+    public void drawRectWithBorder(Graphics g, Rectangle rect,Color color1,Color color2,int size){
+        g.setColor(color2);
+        g.fillRect((int) rect.getX()-size/2, (int) rect.getY()-size/2, (int) rect.getWidth()+size, (int) rect.getHeight()+size);
+        g.setColor(color1);
+        g.fillRect((int) rect.getX()+size/2, (int) rect.getY()+size/2, (int) rect.getWidth()-size, (int) rect.getHeight()-size);
+    }
+
+    public void drawRectWithContext(Graphics g, Rectangle rect,Color color1,Color color2,int size){
+        if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
+            drawRectWithBorder(g,rect,color1,color2,size);
+        }else{
+            drawRect(g,rect,color1);
+        }
+
+    }
+    public void centerString(Graphics g, Rectangle r, String s,
+                             Font font) {
+        FontRenderContext frc =
+                new FontRenderContext(null, true, true);
+
+        Rectangle2D r2D = font.getStringBounds(s, frc);
+        int rWidth = (int) Math.round(r2D.getWidth());
+        int rHeight = (int) Math.round(r2D.getHeight());
+        int rX = (int) Math.round(r2D.getX());
+        int rY = (int) Math.round(r2D.getY());
+
+        int a = (r.width / 2) - (rWidth / 2) - rX;
+        int b = (r.height / 2) - (rHeight / 2) - rY;
+
+        g.setFont(font);
+        g.drawString(s, r.x + a, r.y + b);
+    }
     public void draw(Graphics g){
         Rectangle r = getBounds();
         //r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
-        if(GameGrid.GAME_HEIGHT!=r.height) {
+
+        if(GameGrid.GAME_HEIGHT!=r.height||GameGrid.GAME_WIDTH!=r.width) {
 
             GameGrid.setGameHeight(r.height);
             GameGrid.setGameWidth(r.width);
@@ -81,24 +127,119 @@ public class GamePanel extends JPanel implements Runnable {
             CubeContainer.setGameWidth(r.width);
             Chunk.GAME_WIDTH = r.width;
             Chunk.GAME_HEIGHT = r.height;
+            rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
+
         }
-
-
 
 
         gameGrid.draw(g);
         stats.draw(g);
+        if(gameState==GameStates.get("Menu")){
+            g.setColor(new Color(84, 84, 84,200));
+            g.fillRect(0,0,GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
+            drawRectWithContext(g,rectForDraw[0],new Color(168, 113, 10),Color.yellow,4);
+            g.setColor(Color.black);
+            centerString(g,rectForDraw[0],"Start",new Font("Arial",Font.PLAIN,30));
+
+        }
+        if(gameState==GameStates.get("Paused")){
+            g.setColor(new Color(84, 84, 84,200));
+            g.fillRect(0,0, GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
+            drawRectWithContext(g,rectForDraw[0],new Color(168, 113, 10),Color.yellow,4);
+            g.setColor(Color.black);
+            centerString(g,rectForDraw[0],"Continue",new Font("Arial",Font.PLAIN,30));
+
+        }
+        if(gameState==GameStates.get("Dead")){
+            g.setColor(new Color(84, 84, 84,200));
+            g.fillRect(0,0, GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
+            drawRectWithContext(g,rectForDraw[0],new Color(168, 113, 10),Color.yellow,4);
+            g.setColor(Color.black);
+            centerString(g,rectForDraw[0],"Respawn",new Font("Arial",Font.PLAIN,30));
+
+        }
 
     }
+    public void updateData(double deltaTime) {
+        try{
+            yPos=this.getLocationOnScreen().getY() ;
+            xPos=this.getLocationOnScreen().getX();} catch (Exception ignored) {
+        }if(!Player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running"))this.setCursor(blankCursor);
+        else{this.setCursor(Cursor.getDefaultCursor());}
 
 
 
+        if(gameState==GameStates.get("Menu")){
+            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
+                if(GameGrid.mouseLeftClickDown)gameState=GameStates.get("Running");
+            }
+            return;
+        }
+        if(gameState==GameStates.get("Paused")){
+            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
+                if(GameGrid.mouseLeftClickDown)gameState=GameStates.get("Running");
+            }
+            return;
+        }
+        if(gameState==GameStates.get("Dead")){
+            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
+                if(GameGrid.mouseLeftClickDown)gameGrid.player.respawn();
+            }
+            return;
+        }
+        gameGrid.updateData(deltaTime);
+        stats.updateData(deltaTime);
+
+
+
+
+    }
+    @Override
+    public void run() {
+        long lastTime = System.nanoTime();
+        double amountOfTicks=120;
+        double ns=1000000000/amountOfTicks;
+        double delta= 0;
+        newGameGrid();
+        double accumulator=0;
+        while(true){
+            long now =System.nanoTime();
+            delta=(now-lastTime)/ns;
+            lastTime=System.nanoTime();
+            accumulator+=delta;
+           // System.out.println(accumulator);
+            while (accumulator>=0){
+                //System.out.println("test");
+                updateData(1/amountOfTicks);
+                accumulator--;
+               // count++;
+            }
+            paintImmediately(0,0,GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
+            FPS=amountOfTicks/((System.nanoTime()-(now))/ns);
+
+
+            /*
+                if(count>=3&&delta>=2){
+                    repaint();
+                    //removeAll();
+                    count=0;
+
+            }
+
+             */
+
+
+        }
+    }
 
     public class AL extends KeyAdapter{
         public void keyPressed(KeyEvent e){
             //System.out.println(e.getKeyCode()+" = "+e.getKeyChar());
             gameGrid.player.keyPressed(e);
             gameGrid.keyPressed(e);
+            if(e.getKeyCode()==27){
+                togglePause();
+            }
 
 
         }
@@ -108,6 +249,17 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
     }
+
+    private void togglePause() {
+        if(gameState==GameStates.get("Running")){
+            gameState=GameStates.get("Paused");
+
+        }
+        else if(gameState==GameStates.get("Paused")){
+            gameState=GameStates.get("Running");
+        }
+    }
+
     public class ML implements MouseListener,MouseMotionListener {
 
         @Override
@@ -121,20 +273,13 @@ public class GamePanel extends JPanel implements Runnable {
            // System.out.println("test");
            // System.out.println(e.getButton());
 
-            if(e.getButton()==1)
-            GameGrid.mouseLeftClickDown =true;
-
-            if(e.getButton()==3)GameGrid.mouseRightClickDown =true;
+            gameGrid.mousePressed(e);
 
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if(e.getButton()==1)
-            GameGrid.mouseLeftClickDown =false;
-
-            if(e.getButton()==3)GameGrid.mouseRightClickDown =false;
-
+            gameGrid.mouseReleased(e);
 
         }
 
@@ -150,52 +295,17 @@ public class GamePanel extends JPanel implements Runnable {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            GameGrid.mousePositionX =e.getX();
-            GameGrid.mousePositionY =e.getY();
+            gameGrid.mouseDragged(e);
+
         }
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            GameGrid.mousePositionX =e.getX();
-            GameGrid.mousePositionY =e.getY();
-
-
+            gameGrid.mouseMoved(e);
         }
     }
 
-    @Override
-    public void run() {
-        long lastTime = System.nanoTime();
-        double amountOfTicks=72;
-        double ns=1000000000/amountOfTicks;
-        double delta= 0;
-        newGameGrid();
-        int count=0;
-        System.out.println(delta);
-        while(true){
-            long now =System.nanoTime();
-            delta+=(now-lastTime)/ns;
-            lastTime=System.nanoTime();
-           // System.out.println(delta);
-            if(delta >=1){
-                updateData(1/amountOfTicks);
-                count++;
-                if(count>=0){
-                    removeAll();
-                    repaint();
-                    removeAll();
-                    count=0;
-                }
-
-                delta--;
-            }
-        }
-    }
-
-    public void updateData(double deltaTime) {
-        gameGrid.updateData(deltaTime);
-        stats.updateData(deltaTime);
 
 
-    }
+
 }

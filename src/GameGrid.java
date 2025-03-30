@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -21,6 +22,7 @@ public class GameGrid {
 
     static double angleForXRotation=0.0;
 
+
     static boolean isRotatingLeft=false;
     static boolean isRotatingRight=false;
 
@@ -39,10 +41,9 @@ public class GameGrid {
 
    static boolean oneDown=false;
 
-   static boolean oneHaveBeenRelesed=false;
+   static boolean oneHaveBeenRelesed=true;
 
     //Enemy enemy;
-
 
 
 
@@ -56,10 +57,6 @@ public class GameGrid {
         fireBallContainer=new FireBallContainer();
         enemiesContainer=new EnemiesContainer();
 
-
-
-
-
     }
 
     public static void setGameWidth(int gameWidth) {
@@ -70,23 +67,48 @@ public class GameGrid {
 
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
-        PFY=0*GAME_HEIGHT/8.0;
+        if(Player.thirdPerspective)
+            PFY=0*GAME_HEIGHT/8.0;
+        else{
+            PFY=GAME_HEIGHT/2.0;
+        }
         PVY=3*GAME_HEIGHT/3;
     }
     public void newPlayer(){
         player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0,0);
 
+    }public double[] moveMouse(int x,int y) throws AWTException {
+        double[] delta=new double[2];
+        Robot robot = new Robot();
+        delta[0]=x-mousePositionX;
+        delta[1]=y-mousePositionY;
+        robot.mouseMove((int) (GamePanel.xPos+x), (int) (GamePanel.yPos+y));
+        return delta;
+
     }
     public void updateData(double deltaTime){
+        //System.out.println( mousePositionX);
+
         //if(mouseClicked) fireBallContainer.createFireBall();
        // System.out.println(mouseLeftClickDown+", "+mouseRightClickDown);
 
+        if(!Player.thirdPerspective){
+            try {
+                moveMouse((int) PFX, (int) PFY);
+            } catch (AWTException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        double rotationMultiplier=1;
+        if(player.isSlowing)rotationMultiplier=player.slowMultiplier*3;
+
         if(isRotatingLeft){
-            angleForXRotation-=Math.PI/64*deltaTime*30;
+            angleForXRotation-=Math.PI/32*deltaTime*30*rotationMultiplier;
 
         }
         if(isRotatingRight){
-            angleForXRotation+=Math.PI/64*deltaTime*30;
+            angleForXRotation+=Math.PI/32*deltaTime*30*rotationMultiplier;
         }
         while(angleForXRotation>=Math.PI*2){
             angleForXRotation-=Math.PI*2;
@@ -103,6 +125,7 @@ public class GameGrid {
         cubeContainer.updateData(deltaTime);
         enemiesContainer.updateData(deltaTime);
         fireBallContainer.updateData(deltaTime);
+
 
     }
     public void draw(Graphics g){
@@ -121,12 +144,13 @@ public class GameGrid {
         enemiesContainer.draw(g);
         Player.draw(g);
 
+
         g.setColor(Color.RED);
         g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
     }
     public double[] mousePosToGamePos(int xPos,int yPos){
         double[] gamePos=new double[2];
-        if(yPos<PFY){
+        if(yPos<=PFY){
            yPos= (int) (PFY+1);
 
         }
@@ -195,6 +219,12 @@ public class GameGrid {
             if(Player.yPosition-yPos>0)angle=3*Math.PI/2;
 
         }
+        /*
+        if(mousePositionX==PFX&&mousePositionY==PFY){
+            return 3*Math.PI/2;
+        }
+
+         */
 
 
         return angle;
@@ -242,8 +272,64 @@ public class GameGrid {
         }
     }
 
-    public void mouseClicked(MouseEvent e) {
-        //fireBallContainer.createFireBall();
+    public void mousePressed(MouseEvent e) {
+        if(e.getButton()==1)
+            GameGrid.mouseLeftClickDown =true;
+
+        if(e.getButton()==3)GameGrid.mouseRightClickDown =true;
 
     }
+    public void mouseReleased(MouseEvent e) {
+        if(e.getButton()==1)
+            GameGrid.mouseLeftClickDown =false;
+
+        if(e.getButton()==3)GameGrid.mouseRightClickDown =false;
+    }
+
+    public void mouseDragged(MouseEvent e) {
+        if(!Player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running")){
+            try {
+                double delta[]=moveMouse((int) PFX, (int) PFY);
+                angleForXRotation-=delta[0]/200;
+                // System.out.println(delta[0]);
+            } catch (AWTException e2) {
+                throw new RuntimeException(e2);
+            }
+
+
+        }
+        mousePositionX =e.getX();
+        mousePositionY =e.getY();
+
+
+        mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
+        mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
+
+    }
+
+    public void mouseMoved(MouseEvent e) {
+
+
+        if(!Player.thirdPerspective &&GamePanel.gameState==GamePanel.GameStates.get("Running")){
+            try {
+                double delta[]=moveMouse((int) PFX, (int) PFY);
+                angleForXRotation-=delta[0]/200;
+               // System.out.println(delta[0]);
+            } catch (AWTException e2) {
+                throw new RuntimeException(e2);
+            }
+
+
+        }
+        mousePositionX =e.getX();
+        mousePositionY =e.getY();
+
+
+        mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
+        mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
+       // System.out.println("truc "+mouseAngleInGame+", "+mouseInGame[0]+","+mouseInGame[1]);
+    }
+
+
+
 }

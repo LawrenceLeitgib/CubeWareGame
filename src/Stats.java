@@ -21,10 +21,10 @@ public class Stats {
         this.GAME_HEIGHT=GAME_HEIGHT;
 
         strength=10;
-        maxHealth=20;
-        health=20;
-        maxMana=20;
-        mana=20;
+        maxHealth=10;
+        health=10;
+        maxMana=10;
+        mana=10;
     }
     public static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
@@ -37,7 +37,6 @@ public class Stats {
 
 
 
-
         drawRectWithBorder(g,10,10,200,15,2,Color.RED,Color.black);
         g.setColor(Color.green);
         g.fillRect(10,10, (int) (200*health/maxHealth),15);
@@ -45,14 +44,27 @@ public class Stats {
         g.setColor(new Color(0,0,255));
         g.fillRect(10,30, (int) (200*mana/maxMana),15);
 
-        drawRectWithBorder(g,GAME_WIDTH-10-200,10,200,15,2,new Color(0, 150, 80),Color.black);
+        g.setColor(new Color(100,100,100,100));
+        g.fillRect(10,50,200,100);
+        g.setColor(Color.black);
+        g.setFont(new Font("Arial",Font.PLAIN,24));
+        g.setColor(Color.red);
+        g.drawString("x: "+Player.xPosition,15,70);
+        g.drawString("y: "+Player.yPosition,15,90);
+        g.drawString("z: "+Player.zPosition,15,110);
+        g.drawString("FPS: "+(int)(GamePanel.FPS+.5),15,130);
 
+
+
+        drawRectWithBorder(g,GAME_WIDTH-10-200,10,200,15,2,new Color(0, 150, 80),Color.black);
         g.setColor(new Color(0, 255, 140));
         g.fillRect(GAME_WIDTH-10-200,10, (int) (200*xp/xpUntilNextLevel),15);
 
         g.setFont(new Font("Arial",Font.PLAIN,16));
         g.setColor(Color.black);
         g.drawString("XP:"+String.valueOf((int)(xp*10+0.5)/10.0)+" / "+String.valueOf((int)(xpUntilNextLevel*10+0.5)/10.0),GAME_WIDTH-200,23);
+
+
 
 
         //g.setColor(Color.black);
@@ -75,11 +87,15 @@ public class Stats {
             currentLevel+=1;
             xpUntilNextLevel=xpUntilNextLevelBase*Math.pow(1.1 ,currentLevel);
             //System.out.println(xpUntilNextLevel);
-            maxMana=20+currentLevel;
+            maxMana=10+currentLevel;
             mana=maxMana;
-            maxHealth=20+currentLevel;
+            maxHealth=10+currentLevel;
             health=maxHealth;
             strength=10+currentLevel;
+        }
+        if(health<=0){
+            health=0;
+            GamePanel.gameState=GamePanel.GameStates.get("Dead");
         }
     }
     public void drawRectWithBorder(Graphics g, int x, int y, int width, int height, int borderSize, Color c1, Color c2){

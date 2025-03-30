@@ -15,6 +15,7 @@ public class GameFrame extends JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
 
+
     }
 
 }

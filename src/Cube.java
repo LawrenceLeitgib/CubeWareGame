@@ -245,6 +245,14 @@ public class Cube {
                 sizeRatio=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+GAME_HEIGHT/depthRatio;
 
             }
+            if(Math.sqrt(Math.pow(yPositionA-Player.yPosition,2)+Math.pow(yPositionA-Player.yPosition,2))>Player.numOfChunkToDraw*Chunk.numOfCubeX)return;
+            /*
+            if(yPositionA>Player.yPosition+Player.cubeAway+1)return;
+            if(xPositionA>Player.xPosition+30)return;
+            if(xPositionA<Player.xPosition-30)return;
+            if(zPosition>Player.zPosition+30)return;;
+
+             */
             newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
             //sizeRatio*(GameGrid.PVY-GameGrid.PFY+dif)=newPosY-GameGrid.PFY
             newWidth=  (width*sizeRatio);
@@ -575,6 +583,7 @@ public class Cube {
     }
     public void fillPolygonB(Graphics g,int[] listX,int[] listY,Color color){
         g.setColor(new Color(21, 92, 5));
+        g.setPaintMode();
         g.setColor(color);
         g.fillPolygon(listX,listY,4);
         g.setColor(Color.BLACK);
