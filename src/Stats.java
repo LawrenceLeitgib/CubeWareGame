@@ -31,11 +31,20 @@ public class Stats {
     static Rectangle bigRect;
 
     static Dictionary<String, Integer> StatsStates = new Hashtable<>();
+    static Dictionary<String, int[]> SpecialAttack = new Hashtable<String, int[]>();
+
     static int statsState;
 
-    static int numOfRectForStat=6;
+    static int numOfRectForStat =6;
     static Rectangle[] rectForStats=new Rectangle[numOfRectForStat];
+
+    static int numOfRectAS=2;
+
+    static Rectangle[][] rectForAS=new Rectangle[numOfRectAS][2];
+
+
     double PFSMean;
+
 
 
     Stats(int GAME_WIDTH, int GAME_HEIGHT){
@@ -44,17 +53,25 @@ public class Stats {
         Stats.GAME_HEIGHT =GAME_HEIGHT;
         bigRect=centerRectangle(GAME_WIDTH/2,GAME_HEIGHT/2,GAME_WIDTH-100,GAME_HEIGHT-100);
         StatsStates.put("General",0);
+        StatsStates.put("Special_Attack",1);
+        SpecialAttack.put("Dash", new int[]{5,4});
+        SpecialAttack.put("FBT", new int[]{10,10});
+
+
+
         statsState=StatsStates.get("General");
-        currentLevel=0;
+        currentLevel=30;
         setRectForStats();
         setPlayerStats();
+        setRectForAS();
+
     }
 
     public void setPlayerStats(){
         xpUntilNextLevel=xpUntilNextLevelBase*Math.pow(1.1 ,currentLevel);
         maxMana=10+currentLevel;
         mana=maxMana;
-        maxHealth=10+currentLevel+10000;
+        maxHealth=10+currentLevel;
         health=maxHealth;
         strength=10+currentLevel;
         healthRecovery=1+.05*currentLevel;
@@ -83,7 +100,12 @@ public class Stats {
         for(var i=0;i<numOfRectForStat;i++){
             rectForStats[i]=new Rectangle(bigRect.x+5+i*(bigRect.width-10)/numOfRectForStat,bigRect.y+5,(bigRect.width-10)/numOfRectForStat,30);
         }
-
+    }
+    public static void setRectForAS(){
+        for(var i=0;i<numOfRectAS;i++){
+            rectForAS[i][0]=new Rectangle(bigRect.x+5,bigRect.y+40+35*i,200,30);
+            rectForAS[i][1]=new Rectangle(bigRect.x+5+200+5,bigRect.y+40+35*i,bigRect.width-220,30);
+        }
     }
     public static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
@@ -207,6 +229,7 @@ public class Stats {
         GamePanel.drawRectWithContext2(g, rectForStats[statsState], new Color(79, 40, 0, 255), new Color(255, 245, 0), 4);
         g.setColor(Color.BLACK);
         GamePanel.centerString(g, rectForStats[StatsStates.get("General")], "General",new Font("Arial", Font.PLAIN, 22));
+        GamePanel.centerString(g, rectForStats[StatsStates.get("Special_Attack")], "Special Attack",new Font("Arial", Font.PLAIN, 22));
 
         if(statsState==StatsStates.get("General")){
             g.setFont(new Font("Arial",Font.PLAIN,20));
@@ -219,11 +242,36 @@ public class Stats {
             g.drawString("HealthRecovery: "+healthRecovery+" ("+1+" + "+currentLevel*.05+")", bigRect.x+10, bigRect.y+195);
 
 
+        }
+
+        if(statsState==StatsStates.get("Special_Attack")){
+            for (var i = 0; i < numOfRectAS; i++) {
+                GamePanel.drawRectWithBorder(g, rectForAS[i][0], new Color(176, 91, 0, 255), new Color(129, 124, 0), 2);
+                GamePanel.drawRectWithBorder(g, rectForAS[i][1], new Color(176, 91, 0, 255), new Color(129, 124, 0), 2);
+
+            }
+            drawRectWithLevel(g, rectForAS[0][0],SpecialAttack.get("Dash")[0]);
+            drawRectWithLevel(g, rectForAS[1][0],SpecialAttack.get("FBT")[0]);
+            drawRectWithLevel(g, rectForAS[0][1],SpecialAttack.get("Dash")[0]);
+            drawRectWithLevel(g, rectForAS[1][1],SpecialAttack.get("FBT")[0]);
 
 
 
-
+            g.setColor(Color.black);
+            if(currentLevel>=SpecialAttack.get("Dash")[0])GamePanel.centerString(g, rectForAS[0][0], "Dash",new Font("Arial", Font.PLAIN, 18));
+            if(currentLevel>=SpecialAttack.get("FBT")[0]) GamePanel.centerString(g, rectForAS[1][0], "Fire tornado",new Font("Arial", Font.PLAIN, 18));
+            if(currentLevel>=SpecialAttack.get("Dash")[0])GamePanel.centerString(g, rectForAS[0][1], "Cost: "+SpecialAttack.get("Dash")[1]+" mana, use the touch Q to dash",new Font("Arial", Font.PLAIN, 18));
+            if(currentLevel>=SpecialAttack.get("FBT")[0]) GamePanel.centerString(g, rectForAS[1][1], "Cost: "+SpecialAttack.get("FBT")[1]+" mana, use the touch 1 to create a tornado of fire ball",new Font("Arial", Font.PLAIN, 18));
 
         }
+
+    }
+    public void drawRectWithLevel(Graphics g,Rectangle rect,int level){
+        if(currentLevel<level){
+            GamePanel.drawRect(g,rect,new Color(100,100,100,200));
+            g.setColor(Color.black);
+            GamePanel.centerString(g, rect, "Unlock at level:"+level,new Font("Arial", Font.PLAIN, 18));
+        }
+
     }
 }

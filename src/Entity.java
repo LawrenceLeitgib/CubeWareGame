@@ -841,8 +841,8 @@ public class Entity {
     public void rejectionFromSpawn(double deltaTime){
         double  distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
         if(distanceFromMiddle<=GameGrid.safeZone) {
-            xPosition +=xPosition/distanceFromMiddle*speed*deltaTime;
-            yPosition +=yPosition/distanceFromMiddle*speed*deltaTime;
+            xPosition +=xPosition/distanceFromMiddle*speed*runningMultiplier*deltaTime;
+            yPosition +=yPosition/distanceFromMiddle*speed*runningMultiplier*deltaTime;
         }
         if(distanceFromMiddle<=GameGrid.safeZone-2){
             this.marketForDeletion=true;

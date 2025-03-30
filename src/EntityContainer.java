@@ -74,7 +74,7 @@ public class EntityContainer {
         mageCreationSpawnTime =0.00001*Math.pow(Player.distanceFromMiddle -800,2)+.3;
 
         if(Player.distanceFromMiddle>GameGrid.safeZone) {
-            zombieCreationCount += deltaTime*0;
+            zombieCreationCount += deltaTime;
             if (zombieCreationCount >= zombieCreationSpawnTime) {
                 if(entities.size()<800){
                     createEnemy("zombie");
@@ -83,7 +83,7 @@ public class EntityContainer {
             }
         }
         if(Player.distanceFromMiddle>300) {
-            mageCreationCount += deltaTime*0;
+            mageCreationCount += deltaTime;
             if (mageCreationCount >= mageCreationSpawnTime) {
                 if(entities.size()<800){
                     createEnemy("mage");

@@ -21,9 +21,10 @@ public class SpecialMoveHandler {
         ProjectileContainer.Projectiles.add(new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+ ProjectileContainer.ProjectileHeight,GameGrid.mouseAngleInGame,20,20,Stats.strength,true));
     }
     public static void attackSpecial1(){
-        Stats.mana-=10;
+        if(Stats.currentLevel<Stats.SpecialAttack.get("FBT")[0])return;
+        Stats.mana-=Stats.SpecialAttack.get("FBT")[1];
         if(Stats.mana<0){
-            Stats.mana+=10;
+            Stats.mana+=Stats.SpecialAttack.get("FBT")[1];
             return;
         }
         for(var j=0;j<100;j++){
@@ -51,14 +52,15 @@ public class SpecialMoveHandler {
         }
     }
     public void lightningSprintHandler(double deltaTime){
+        if(Stats.currentLevel<Stats.SpecialAttack.get("Dash")[0])return;
         lightningSprintCount2+=deltaTime;
         if(lightningSprint){
             if(lightningSprintCount2>= lightningSprintTime){
                 lightningSprintCount2=0;
-                Stats.mana-=4;
+                Stats.mana-=Stats.SpecialAttack.get("Dash")[1];
                 lightningSprintCount=30;
                 if(Stats.mana<0){
-                    Stats.mana+=4;
+                    Stats.mana+=Stats.SpecialAttack.get("Dash")[1];
                     lightningSprintCount=0;
                 }
             }

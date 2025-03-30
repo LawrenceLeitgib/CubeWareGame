@@ -9,12 +9,15 @@ public class Player {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
 
-    static double cubeAway=10;
+    static double cubeAway=2;
     static double width=.8*Cube.defaultSize;
     static double height=1.8*Cube.defaultSize;
     static double depth=.8*Cube.defaultSize;
     static double[][] corners=new double[12][2];
     double speed=4.2;
+
+    double runningMultiplier=1.8;
+
     static double xVelocity;
     static double yVelocity;
     double zVelocity;
@@ -25,7 +28,6 @@ public class Player {
 
 
     double slowMultiplier=0.1;
-    double runningMultiplier=1.8;
     boolean isRunning;
 
 
@@ -78,13 +80,14 @@ public class Player {
     }
     public void updateData(double deltaTime) {
         SMH.updateData(deltaTime);
+        //updateMegaChunk();
         setNewPositions(deltaTime);
-        projectileCollisionHandler(deltaTime);
         detectionCollisionWithContext();
+        projectileCollisionHandler(deltaTime);
         detectionCollisionWithEnemy(deltaTime);
         setCubeAndChunkIn();
-        detectionCollision(0);
         updateMegaChunk();
+        detectionCollision(0);
         flySwitchHandler(deltaTime);
         xPosition=  (int)((xPosition)*1000)/1000.0;
         yPosition=  (int)((yPosition)*1000)/1000.0;
@@ -224,6 +227,30 @@ public class Player {
         if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
         if(yPosition<0)cubeIn[1]=(int)(yPosition-0.5);
         distanceFromMiddle =Math.sqrt(Math.pow(Player.xPosition,2)+Math.pow(Player.yPosition,2));
+
+    }
+    public boolean getCubeIn(){
+        int[] cubeIn=new int[3];
+        cubeIn[0]=(int)(xPosition+0.5);
+        cubeIn[1]=(int)(yPosition+0.5);
+        cubeIn[2]=(int)(zPosition);
+        if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
+        if(yPosition<0)cubeIn[1]=(int)(yPosition-0.5);
+
+        int[] info1=CubeContainer.YAndXPositionToChunkPos(cubeIn[0]);
+        int[] info2=CubeContainer.YAndXPositionToChunkPos(cubeIn[1]);
+    try {
+
+
+        if (CubeContainer.chunks[info1[0]+CubeContainer.numOfChunkX][info2[0]+CubeContainer.numOfChunkY].cubePositions[info1[1]][info2[1]][cubeIn[2]]) return true;
+        if (CubeContainer.chunks[info1[0]+CubeContainer.numOfChunkX][info2[0]+CubeContainer.numOfChunkY].cubePositions[info1[1]][info2[1]][cubeIn[2] + 1]) return true;
+        if (CubeContainer.chunks[info1[0]+CubeContainer.numOfChunkX][info2[0]+CubeContainer.numOfChunkY].cubePositions[info1[1]][info2[1]][cubeIn[2] + 2]) return true;
+    }catch (Exception ignored){
+
+    }
+
+
+        return false;
 
     }
     public void setNewPositions(double deltaTime){
@@ -492,6 +519,155 @@ public class Player {
         }
 
     }
+
+    public void detectionCollisionWithContext(double deltaTime,String lol){
+       boolean[] collisions=detectionCollision(0);
+
+
+        int newXpos=cubeIn[0];
+        int newYposFront=cubeIn[1]-1;
+        int newYposBack=cubeIn[1] +1;
+        int xChunkNum=0;
+        int yChunkNumFront=0;
+        int yChunkNumBack=0;
+        int newYpos=cubeIn[1];
+        int newXposLeft=cubeIn[0]-1;
+        int newXposRight=cubeIn[0]+1;
+        int  YChunkNum=0;
+        int XChunkNumLeft=0;
+        int XChunkNumRight=0;
+        while(newXpos<0){
+            newXpos+=Chunk.numOfCubeX;
+            xChunkNum-=1;
+
+        }
+        while(newXpos>=Chunk.numOfCubeX){
+            newXpos-=Chunk.numOfCubeX;
+            xChunkNum+=1;
+
+        }
+        while(newYposFront<0){
+            newYposFront+=Chunk.numOfCubeY;
+            yChunkNumFront-=1;
+
+        }
+        while(newYposFront>=Chunk.numOfCubeY){
+            newYposFront-=Chunk.numOfCubeY;
+            yChunkNumFront+=1;
+
+        }
+        while(newYposBack<0){
+            newYposBack+=Chunk.numOfCubeY;
+            yChunkNumBack-=1;
+
+        }
+        while(newYposBack>=Chunk.numOfCubeY){
+            newYposBack-=Chunk.numOfCubeY;
+            yChunkNumBack+=1;
+        }
+        while(newYpos<0){
+            newYpos+=Chunk.numOfCubeY;
+            YChunkNum-=1;
+
+        }
+        while(newYpos>=Chunk.numOfCubeY){
+            newYpos-=Chunk.numOfCubeY;
+            YChunkNum+=1;
+
+        }
+        while(newXposLeft<0){
+            newXposLeft+=Chunk.numOfCubeX;
+            XChunkNumLeft-=1;
+
+        }
+        while(newXposLeft>=Chunk.numOfCubeX){
+            newXposLeft-=Chunk.numOfCubeX;
+            XChunkNumLeft+=1;
+
+        }
+        while(newXposRight<0){
+            newXposRight+=Chunk.numOfCubeX;
+            XChunkNumRight-=1;
+
+        }
+        while(newXposRight>=Chunk.numOfCubeX){
+            newXposRight-=Chunk.numOfCubeX;
+            XChunkNumRight+=1;
+        }
+        if(cubeIn[2]<0){
+            cubeIn[2]=Chunk.numOfCubeZ-3;
+        }
+        boolean cubeFront=(CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNumFront+CubeContainer.numOfChunkY].cubePositions[newXpos][newYposFront][cubeIn[2]]
+                ||CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNumFront+CubeContainer.numOfChunkY].cubePositions[newXpos][newYposFront][cubeIn[2]+1]
+                ||CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNumFront+CubeContainer.numOfChunkY].cubePositions[newXpos][newYposFront][(int)(cubeIn[2]+height/Cube.defaultSize+.5)]);
+        boolean cubeBack=(CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNumBack+CubeContainer.numOfChunkY].cubePositions[newXpos][newYposBack][cubeIn[2]]
+                ||CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNumBack+CubeContainer.numOfChunkY].cubePositions[newXpos][newYposBack][cubeIn[2]+1]
+                ||CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNumBack+CubeContainer.numOfChunkY].cubePositions[newXpos][newYposBack][(int)(cubeIn[2]+height/Cube.defaultSize+.5)]);
+        boolean cubeRight=(CubeContainer.chunks[XChunkNumRight+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposRight][newYpos][cubeIn[2]])||
+                xVelocity>0&&(CubeContainer.chunks[XChunkNumRight+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposRight][newYpos][cubeIn[2]+1])||
+                xVelocity>0&&(CubeContainer.chunks[XChunkNumRight+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposRight][newYpos][(int)(cubeIn[2]+height/Cube.defaultSize+.5)]);
+        boolean cubeLeft=xVelocity<0&&(CubeContainer.chunks[XChunkNumLeft+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposLeft][newYpos][cubeIn[2]])||
+                xVelocity<0&&(CubeContainer.chunks[XChunkNumLeft+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposLeft][newYpos][cubeIn[2]+1])||
+                xVelocity<0&&(CubeContainer.chunks[XChunkNumLeft+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposLeft][newYpos][(int)(cubeIn[2]+height/Cube.defaultSize+.5)]);
+
+        int beforeCount=yPosCount-3;
+        if(beforeCount<0)beforeCount+=10;
+        double deltaYPos=yPosHistoric[yPosCount]-yPosHistoric[beforeCount];
+/*
+        if(xVelocity>0){
+            detectionCollision(4);
+        }
+        if(xVelocity<0){
+            detectionCollision(3);
+        }
+        if(yVelocity>0){
+            detectionCollision(6);
+        }
+        if(yVelocity<0){
+            detectionCollision(5);
+        }
+
+ */
+
+
+        if(collisions[5]&&yVelocity<0&&cubeFront){
+            yPosition-=yVelocity*deltaTime;
+        }
+        if(collisions[6]&&yVelocity>0&&cubeBack){
+            yPosition-=yVelocity*deltaTime;
+        }
+        if(collisions[3]&&xVelocity<0&&cubeLeft){
+            xPosition-=xVelocity*deltaTime;
+        }
+        if(collisions[4]&&xVelocity>0&&cubeRight){
+            xPosition-=xVelocity*deltaTime;
+        }
+
+
+        if(collisions[3]&&xVelocity<0){
+            xPosition-=xVelocity*deltaTime;
+        }
+        if(collisions[4]&&xVelocity>0){
+           xPosition-=xVelocity*deltaTime;
+        }
+        if(collisions[5]&&yVelocity<0){
+            yPosition-=yVelocity*deltaTime;
+        }
+        if(collisions[6]&&yVelocity>0){
+          yPosition-=yVelocity*deltaTime;
+        }
+
+
+
+
+        yPosHistoric[yPosCount]=yPosition;
+        yPosCount++;
+        if(yPosCount>=10){
+            yPosCount=0;
+        }
+
+
+    }
     public void detectionCollisionWithEnemy(double deltaTime){
         pushCount+=deltaTime;
         if(pushCount>=pushTime){
@@ -591,7 +767,7 @@ public class Player {
        if(zPosition<0)zPosAbove=(int)(zPosition+height/Cube.defaultSize-1);
        double forOtherSensitivity=0.02;
 
-       
+
        int xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2);
        if(xPosition<0)xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2-1);
 
@@ -662,7 +838,7 @@ public class Player {
                cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPosForOther][zPosAbove];
 
 
-    if(num==3 ||num==0)
+        if(num==3 ||num==0)
         collision[3]= cubesPosChunkInside[numCubX+xLeftPos][numCubY+yFrontPosForOther][zPosUnderForOther]||
                 cubesPosChunkInside[numCubX+xLeftPos][numCubY+yBackPosForOther][zPosUnderForOther]||
                 cubesPosChunkInside[numCubX+xLeftPos][numCubY+yFrontPosForOther][zPosMiddleForOther]||
@@ -701,7 +877,6 @@ public class Player {
       // System.out.println( collision[3]);
       // System.out.println(collision[5]+" "+xRightPosForOther+" "+xPosition);
 
-
        if(collision[1]&&zPosUnder+1-zPosition<sensitivity&&(isMovingDown||zVelocity<0)){
            zPosition=zPosUnder+1;
            zVelocity=0;
@@ -710,18 +885,40 @@ public class Player {
            zPosition=zPosAbove-height/Cube.defaultSize;
            zVelocity=0;
        }
+
        if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity&&xVelocity<0){
-           xPosition=xLeftPos+1-(1-width/Cube.defaultSize)/2;
+            double old=xPosition;
+              xPosition=xLeftPos+1-(1-width/Cube.defaultSize)/2;
+              if(getCubeIn()&&Math.abs(old-xPosition)>.2){
+                  xPosition=old;
+              }
+
        }
        if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity&&xVelocity>0){
-         xPosition=xRightPos-1+(1-width/Cube.defaultSize)/2;
+           double old=xPosition;
+           xPosition=xRightPos-1+(1-width/Cube.defaultSize)/2;
+           if(getCubeIn()&&Math.abs(old-xPosition)>.2){
+               xPosition=old;
+
+           }
+
        }
        if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity&&yVelocity<0){
+           double old=yPosition;
            yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
+           if(getCubeIn()&&Math.abs(old-yPosition)>.2){
+               yPosition=old;
+
+           }
        }
        if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&yVelocity>0) {
+           double old=yPosition;
            yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
+           if(getCubeIn()&&Math.abs(old-yPosition)>.2){
+               yPosition=old;
+           }
        }
+
 
 
 

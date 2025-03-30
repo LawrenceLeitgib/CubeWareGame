@@ -12,6 +12,8 @@ public class CubeContainer {
 
     static boolean[] bigZLayer=new boolean[Chunk.numOfCubeZ];
     int[] newChunkIn={0,0};
+    int[] newCubeIn={0,0};
+
 
     static Color[][] colorsList=new  Color[7][2];
     CubeContainer(double depthRatio){
@@ -19,7 +21,7 @@ public class CubeContainer {
         CubeContainer.depthRatio=depthRatio;
         CreateNewChunks();
         //CreateNewGround();
-       // CreateNewStructure();
+        //CreateNewStructure();
         drawSpawn();
         newChunkIn[0] = Player.chunkIn[0];
         newChunkIn[1] = Player.chunkIn[1];
@@ -298,6 +300,7 @@ public class CubeContainer {
         }
     }
     public void drawSpawn(){
+
         fillCircle2(0,0,2,GameGrid.regenZone,2);
         drawCircle3(0,0,2,GameGrid.safeZone,1);
         drawCircle3(0,0,3,GameGrid.safeZone,1);
@@ -305,6 +308,40 @@ public class CubeContainer {
         drawPortal(-19,0,2,0);
         drawPortal(0,19,2,1);
         drawPortal(0,-19,2,1);
+
+
+
+        /*
+        int a=0;
+        for(var i=0;i<=21;i++){
+            if(a>6)a=0;
+            for(var j=i;j<=21-i;j++){
+                newCube(i,j,2,a);
+                newCube(j,i,2,a);
+            }
+            for(var j=i;j<=21-i;j++){
+                newCube(21-i,21-j,2,a);
+                newCube(21-j,21-i,2,a);
+            }
+            a++;
+        }
+
+         */
+
+
+
+        /*
+        drawBasicStructure(-7,-40,2,15,15,2);
+
+        drawBasicStructure(-15,-30,2,3,3,1);
+
+        drawBasicStructure(-20,-30,2,3,7,1);
+
+        drawBasicStructure(-30,-30,2,7,3,1);
+
+
+         */
+
 
 
 
@@ -455,7 +492,7 @@ public class CubeContainer {
             drawMountain(x*Chunk.numOfCubeX+numX,y*Chunk.numOfCubeY+numY,2,rNum,stepNum);
     }
     private static void generateChunk(int x, int y) {
-          int numX= (int) (Math.random()*16);
+        int numX= (int) (Math.random()*16);
         int numY= (int) (Math.random()*16);
         int heightNum=(int) (Math.random()*3);
 
@@ -468,7 +505,7 @@ public class CubeContainer {
         if((newChunkIn[0]!=Player.chunkIn[0])||(newChunkIn[1]!=Player.chunkIn[1])){
             CreateNewChunks();
             CreateNewGround();
-            //CreateNewStructure();
+            CreateNewStructure();
         }
         newChunkIn[0] = Player.chunkIn[0];
         newChunkIn[1] = Player.chunkIn[1];
@@ -543,6 +580,7 @@ public class CubeContainer {
 
 
     }
+
     public void drawAll2(Graphics g,int xNum,int yNum,int kNum,int jNum,int i){
         int xPosForCube=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum;
         int yPosForCube=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum;
@@ -649,7 +687,6 @@ public class CubeContainer {
         g.setColor(new Color(14, 172, 204));
         g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-
         int[] yInfo;
         int[] xInfo;
 
@@ -657,23 +694,30 @@ public class CubeContainer {
         for(var i=0;i<Chunk.numOfCubeZ;i++){
             if(!bigZLayer[i]&&!(Player.cubeIn[2]==i)&&!(Player.cubeIn[2]+1==i)&&!(Player.cubeIn[2]+2==i))continue;
             if(!checkToSkip2(i))continue;
+            int num=Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);
+
+
+
+
+
+
             if(GameGrid.angleForXRotation<Math.PI/4){
-            for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
-                yInfo= YAndXPositionToChunkPos(j);
+                for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
+                    yInfo= YAndXPositionToChunkPos(j);
                     for(var k=Chunk.numOfCubeX*(Player.numOfChunkToDraw*2+1)-1;k>=0;k--){
-                    xInfo=YAndXPositionToChunkPos(k);
-                    drawAll(g, xInfo[0],yInfo[0], xInfo[1], yInfo[1],i);
+                        xInfo=YAndXPositionToChunkPos(k);
+                        drawAll(g, xInfo[0],yInfo[0], xInfo[1], yInfo[1],i);
+                    }
                 }
             }
-        }
             else if(GameGrid.angleForXRotation<Math.PI/2){
-                    for(var k=Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k>=0;k--) {
-                        xInfo=YAndXPositionToChunkPos(k);
-                        for (var j = 0; j < Chunk.numOfCubeY * (1 + Player.numOfChunkToDraw * 2); j++) {
-                            yInfo= YAndXPositionToChunkPos(j);
-                            drawAll(g, xInfo[0],yInfo[0], xInfo[1], yInfo[1],i);
-                        }
+                for(var k=Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k>=0;k--) {
+                    xInfo=YAndXPositionToChunkPos(k);
+                    for (var j = 0; j < Chunk.numOfCubeY * (1 + Player.numOfChunkToDraw * 2); j++) {
+                        yInfo= YAndXPositionToChunkPos(j);
+                        drawAll(g, xInfo[0],yInfo[0], xInfo[1], yInfo[1],i);
                     }
+                }
             }
             else if(GameGrid.angleForXRotation<3*Math.PI/4){
                 for(var k=Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k>=0;k--) {
@@ -729,6 +773,12 @@ public class CubeContainer {
                     }
                 }
             }
+
+
+
+
+
+
         }
 //                        drawAll2(g, xInfo[0],yInfo[0], xInfo[1], yInfo[1],i);
         for(var i=Chunk.numOfCubeZ-1;i>=0;i--){
