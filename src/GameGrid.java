@@ -35,7 +35,7 @@ public class GameGrid {
 
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
-        PFY=GAME_HEIGHT/3.0;
+        PFY=GAME_HEIGHT/2.0;
         PVY=GAME_HEIGHT;
     }
     public void newPlayer(){
@@ -53,7 +53,7 @@ public class GameGrid {
         g.setColor(Color.red);
         player.draw(g);
         g.setColor(Color.RED);
-        g.fillOval(GAME_WIDTH/2-4,GAME_HEIGHT/3-4,8,8);
+        g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
 
 
     }

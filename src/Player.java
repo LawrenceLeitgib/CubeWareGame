@@ -12,17 +12,18 @@ public class Player {
     int width=40;
     int height=40;
 
-    double speed=40.0;
+    double speed=50.0;
 
     double xVelocity;
     double yVelocity;
+    double zVelocity;
 
     boolean isSlowing=false;
 
-    Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double PositionZ){
+    Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=positionX;
         Player.yPosition=positionY;
-        Player.zPosition=PositionZ;
+        Player.zPosition=positionZ;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
 
@@ -30,12 +31,14 @@ public class Player {
 
     }
     public void updateData(double deltaTime){
-        if (isSlowing==true) {
-            this.xPosition += this.xVelocity/10.0;
-            this.yPosition += this.yVelocity/10.0;
+        if (isSlowing) {
+            xPosition += this.xVelocity/10.0;
+            yPosition += this.yVelocity/10.0;
+            zPosition += this.zVelocity/10.0;
         }else{
-            this.xPosition += this.xVelocity;
-            this.yPosition += this.yVelocity;
+            xPosition += this.xVelocity;
+            yPosition += this.yVelocity;
+            zPosition += this.zVelocity;
         }
 
     }
@@ -46,6 +49,10 @@ public class Player {
 
     public void setYVelocity(double yVelocity) {
         this.yVelocity = yVelocity;
+    }
+
+    public void setZVelocity(double zVelocity) {
+        this.zVelocity = zVelocity;
     }
 
     public static void setGameWidth(int gameWidth) {
@@ -67,6 +74,7 @@ public class Player {
         g.setColor(Color.red);
         g.drawString(String.valueOf(yPosition),15,90);
         g.drawString(Double.toString(xPosition),15,70);
+        g.drawString(Double.toString(zPosition),15,110);
     }
 
 
@@ -86,9 +94,18 @@ public class Player {
             case 87:
                 setYVelocity(-speed);
                 break;
+            case 89:
+                setZVelocity(-speed);
+                break;
+
+            case 88:
+                setZVelocity(speed);
+                break;
+
             case 16:
                 isSlowing=true;
                 break;
+
 
         }
 
@@ -113,6 +130,15 @@ public class Player {
             case 87:
                 if(yVelocity<0)
                 setYVelocity(0);
+                break;
+            case 89:
+                if(zVelocity<0)
+                    setZVelocity(0);
+                break;
+
+            case 88:
+                if(zVelocity>0)
+                    setZVelocity(0);
                 break;
             case 16:
                 isSlowing=false;
