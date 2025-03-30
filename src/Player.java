@@ -11,8 +11,8 @@ public class Player {
     static double height=1.8;
     static double depth=.8;
     static double[][] corners=new double[12][2];
-    double speed=4.2*4;
-    double runningMultiplier=1.8*2;
+    double speed=4.2;
+    double runningMultiplier=1.8;
     static double xVelocity;
     static double yVelocity;
     double zVelocity;
@@ -30,16 +30,12 @@ public class Player {
     static int[] chunkIn=new int[2];
     static boolean thirdPerspective=true;
     static int[] cubeIn=new int[3];
-    int yPosCount=0;
+    private int yPosCount=0;
     double[] yPosHistoric=new double[10];
-    boolean spaceHasBeenClick;
-    double flyingCount=0;
-    double flyingTime=.2;
-    boolean spaceHasBeenReleased;
     static double distanceFromMiddle;
     static double jumpSpeed=15;
-    double pushCount=0;
-    double pushTime=.1;
+    private double pushCount=0;
+    private double pushTime=.1;
     SpecialMoveHandler SMH;
     Player(double positionX, double positionY, double positionZ){
         Player.xPosition=positionX;
@@ -58,7 +54,6 @@ public class Player {
         detectionCollisionWithEnemy(deltaTime);
         setCubeAndChunkIn();
         detectionCollision(0);
-        flySwitchHandler(deltaTime);
         xPosition=  (int)((xPosition)*1000)/1000.0;
         yPosition=  (int)((yPosition)*1000)/1000.0;
         zPosition=  (int)((zPosition)*1000)/1000.0;
@@ -256,27 +251,13 @@ public class Player {
         yPosition+=yVelocity*deltaTime;
 
     }
-    private void flySwitchHandler(double deltaTime){
-        if(flyingCount>0){
-            flyingCount+=deltaTime;
-            if(spaceHasBeenClick){
-                toggleFly();
-                spaceHasBeenClick=false;
-            }
-        }
-        if(spaceHasBeenClick){
-            flyingCount+=deltaTime;
-            spaceHasBeenClick=false;
-        }
-        if(flyingCount>flyingTime){
-            flyingCount=0;
-        }
-    }
+
     private void detectionCollisionWithContext(){
 
         int newXpos=cubeIn[0];
         int newYposFront=cubeIn[1]-1;
         int newYposBack=cubeIn[1] +1;
+
         int xChunkNum=0;
         int yChunkNumFront=0;
         int yChunkNumBack=0;
@@ -286,6 +267,10 @@ public class Player {
         int  YChunkNum=0;
         int XChunkNumLeft=0;
         int XChunkNumRight=0;
+
+
+
+
         while(newXpos<0){
             newXpos+=Chunk.numOfCubeX;
             xChunkNum-=1;
@@ -463,25 +448,25 @@ public class Player {
         pushCount+=deltaTime;
         if(pushCount>=pushTime){
             for(int i = 0; i< EntityContainer.entities.size(); i++){
-                if(zPosition< EntityContainer.entities.get(i).getzPosition()+ EntityContainer.entities.get(i).getHeight()&&zPosition+height> EntityContainer.entities.get(i).getzPosition())
-                    if(Math.sqrt(Math.pow(EntityContainer.entities.get(i).getxPosition()-xPosition,2)+Math.pow(EntityContainer.entities.get(i).getyPosition()-yPosition,2))<(EntityContainer.entities.get(i).getWidth()/2+width/2)){
-                        xPosition-=Math.cos(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
-                        xVelocity=-Math.cos(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
-                        yPosition-=Math.sin(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
-                        yVelocity=-Math.sin(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
+                Entity entity=EntityContainer.entities.get(i);
+                if(zPosition<entity.getzPosition()+ entity.getHeight()&&zPosition+height> entity.getzPosition()) {
+                    if (Math.sqrt(Math.pow(entity.getxPosition() - xPosition, 2) + Math.pow(entity.getyPosition() - yPosition, 2)) < (entity.getWidth() / 2 + width / 2)) {
+                        xPosition -= Math.cos(entity.angleWithPlayer) * entity.getSpeed() * 20 * deltaTime;
+                        xVelocity = -Math.cos(entity.angleWithPlayer) * entity.getSpeed() * 20 * deltaTime;
+                        yPosition -= Math.sin(entity.angleWithPlayer) * entity.getSpeed() * 20 * deltaTime;
+                        yVelocity = -Math.sin(entity.angleWithPlayer) * entity.getSpeed() * 20 * deltaTime;
                         detectionCollision(3);
                         detectionCollision(4);
                         detectionCollision(5);
                         detectionCollision(6);
-                        Stats.health-= EntityContainer.entities.get(i).strength;
+                        Stats.health -= EntityContainer.entities.get(i).strength;
                         pushCount = 0;
                     }
+                }
             }
         }
-
     }
     private boolean detectionCollisionWithProjectile(double ProjectilePosX, double ProjectilePosY, double ProjectilePosZ, double ProjectileSize){
-
         if(ProjectilePosX<xPosition+(width/2) &&ProjectilePosX>xPosition-(width/2))
             if(ProjectilePosY>yPosition-(depth/2+1/2.0)&&ProjectilePosY<yPosition+(depth/2-1/2.0)){
                 if(ProjectilePosZ>zPosition&&ProjectilePosZ<zPosition+height){
@@ -748,21 +733,13 @@ public class Player {
                 break;
             case 89:
                 break;
-
             case 88:
-
                 break;
             case 70:
-                //flySwitch();
-                //FireBall.speed=20;
                 break;
             case 32:
                 if(!isFlying)isJumping=true;
                 if(isFlying)isMovingUp=true;
-                if(spaceHasBeenReleased){
-                    spaceHasBeenClick=true;
-                    spaceHasBeenReleased=false;
-                }
                 break;
 
             case 16:
@@ -796,7 +773,6 @@ public class Player {
                     isMovingLeft=false;
                 }
                 break;
-
             case 68:
                 if(thirdPerspective)GameGrid.isRotatingRight=false;
                 else{
@@ -819,7 +795,6 @@ public class Player {
             case 32:
                 if(!isFlying)isJumping=false;
                 if(isFlying)isMovingUp=false;
-                spaceHasBeenReleased=true;
 
                 break;
             case 16:
@@ -842,6 +817,7 @@ public class Player {
         }
     }
     public void togglePerspective(){
+        System.out.println(Chunk.numberOfCube);
         if(GamePanel.gameState==GamePanel.GameStates.get("Running")){
             if(thirdPerspective){
                 thirdPerspective=false;
@@ -853,7 +829,8 @@ public class Player {
                 GameGrid.isRotatingRight=false;
                 cubeAway=-5;
 
-            }else{
+            }
+            else{
                 GameGrid.PFY= GameGrid.GAME_HEIGHT/3.0;
                 GameGrid.PVY= GameGrid.GAME_HEIGHT;
                 GameGrid.depthRatio= GameGrid.GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
@@ -864,13 +841,8 @@ public class Player {
             }
         }
     }
-    private void toggleFly() {
-        if(isFlying){
-            isFlying=false;
-        }
-        else{
-            isFlying=true;
-        }
+    public void toggleFly() {
+        isFlying= !isFlying;
         isJumping=false;
         isMovingUp=false;
         isMovingDown=false;

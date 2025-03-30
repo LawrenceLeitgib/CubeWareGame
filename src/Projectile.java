@@ -1,6 +1,6 @@
 import java.awt.*;
 
-public class Projectile {
+abstract class Projectile {
     private final double size;
     private final boolean isFriendly;
     private final double xPositionIni;
@@ -100,16 +100,13 @@ public class Projectile {
         int[] yInfo=CubeContainer.YAndXPositionToChunkPos(cubeIn[1]);
         if(CubeContainer.chunksPosition[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX]&&cubeIn[2]>=0&&cubeIn[2]<200){
             if(CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubePositions[xInfo[1]][yInfo[1]][cubeIn[2]]){
-                CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubes[xInfo[1]][yInfo[1]][cubeIn[2]]=null;
-                CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubePositions[xInfo[1]][yInfo[1]][cubeIn[2]]=false;
+                CubeContainer.removeCube(cubeIn[0],cubeIn[1],cubeIn[2]);
                 return true;
             }
         }
-
         return false;
     }
     public void draw(Graphics g){
-
 
     }
     double[] getScreenPosAndSize(){

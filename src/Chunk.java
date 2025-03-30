@@ -1,5 +1,6 @@
 public class Chunk {
     static final byte numOfCubeX = 16;
+    static int numberOfCube;
     static final byte numOfCubeY = 16;
     static final short numOfCubeZ = 200;
     final Cube[][][] cubes = new Cube[numOfCubeX][numOfCubeY][numOfCubeZ];
@@ -12,7 +13,8 @@ public class Chunk {
         cubes[x][y][z] = new Cube();
         cubePositions[x][y][z] = true;
         zLayer[z]=true;
-        CubeContainer.bigZLayer[z]=true;
+        GameGrid.bigZLayer[z]=true;
+        numberOfCube++;
     }
     private void createCubes() {
         for (var i = 0; i < numOfCubeX; i++) {

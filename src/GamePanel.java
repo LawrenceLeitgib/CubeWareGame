@@ -15,7 +15,7 @@ public class GamePanel extends JPanel implements Runnable {
     static Image image;
     Graphics graphics;
     Stats stats;
-    GameGrid gameGrid;
+    private GameGrid gameGrid;
     static double xPos;
     static double yPos;
     static double FPS;
@@ -24,6 +24,8 @@ public class GamePanel extends JPanel implements Runnable {
     Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
     static Dictionary<String, Integer> GameStates = new Hashtable<>();
     static int gameState;
+
+    InputHandler inputHandler;
     static Rectangle[] rectForDraw=new Rectangle[100];
     GamePanel() {
         this.setFocusable(true); //read key strock
@@ -37,6 +39,8 @@ public class GamePanel extends JPanel implements Runnable {
         }
         newGameGrid();
         stats=new Stats();
+        inputHandler=new InputHandler(gameGrid);
+
         gameThread=new Thread(this);
         gameThread.start();
         GameStates.put("Menu",0);
@@ -157,8 +161,6 @@ public class GamePanel extends JPanel implements Runnable {
         }if(!Player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running"))this.setCursor(blankCursor);
         else{this.setCursor(Cursor.getDefaultCursor());}
 
-
-
         if(gameState==GameStates.get("Menu")){
             if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
                 if(GameGrid.mouseLeftClickDown)gameState=GameStates.get("Running");
@@ -186,9 +188,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         gameGrid.updateData(deltaTime);
         stats.updateData(deltaTime);
-
-
-
+        inputHandler.update(deltaTime);
 
     }
     @Override
@@ -198,6 +198,9 @@ public class GamePanel extends JPanel implements Runnable {
         double ns=1000000000/amountOfTicks;
         double delta;
         double accumulator=0;
+
+
+
         while (true) {
             long now = System.nanoTime();
             delta = (now - lastTime) / ns;
@@ -241,10 +244,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public class AL extends KeyAdapter{
         public void keyPressed(KeyEvent e){
-            //System.out.println(e.getKeyCode()+" = "+e.getKeyChar());
-            gameGrid.player.keyPressed(e);
-            gameGrid.player.SMH.keyPressed(e);
-            gameGrid.keyPressed(e);
+            inputHandler.keyPressed(e);
             if(e.getKeyCode()==27){
                 togglePause();
             }
@@ -255,9 +255,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
         public void keyReleased(KeyEvent e){
-            gameGrid.player.keyReleased(e);
-            gameGrid.player.SMH.keyReleased(e);
-            gameGrid.keyReleased(e);
+            inputHandler.keyReleased(e);
 
         }
     }
@@ -265,44 +263,29 @@ public class GamePanel extends JPanel implements Runnable {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-
         }
-
         @Override
         public void mousePressed(MouseEvent e) {
-           // System.out.println(e.getX());
-           // System.out.println("test");
-           // System.out.println(e.getButton());
-
-            gameGrid.mousePressed(e);
-
+            inputHandler.mousePressed(e);
         }
-
         @Override
         public void mouseReleased(MouseEvent e) {
-            gameGrid.mouseReleased(e);
-
+            inputHandler.mouseReleased(e);
         }
-
         @Override
         public void mouseEntered(MouseEvent e) {
-
         }
-
         @Override
         public void mouseExited(MouseEvent e) {
 
         }
-
         @Override
         public void mouseDragged(MouseEvent e) {
-            gameGrid.mouseDragged(e);
-
+            inputHandler.mouseDragged(e);
         }
-
         @Override
         public void mouseMoved(MouseEvent e) {
-            gameGrid.mouseMoved(e);
+            inputHandler.mouseMoved(e);
         }
     }
 }

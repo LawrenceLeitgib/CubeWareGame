@@ -321,5 +321,31 @@ public abstract class TrashyMethod extends CubeContainer {
             g.drawLine(listX[i],listY[i],listX[xNum],listY[xNum]);
         }
 
+
+    }
+    public void drawSpawn2(){
+
+
+        /*
+        int a=0;
+        for(var i=0;i<=21;i++){
+            if(a>6)a=0;
+            for(var j=i;j<=21-i;j++){
+                newCube(i,j,2,a);
+                newCube(j,i,2,a);
+            }
+            for(var j=i;j<=21-i;j++){
+                newCube(21-i,21-j,2,a);
+                newCube(21-j,21-i,2,a);
+            }
+            a++;
+        }
+         */
+        /*
+        drawBasicStructure(-7,-40,2,15,15,2);
+        drawBasicStructure(-15,-30,2,3,3,1);
+        drawBasicStructure(-20,-30,2,3,7,1);
+        drawBasicStructure(-30,-30,2,7,3,1);
+         */
     }
 }

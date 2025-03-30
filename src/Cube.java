@@ -11,7 +11,7 @@ public class Cube {
         return type;
     }
     void draw(Graphics g,int x,int y,int z){
-        if(Math.sqrt(Math.pow(y-Player.yPosition,2)+Math.pow(x-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(y-Player.yPosition,2)+Math.pow(x-Player.xPosition,2))>(2*GameGrid.numOfChunkToDraw+1)*Chunk.numOfCubeX/2.0)return;
         boolean[] sidesCheck=CheckToDraw(x,y,z);
         if(!sidesCheck[6]){
             return;
@@ -20,7 +20,6 @@ public class Cube {
         if(corners[8][0]>8)return;
         int xCountForCorners=0;
         int yCountForCorners=0;
-
         for(int i=0;i<8;i++){
             if(corners[i][0]<0||corners[i][0]>GameGrid.GAME_WIDTH)xCountForCorners++;
             if(corners[i][1]<0||corners[i][1]>GameGrid.GAME_HEIGHT)yCountForCorners++;

@@ -1,5 +1,5 @@
 import java.awt.*;
-public class Entity {
+abstract class Entity {
     private boolean marketForDeletion;
     private double xPosition;
     private double yPosition;
@@ -35,7 +35,6 @@ public class Entity {
             zPosition++;
         }
     }
-
     public double getxPosition() {
         return xPosition;
     }
@@ -281,7 +280,6 @@ public class Entity {
     private boolean[] detectionCollisionWithBlocks(int num){
         boolean[] collision=new boolean[11];
 
-
         int zPosUnder=(int)(zPosition);
         if(zPosition<0)zPosUnder=(int)(zPosition-1);
         int zPosAbove=(int)(zPosition+height);
@@ -349,16 +347,13 @@ public class Entity {
         int xRightPosForOtherChunk=xRightPosForOtherInfo[0];
         int newXRightPosForOther=xRightPosForOtherInfo[1];
 
-
         int[] xRightPosInfo=CubeContainer.YAndXPositionToChunkPos(xRightPos);
         int xRightPosChunk=xRightPosInfo[0];
         int newXRightPos=xRightPosInfo[1];
 
-
         int[] yFrontPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(yFrontPosForOther);
         int yFrontPosForOtherChunk=yFrontPosForOtherInfo[0];
         int newYFrontPosForOther=yFrontPosForOtherInfo[1];
-
 
         int[] yFrontPosInfo=CubeContainer.YAndXPositionToChunkPos(yFrontPos);
         int yFrontPosChunk=yFrontPosInfo[0];
@@ -465,17 +460,12 @@ public class Entity {
         if(collision[6]&&yPosition-(yBackPos-1+(1-depth)/2)<sensitivity&&yVelocity>0) {
             yPosition=yBackPos-1+(1-depth)/2;
         }
-
-
-
         for(var i=1;i<7;i++){
             if (collision[i]) {
                 collision[0] = true;
                 break;
             }
         }
-
-
         return collision;
     }
     private boolean detectionCollisionWithProjectile(double ProjectilePosX, double ProjectilePosY, double ProjectilePosZ, double ProjectileSize){

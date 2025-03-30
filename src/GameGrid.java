@@ -15,6 +15,7 @@ public class GameGrid {
     static double PVY;
     static int numOfChunkToDraw=3;
     static int defaultSize=100;
+    static boolean[] bigZLayer=new boolean[Chunk.numOfCubeZ];
     CubeContainer cubeContainer;
     static double depthRatio=1;
     static double angleForXRotation=0.0;
@@ -39,7 +40,6 @@ public class GameGrid {
         fireBallContainer = new ProjectileContainer();
         entityContainer = new EntityContainer();
     }
-
     public static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
         PFX=GAME_WIDTH/2.0;
@@ -58,10 +58,8 @@ public class GameGrid {
         double[] delta=new double[2];
         Robot robot = new Robot();
         delta[0]=x-mousePositionX-1;
-
         delta[1]=y-mousePositionY-1;
         robot.mouseMove((int) (GamePanel.xPos+x-1), (int) (GamePanel.yPos+y-1));
-
         return delta;
     }
     public void updateData(double deltaTime){
@@ -96,10 +94,160 @@ public class GameGrid {
         fireBallContainer.updateData(deltaTime);
         cubeContainer.updateData(deltaTime);
     }
+
+    public void bigZLayerHandler(){
+        for(var k=0;k<Chunk.numOfCubeZ;k++){
+            GameGrid.bigZLayer[k]=false;
+        }
+        for(var k=0;k<Chunk.numOfCubeZ;k++){
+            if(ProjectileContainer.zLayers[k]|| EntityContainer.zLayers[k]){
+                GameGrid.bigZLayer[k]=true;
+            }
+        }
+        for(int i = Player.chunkIn[0]- GameGrid.numOfChunkToDraw; i<=Player.chunkIn[0]+ GameGrid.numOfChunkToDraw; i++){
+            for(int j = Player.chunkIn[1]- GameGrid.numOfChunkToDraw; j<=Player.chunkIn[1]+ GameGrid.numOfChunkToDraw; j++){
+                for(var k=0;k<Chunk.numOfCubeZ;k++){
+                    if(CubeContainer.chunks[i+CubeContainer.numOfChunkX][j+CubeContainer.numOfChunkY].zLayer[k]){
+                        GameGrid.bigZLayer[k]=true;
+                    }
+                }
+            }
+        }
+    }
+    public boolean checkToSkip3(int i){
+        double[] info1=Cube.getObjectScreenPos(Player.xPosition,Player.yPosition,i+1);
+        return info1[1] < GameGrid.PFY;
+    }
+    public void drawPlayer(Graphics g, int i, int xPos, int yPos){
+        if(xPos==Player.cubeIn[0]&&yPos==Player.cubeIn[1]){
+            if(Player.cubeIn[2]==i)Player.draw1(g);
+            if(Player.cubeIn[2]+1==i)Player.draw2(g);
+            if(Player.cubeIn[2]+2==i)Player.draw3(g);
+        }
+    }
+    public void drawEntities(Graphics g, int i, int xPos, int yPos){
+        int xNumForEnemy=xPos+EntityContainer.numOfEntities-Player.cubeIn[0];
+        int yNumForEnemy=yPos+EntityContainer.numOfEntities-Player.cubeIn[1];
+        if(xNumForEnemy>=0 && xNumForEnemy<EntityContainer.numOfEntities*2 && yNumForEnemy>=0 && yNumForEnemy<EntityContainer.numOfEntities*2) {
+            if (EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i] != null) {
+                for (var l = 0; l < EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i].size(); l++) {
+                    if( EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i].get(l).cubeIn[2]==i) EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i].get(l).draw1(g);
+                }
+            }
+            if (i>0&& EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1] != null) {
+                for (var l = 0; l < EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1].size(); l++) {
+                    if( EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1].get(l).cubeIn[2]+1==i) EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1].get(l).draw2(g);
+                }
+            }
+            if (i>1&& EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2] != null) {
+                for (var l = 0; l < EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2].size(); l++) {
+                    if( EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2].get(l).cubeIn[2]+2==i) EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2].get(l).draw3(g);
+                }
+            }
+        }
+    }
+    public  void drawProjectile(Graphics g, int i, int xPos, int yPos){
+        int xNumForFireBall=xPos+ ProjectileContainer.numOfProjectile -Player.cubeIn[0];
+        int yNumForFireBall=yPos+ ProjectileContainer.numOfProjectile -Player.cubeIn[1];
+        if(xNumForFireBall>=0 &&xNumForFireBall< ProjectileContainer.numOfProjectile *2&&yNumForFireBall>=0 &&yNumForFireBall< ProjectileContainer.numOfProjectile *2) {
+            if (ProjectileContainer.projectile3D[xNumForFireBall][yNumForFireBall][i] != null) {
+                for (var l = 0; l < ProjectileContainer.projectile3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
+                    ProjectileContainer.projectile3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
+                }
+            }
+        }
+
+    }
+    public void drawCube(Graphics g, int i, int xPos, int yPos){
+        int[] xPosInfo=CubeContainer.YAndXPositionToChunkPos(xPos);
+        int[] yPosInfo=CubeContainer.YAndXPositionToChunkPos(yPos);
+        if( cubeContainer.chunks[xPosInfo[0]+CubeContainer.numOfChunkX][yPosInfo[0]+CubeContainer.numOfChunkY].cubePositions[xPosInfo[1]][yPosInfo[1]][i]){
+            cubeContainer.chunks[xPosInfo[0]+CubeContainer.numOfChunkX][yPosInfo[0]+CubeContainer.numOfChunkY].cubes[xPosInfo[1]][yPosInfo[1]][i].draw(g,xPos,yPos,i);
+        }
+    }
+    public void drawAll(Graphics g, int i, int x, int y){
+        int xPos=Player.cubeIn[0]+x- GameGrid.numOfChunkToDraw*Chunk.numOfCubeX-Chunk.numOfCubeX/2;
+        int yPos=Player.cubeIn[1]+y- GameGrid.numOfChunkToDraw*Chunk.numOfCubeY-Chunk.numOfCubeY/2;
+
+        drawCube(g,i,xPos,yPos);
+        drawPlayer(g,i,xPos,yPos);
+        drawEntities(g,i,xPos,yPos);
+        drawProjectile(g,i,xPos,yPos);
+    }
+    public void drawLayer(Graphics g,int i){
+        if(GameGrid.angleForXRotation<Math.PI/4){
+            for(var j = 0; j<Chunk.numOfCubeY*(1+ GameGrid.numOfChunkToDraw*2); j++){
+                for(var k = Chunk.numOfCubeX*(GameGrid.numOfChunkToDraw*2+1)-1; k>=0; k--){
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+        else if(GameGrid.angleForXRotation<Math.PI/2){
+            for(var k = Chunk.numOfCubeX*(1+ GameGrid.numOfChunkToDraw*2); k>=0; k--) {
+                for (var j = 0; j < Chunk.numOfCubeY * (1 + GameGrid.numOfChunkToDraw * 2); j++) {
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+        else if(GameGrid.angleForXRotation<3*Math.PI/4){
+            for(var k = Chunk.numOfCubeX*(1+ GameGrid.numOfChunkToDraw*2); k>=0; k--) {
+                for (var j = Chunk.numOfCubeY * (1 + GameGrid.numOfChunkToDraw * 2)-1; j >=0; j--) {
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+        else if(GameGrid.angleForXRotation<Math.PI){
+            for(var j = Chunk.numOfCubeY*(1+ GameGrid.numOfChunkToDraw*2)-1; j>=0; j--){
+                for(var k = Chunk.numOfCubeX*(1+ GameGrid.numOfChunkToDraw*2)-1; k>=0; k--){
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+        else if(GameGrid.angleForXRotation<5*Math.PI/4){
+            for(var j = Chunk.numOfCubeY*(1+ GameGrid.numOfChunkToDraw*2)-1; j>=0; j--){
+                for(var k = 0; k<Chunk.numOfCubeX*(1+ GameGrid.numOfChunkToDraw*2); k++){
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+        else if(GameGrid.angleForXRotation<3*Math.PI/2){
+            for(var k = 0; k<Chunk.numOfCubeX*(1+ GameGrid.numOfChunkToDraw*2); k++) {
+                for (var j = Chunk.numOfCubeY * (1 + GameGrid.numOfChunkToDraw * 2)-1; j >=0; j--) {
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+        else if(GameGrid.angleForXRotation<7*Math.PI/4){
+            for(var k = 0; k<Chunk.numOfCubeX*(1+ GameGrid.numOfChunkToDraw*2); k++) {
+                for (var j = 0; j <Chunk.numOfCubeY * (1 + GameGrid.numOfChunkToDraw * 2); j++) {
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+        else if(GameGrid.angleForXRotation<2*Math.PI){
+            for(var j = 0; j<Chunk.numOfCubeY*(1+ GameGrid.numOfChunkToDraw*2); j++){
+                for(var k = 0; k<Chunk.numOfCubeX*(1+ GameGrid.numOfChunkToDraw*2); k++){
+                    drawAll(g, i,k,j);
+                }
+            }
+        }
+    }
     public void draw(Graphics g){
         fireBallContainer.draw(g);
         entityContainer.draw(g);
-        cubeContainer.draw(g);
+        bigZLayerHandler();
+        g.setColor(new Color(14, 172, 204));
+        g.fillRect(0, 0, GameGrid.GAME_WIDTH, GameGrid.GAME_HEIGHT);
+        for(var i=0;i<Chunk.numOfCubeZ;i++){
+            if(!bigZLayer[i]&&!(Player.cubeIn[2]==i)&&!(Player.cubeIn[2]+1==i)&&!(Player.cubeIn[2]+2==i))continue;
+            if(checkToSkip3(i))continue;
+            drawLayer(g,i);
+        }
+        for(var i=Chunk.numOfCubeZ-1;i>=0;i--){
+            if(!bigZLayer[i]&&!(Player.cubeIn[2]==i)&&!(Player.cubeIn[2]+1==i)&&!(Player.cubeIn[2]+2==i))continue;
+            if(!checkToSkip3(i))continue;
+            drawLayer(g,i);
+        }
         g.setColor(Color.RED);
         g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
         if(!Player.thirdPerspective)g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
@@ -196,14 +344,12 @@ public class GameGrid {
     public void mousePressed(MouseEvent e) {
         if(e.getButton()==1)
             GameGrid.mouseLeftClickDown =true;
-
         if(e.getButton()==3)GameGrid.mouseRightClickDown =true;
 
     }
     public void mouseReleased(MouseEvent e) {
         if(e.getButton()==1)
             GameGrid.mouseLeftClickDown =false;
-
         if(e.getButton()==3)GameGrid.mouseRightClickDown =false;
     }
     public void mouseDragged(MouseEvent e) {
@@ -222,8 +368,6 @@ public class GameGrid {
 
     }
     public void mouseMoved(MouseEvent e) {
-
-
         if(!Player.thirdPerspective &&GamePanel.gameState==GamePanel.GameStates.get("Running")){
             try {
                 double[] delta =moveMouse((int) PFX, (int) PFY);
