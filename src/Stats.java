@@ -82,10 +82,10 @@ public class Stats {
 
 
     public void updateData(double deltaTime){
-        mana+=deltaTime;
+        mana+=deltaTime*1000;
         if(Player.distanceFromMiddle<GameGrid.regenZone){
-            mana+=deltaTime*4;
-            health+=4*deltaTime;
+            mana+=deltaTime*(maxMana);
+            health+=deltaTime*(maxHealth);
         }
         if(mana>=maxMana)mana=maxMana;
         if(health>=maxHealth)health=maxHealth;

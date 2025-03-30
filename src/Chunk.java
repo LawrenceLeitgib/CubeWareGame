@@ -50,7 +50,7 @@ public class Chunk {
     }
 
     public void newCube(int x, int y, int z) {
-        cubes[x][y][z] = new Cube(x + xPosition * numOfCubeX, y + yPosition * numOfCubeY, z, GameGrid.depthRatio, this);
+        cubes[x][y][z] = new Cube(x + xPosition * numOfCubeX, y + yPosition * numOfCubeY, z, this);
         cubePositions[x][y][z] = true;
         zLayer[z]=true;
     }

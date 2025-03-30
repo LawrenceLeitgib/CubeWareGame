@@ -21,17 +21,17 @@ public class EnemiesContainer {
         if(Math.sqrt(Math.pow(Math.cos(a) * r + Player.xPosition,2)+Math.pow(Math.sin(a) * r + Player.yPosition,2))>GameGrid.safeZone) {
             enemies.add(new Enemy(Math.cos(a) * r + Player.xPosition, Math.sin(a) * r + Player.yPosition, 2));
         }
-
+       // enemies.add(new Enemy(10, 70, 2));
 
     }
     public void updateData(double deltaTime) {
 
-        EnemyCreationSpawnTime=0.002*Math.pow(Player.distanceFromMiddle -150,2)+2;
+        EnemyCreationSpawnTime=0.0005*Math.pow(Player.distanceFromMiddle -150,2)+2;
 
 
 
         if(Player.distanceFromMiddle>GameGrid.safeZone) {
-            EnemyCreationCount += deltaTime*1000;
+            EnemyCreationCount += deltaTime*0;
             if (EnemyCreationCount >= EnemyCreationSpawnTime) {
                 createEnemy();
                 EnemyCreationCount -= EnemyCreationSpawnTime;

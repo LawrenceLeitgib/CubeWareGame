@@ -135,6 +135,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameGrid.draw(g);
         stats.draw(g);
         if(gameState==GameStates.get("Menu")){
+            Player.draw(g);
             g.setColor(new Color(84, 84, 84,200));
             g.fillRect(0,0,GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
             drawRectWithContext(g,rectForDraw[0],new Color(168, 113, 10),Color.yellow,4);
@@ -207,12 +208,12 @@ public class GamePanel extends JPanel implements Runnable {
             delta=(now-lastTime)/ns;
             lastTime=System.nanoTime();
             accumulator+=delta;
-           // System.out.println(accumulator);
+            //System.out.println(accumulator);
             while (accumulator>=0){
                 //System.out.println("test");
                 updateData(1/amountOfTicks);
                 accumulator--;
-               // count++;
+                // count++;
             }
             paintImmediately(0,0,GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
             FPS=amountOfTicks/((System.nanoTime()-(now))/ns);

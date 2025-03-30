@@ -36,15 +36,14 @@ public class Cube {
     double sizeRatio;
     double[][] corners=new double[8][2];
 
-
-
     int countForDrawing=0;
 
 
 
     boolean drawCube=true;
 
-    Color color;
+    Color colorTop;
+    Color colorSide;
 
     Chunk chunk;
 
@@ -70,13 +69,15 @@ public class Cube {
 
 
 
-    Cube(int xPosition, int yPosition, int zPosition, double depthRatio,Chunk chunk,Color color,int height){
+
+
+    Cube(int xPosition, int yPosition, int zPosition,Chunk chunk,Color colorTop,Color colorSide){
         this.xPosition=xPosition;
         this.yPosition=yPosition;
         this.zPosition=zPosition;
-        Cube.depthRatio=depthRatio;
-        this.color=color;
-        this.height=height;
+        Cube.depthRatio=GameGrid.depthRatio;
+        this.colorTop=colorTop;
+        this.colorSide=colorSide;
         this.chunk=chunk;
         this.xPositionA=xPosition;
         this.yPositionA=yPosition;
@@ -85,8 +86,8 @@ public class Cube {
 
 
     }
-    Cube(int xPosition, int yPosition, int zPosition, double depthRatio, Chunk chunk){
-        this(xPosition,  yPosition, zPosition, depthRatio, chunk,new Color(7, 252, 3),defaultSize);
+    Cube(int xPosition, int yPosition, int zPosition, Chunk chunk){
+        this(xPosition,  yPosition, zPosition, chunk, new Color(5, 168, 30),new Color(95, 43, 1));
     }
 
     public static void setGameWidth(int gameWidth) {
@@ -245,7 +246,7 @@ public class Cube {
                 sizeRatio=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+GAME_HEIGHT/depthRatio;
 
             }
-            if(Math.sqrt(Math.pow(yPositionA-Player.yPosition,2)+Math.pow(yPositionA-Player.yPosition,2))>Player.numOfChunkToDraw*Chunk.numOfCubeX)return;
+            if(Math.sqrt(Math.pow(yPositionA-Player.yPosition,2)+Math.pow(yPositionA-Player.yPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
             /*
             if(yPositionA>Player.yPosition+Player.cubeAway+1)return;
             if(xPositionA>Player.xPosition+30)return;
@@ -404,64 +405,68 @@ public class Cube {
         polygonRight[1]=listDoubleToInt(new double[]{corners[1][1],corners[2][1],
                 corners[6][1],corners[5][1]});
 
+        Color colorLeft=colorSide;
+        Color colorRight=colorSide;
+        Color colorFront=colorSide;
+        Color colorBack=colorSide;
+        Color colorBottom=colorSide;
+
 
 
         g.setColor(new Color(21, 92, 5));
         if (drawCube){
-            Color color1=new Color(5, 168, 30);
-
             if(GameGrid.angleForXRotation<Math.PI/4) {
-                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
-                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
-                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight  );
+                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft  );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack );
             }
             else if(GameGrid.angleForXRotation<Math.PI/2) {
-                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
-                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
-                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack );
+                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft  );
             }
             else if(GameGrid.angleForXRotation<3*Math.PI/4) {
-                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
-                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
-                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront );
+                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft  );
             }
             else if(GameGrid.angleForXRotation<Math.PI) {
-                if (blockRightEmpty)  fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
-                if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
-                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
+                if (blockRightEmpty)  fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight  );
+                if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront );
 
             }
             else if(GameGrid.angleForXRotation<5*Math.PI/4) {
 
-                if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
-                if (blockRightEmpty)   fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
-                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
+                if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft );
+                if (blockRightEmpty)   fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight  );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront );
             }
             else if(GameGrid.angleForXRotation<3*Math.PI/2) {
-                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
-                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
-                if (blockRightEmpty)    fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack);
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront);
+                if (blockRightEmpty)    fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight  );
 
             }
             else if(GameGrid.angleForXRotation<7*Math.PI/4) {
-                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
-                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
-                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack );
+                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight  );
             }
             else if(GameGrid.angleForXRotation<2*Math.PI) {
-                if (blockLeftEmpty)fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
-                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
-                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+                if (blockLeftEmpty)fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft );
+                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight  );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack );
 
 
             }
 
             if (blockBottomEmpty&&newPosY<GameGrid.PFY) {
-                fillPolygonB(g,polygonBottom[0],polygonBottom[1] ,Color.darkGray );
+                fillPolygonB(g,polygonBottom[0],polygonBottom[1] ,colorBottom);
             }
 
             if (blockTopEmpty&&newPosY-newHeight>GameGrid.PFY) {
-                fillPolygonB(g,polygonTop[0],polygonTop[1],color1);
+                fillPolygonB(g,polygonTop[0],polygonTop[1],colorTop);
 
 
             }

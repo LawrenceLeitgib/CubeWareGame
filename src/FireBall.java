@@ -35,6 +35,10 @@ public class FireBall {
     int xChunkNum=0;
     int yChunkNum=0;
 
+    static int diSpawnDistance=50;
+
+
+
 
 
 
@@ -42,13 +46,17 @@ public class FireBall {
     FireBall(double xPos, double yPos,double zPos, double angle, double speed, int size, double damage ){
         xPosition=xPos;
         yPosition=yPos-0.5;
+
         angleOfShout=angle;
         this.speed=speed;
         this.size=size;
         this.damage=damage;
         zPosition=zPos;
-
-
+        cubeIn[0]=(int)(xPosition+0.5);
+        cubeIn[1]=(int)(yPosition+1);
+        cubeIn[2]=(int)(zPosition);
+        if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
+        if(yPosition<0)cubeIn[1]=(int)(yPosition);
     }
 
     public void updateData(double deltaTime) {
@@ -96,14 +104,14 @@ public class FireBall {
         if(CubeContainer.chunksPosition[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX]&&cubeIn[2]>=0&&cubeIn[2]<200){
         if(CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubePositions[newXpos][newYpos][cubeIn[2]]){
             marketForDeletion=true;
-            CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubePositions[newXpos][newYpos][cubeIn[2]]=false;
-            CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubes[newXpos][newYpos][cubeIn[2]]=null;
+            //CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubePositions[newXpos][newYpos][cubeIn[2]]=false;
+            //CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubes[newXpos][newYpos][cubeIn[2]]=null;
 
 
         }
         }
 
-        if(Math.sqrt(Math.pow(difPosYA,2)+Math.pow(difPosXA,2))>50)marketForDeletion=true;
+        if(Math.sqrt(Math.pow(difPosYA,2)+Math.pow(difPosXA,2))>diSpawnDistance)marketForDeletion=true;
         if(damage<=0)marketForDeletion=true;
 
 
@@ -125,6 +133,7 @@ public class FireBall {
 
 
     }
+
     public void draw(Graphics g){
         g.setColor(new Color(10,10,10,60));
         g.fillOval((int) (newPosX2), (int) (newPosY2-newSize2/2), (int) newSize2, (int) newSize2);

@@ -26,18 +26,29 @@ public class Enemy {
 
     double xVelocity=0;
     double yVelocity=0;
+
+    double zVelocity=0;
     double sizeRatio;
     double angleWithPlayer=0;
+
+    static int[] chunkIn=new int[2];
 
     double damage=1;
     Enemy(double x,double y,double z){
         xPosition=x;
         yPosition=y;
         zPosition=z;
+        while(detectionCollision(0)[0]){
+            zPosition++;
+        }
     }
+
     public void updateData(double deltaTime) {
 
-
+        Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX);
+        Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
+        if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
+        if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
 
 
         angleWithPlayer=Math.atan((Player.yPosition-yPosition)/(Player.xPosition-xPosition));
@@ -53,10 +64,52 @@ public class Enemy {
 
         }
 
+        xVelocity=-Math.cos(angleWithPlayer)*speed;
+        yVelocity=-Math.sin(angleWithPlayer)*speed;
+        zVelocity-=GameGrid.gravityAcceleration*deltaTime;
+        if(zVelocity<-90)zVelocity+=GameGrid.gravityAcceleration*deltaTime;
+        zPosition+=zVelocity*deltaTime;
+        if(zVelocity>0) detectionCollision(2);
+        if(zVelocity<0){
+            if(detectionCollision(1)[1]){
+                xPosition+=xVelocity*deltaTime;
+                yPosition+=yVelocity*deltaTime;
+                rejection(deltaTime);
+                boolean[] coli=detectionCollision(0);
+
+                if(coli[3]||coli[4]||coli[5]||coli[6]){
+                   if((coli[3]&&!coli[7])||(coli[4]&&!coli[8])||(coli[5]&&!coli[9])||(coli[6]&&!coli[10]))
+                    zVelocity=Player.jumpSpeed;
+                }
 
 
-       xPosition-=Math.cos(angleWithPlayer)*speed*deltaTime;
-         yPosition-=Math.sin(angleWithPlayer)*speed*deltaTime;
+
+            }
+        }else{
+            xPosition+=xVelocity*deltaTime;
+            yPosition+=yVelocity*deltaTime;
+            rejection(deltaTime);
+
+        }
+
+
+        if(xVelocity>0){
+            detectionCollision(4);
+        }
+        if(xVelocity<0){
+            detectionCollision(3);
+        }
+        if(yVelocity>0){
+            detectionCollision(6);
+        }
+        if(yVelocity<0){
+            detectionCollision(5);
+        }
+
+
+        detectionCollision(0);
+
+
         for(var i = 0; i< FireBallContainer.fireBalls.size(); i++){
 
                 if(detectionCollisionWithBall(FireBallContainer.fireBalls.get(i).xPosition, FireBallContainer.fireBalls.get(i).yPosition, FireBallContainer.fireBalls.get(i).zPosition, FireBallContainer.fireBalls.get(i).size)){
@@ -73,26 +126,8 @@ public class Enemy {
 
         }
 
-         /*
-         for(var i = 0; i< FireBallContainer.fireBallsList.length; i++){
-             if(FireBallContainer.fireBallsList[i]){
-                 if(detectionCollisionWithBall(FireBallContainer.fireBalls[i].xPosition, FireBallContainer.fireBalls[i].yPosition, FireBallContainer.fireBalls[i].zPosition, FireBallContainer.fireBalls[i].size)){
-                     yPosition+= FireBallContainer.fireBalls[i].yVelocity/2*deltaTime;
-                     xPosition+= FireBallContainer.fireBalls[i].xVelocity/2*deltaTime;
-                     if(HP< FireBallContainer.fireBalls[i].damage){
-                         FireBallContainer.fireBalls[i].damage-=HP;
-                         HP=0;
-                     }else{
-                         HP-= FireBallContainer.fireBalls[i].damage;
-                         FireBallContainer.fireBalls[i]=null;
-                         FireBallContainer.fireBallsList[i]=false;
-                     }
-                 }
-             }
-         }
-         */
 
-        if(Math.sqrt(Math.pow(Player.xPosition-xPosition,2)+Math.pow(Player.yPosition-yPosition,2))>40)  this.marketForDeletion=true;
+        if(Math.sqrt(Math.pow(Player.xPosition-xPosition,2)+Math.pow(Player.yPosition-yPosition,2))>GameGrid.diSpawnZone)  this.marketForDeletion=true;
         if(HP<=0){
             HP=0;
             Stats.xp+=25;
@@ -107,6 +142,8 @@ public class Enemy {
        // width=50;
        // depth=50;
         //System.out.println(width);
+
+
         double correction=0.5;
         double difPosXA=(xPosition-correction-Player.xPosition);
         double difPosYA= (yPosition+correction-Player.yPosition);
@@ -152,6 +189,304 @@ public class Enemy {
         g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
 
     }
+    public boolean[] detectionCollision(int num){
+        boolean[] collision=new boolean[11];
+        Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
+
+       // boolean[][][] cubesPosChunkInside=chunkInside.cubePositions;
+        //System.out.println(chunkInside.xPosition+" "+chunkInside.yPosition);
+        int zPosUnder=(int)(zPosition);
+        if(zPosition<0)zPosUnder=(int)(zPosition-1);
+        int zPosAbove=(int)(zPosition+height/Cube.defaultSize);
+        if(zPosition<0)zPosAbove=(int)(zPosition+height/Cube.defaultSize-1);
+
+
+        double forOtherSensitivity=0.02;
+
+
+
+
+        int xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2);
+        if(xPosition<0)xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2-1);
+
+        int xRightPos=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2+1);
+        if(xPosition<0)xRightPos=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2);
+
+        int xLeftPosForOther=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2+forOtherSensitivity);
+        if(xPosition<0.5)xLeftPosForOther=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2-1+forOtherSensitivity);
+
+        int xRightPosForOther=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2+1-forOtherSensitivity);
+        if(xPosition<-0.5)xRightPosForOther=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2-forOtherSensitivity);
+
+        int yFrontPos=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2);
+        if(yPosition<0)yFrontPos=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2-1);
+
+        int yBackPos=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2+1);
+        if(yPosition<0)yBackPos=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2);
+
+        int yFrontPosForOther=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2+forOtherSensitivity);
+        if(yPosition<0.5)yFrontPosForOther=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2-1+forOtherSensitivity);
+
+        int yBackPosForOther=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2+1-forOtherSensitivity);
+        if(yPosition<-0.5)yBackPosForOther=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2-forOtherSensitivity);
+
+        int zPosUnderForOther=(int)(zPosition+forOtherSensitivity);
+        if(zPosition<0)zPosUnderForOther=(int)(zPosition-1+forOtherSensitivity);
+
+        int zPosMiddleForOther=(int)(zPosition+1+forOtherSensitivity);
+        if(zPosition<0)zPosMiddleForOther=(int)(zPosition+1-1+forOtherSensitivity);
+
+        int zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-forOtherSensitivity);
+        if(zPosition<0)zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-1-forOtherSensitivity);
+
+
+
+
+
+
+
+
+        if(zPosUnder<0)zPosUnder=Chunk.numOfCubeZ-1;
+        if(zPosAbove<0)zPosAbove=Chunk.numOfCubeZ-1;
+
+        if(zPosUnderForOther<0)zPosUnderForOther=Chunk.numOfCubeZ-1;
+        if(zPosAboveForOther<0)zPosAboveForOther=Chunk.numOfCubeZ-1;
+        if(zPosMiddleForOther<0)zPosMiddleForOther=Chunk.numOfCubeZ-1;
+
+        if(zPosUnder>=Chunk.numOfCubeZ)zPosUnder=Chunk.numOfCubeZ-1;
+        if(zPosAbove>=Chunk.numOfCubeZ)zPosAbove=Chunk.numOfCubeZ-1;
+        if(zPosUnderForOther>=Chunk.numOfCubeZ)zPosUnderForOther=Chunk.numOfCubeZ-1;
+        if(zPosAboveForOther>=Chunk.numOfCubeZ)zPosAboveForOther=Chunk.numOfCubeZ-1;
+        if(zPosMiddleForOther>=Chunk.numOfCubeZ)zPosMiddleForOther=Chunk.numOfCubeZ-1;
+
+
+
+
+
+        int xLeftPosForOtherChunk=0;
+        int newXLeftPosForOther=xLeftPosForOther;
+        while(newXLeftPosForOther>=Chunk.numOfCubeX){
+            xLeftPosForOtherChunk+=1;
+            newXLeftPosForOther-=Chunk.numOfCubeX;
+        }
+        while(newXLeftPosForOther<0){
+            xLeftPosForOtherChunk-=1;
+            newXLeftPosForOther+=Chunk.numOfCubeX;
+        }
+        int xLeftPosChunk=0;
+        int newXLeftPos=xLeftPos;
+        while(newXLeftPos>=Chunk.numOfCubeX){
+            xLeftPosChunk+=1;
+            newXLeftPos-=Chunk.numOfCubeX;
+        }
+        while(newXLeftPos<0){
+            xLeftPosChunk-=1;
+            newXLeftPos+=Chunk.numOfCubeX;
+        }
+
+        int xRightPosForOtherChunk=0;
+        int newXRightPosForOther=xRightPosForOther;
+        while(newXRightPosForOther>=Chunk.numOfCubeX){
+            xRightPosForOtherChunk+=1;
+            newXRightPosForOther-=Chunk.numOfCubeX;
+        }
+        while(newXRightPosForOther<0){
+            xRightPosForOtherChunk-=1;
+            newXRightPosForOther+=Chunk.numOfCubeX;
+        }
+        int xRightPosChunk=0;
+        int newXRightPos=xRightPos;
+        while(newXRightPos>=Chunk.numOfCubeX){
+            xRightPosChunk+=1;
+            newXRightPos-=Chunk.numOfCubeX;
+        }
+        while(newXRightPos<0){
+            xRightPosChunk-=1;
+            newXRightPos+=Chunk.numOfCubeX;
+        }
+
+        int yFrontPosForOtherChunk=0;
+        int newYFrontPosForOther=yFrontPosForOther;
+        while(newYFrontPosForOther>=Chunk.numOfCubeY){
+            yFrontPosForOtherChunk+=1;
+            newYFrontPosForOther-=Chunk.numOfCubeY;
+        }
+        while(newYFrontPosForOther<0){
+            yFrontPosForOtherChunk-=1;
+            newYFrontPosForOther+=Chunk.numOfCubeY;
+        }
+        int yFrontPosChunk=0;
+        int newYFrontPos=yFrontPos;
+        while(newYFrontPos>=Chunk.numOfCubeY){
+            yFrontPosChunk+=1;
+            newYFrontPos-=Chunk.numOfCubeY;
+        }
+        while(newYFrontPos<0){
+            yFrontPosChunk-=1;
+            newYFrontPos+=Chunk.numOfCubeY;
+        }
+        int yBackPosForOtherChunk=0;
+        int newYBackPosForOther=yBackPosForOther;
+        while(newYBackPosForOther>=Chunk.numOfCubeY){
+            yBackPosForOtherChunk+=1;
+            newYBackPosForOther-=Chunk.numOfCubeY;
+        }
+        while(newYBackPosForOther<0){
+            yBackPosForOtherChunk-=1;
+            newYBackPosForOther+=Chunk.numOfCubeY;
+        }
+        int yBackPosChunk=0;
+        int newYBackPos=yBackPos;
+        while(newYBackPos>=Chunk.numOfCubeY){
+            yBackPosChunk+=1;
+            newYBackPos-=Chunk.numOfCubeY;
+        }
+        while(newYBackPos<0){
+            yBackPosChunk-=1;
+            newYBackPos+=Chunk.numOfCubeY;
+        }
+
+
+
+
+        if(num==1 ||num==0){
+            collision[1]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosUnder]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosUnder]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosUnder]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosUnder];
+        }
+
+        if(num==2 ||num==0)
+           collision[2]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosAbove]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosAbove]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosAbove]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosAbove];
+
+
+        if(num==3 ||num==0)
+            collision[3]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosAboveForOther];
+
+        if(num==4 ||num==0)
+            collision[4]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosAboveForOther];
+
+        if(num==5 ||num==0)
+            collision[5]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosAboveForOther];
+        if(num==6 ||num==0)
+            collision[6]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosAboveForOther];
+
+
+        if(num==7 ||num==0)
+            collision[7]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosAboveForOther];
+
+        if(num==8 ||num==0)
+            collision[8]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosAboveForOther];
+
+        if(num==9 ||num==0)
+            collision[9]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosAboveForOther];
+        if(num==10 ||num==0)
+            collision[10]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosAboveForOther];
+
+
+        double sensitivity=1;
+
+        if(collision[1]&&zPosUnder+1-zPosition<sensitivity&&(zVelocity<0)){
+            zPosition=zPosUnder+1.001;
+            zVelocity=0;
+        }
+        if(collision[2]&&zPosition-zPosAbove+height/Cube.defaultSize<sensitivity&&(zVelocity>0)){
+            zPosition=zPosAbove-height/Cube.defaultSize;
+            zVelocity=0;
+        }
+        if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity&&xVelocity<0){
+            xPosition=xLeftPos+1-(1-width/Cube.defaultSize)/2;
+        }
+        if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity&&xVelocity>0){
+            xPosition=xRightPos-1+(1-width/Cube.defaultSize)/2;
+        }
+        if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity&&yVelocity<0){
+            yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
+        }
+        if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&yVelocity>0) {
+            yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
+        }
+
+
+
+        for(var i=1;i<7;i++){
+            if (collision[i]) {
+                collision[0] = true;
+                break;
+            }
+        }
+
+
+        return collision;
+    }
+    public void rejection(double deltaTime){
+        double  distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
+        if(distanceFromMiddle<=GameGrid.safeZone) {
+            xPosition +=xPosition/distanceFromMiddle*speed*deltaTime;
+            yPosition +=yPosition/distanceFromMiddle*speed*deltaTime;
+
+            //yPosition+=Math.abs(xPosition)/distanceFromMiddle/20*Math.sin(angleWithPlayer);
+
+            //xPosition-=Math.abs(yPosition)/distanceFromMiddle/20*Math.cos(angleWithPlayer);
+
+/*
+            int count = 0;
+            distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
+            while (distanceFromMiddle > GameGrid.safeZone && count < 10) {
+                xPosition += xVelocity * deltaTime ;
+                distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
+                count++;
+                System.out.println("test1: "+count);
+            }
+            count = 0;
+            distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
+            while (distanceFromMiddle > GameGrid.safeZone && count < 10) {
+                yPosition += yVelocity * deltaTime ;
+                distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
+                count++;
+                System.out.println("test2: "+count);
+            }*/
+        }
+        if(distanceFromMiddle<=GameGrid.safeZone-2){
+            this.marketForDeletion=true;
+        }
+    }
+
     public double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight,double difPosZ,double difPosXA,double difPosYA){
         double sizeRatioValue=(GameGrid.depthRatio-GameGrid.GAME_HEIGHT)/GameGrid.depthRatio;
         double xCorrectorForRotation=0.5;
@@ -198,26 +533,11 @@ public class Enemy {
         double newPosYFrontRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFrontRight+GameGrid.PFY+difPosZ*sizeRatioFrontRight);
         double newPosXFrontRight=  (GameGrid.PVX-((Player.xPosition-xPositionAFrontRight)*Cube.defaultSize)*sizeRatioFrontRight-(Cube.defaultSize*sizeRatioFrontRight)/2);
 
-
-
-
-
-
-
-        //if(xPosition==5)System.out.println(deltaYRight);
-
-
-
-
-
-
         double [][] corners=new double[8][2];
         corners[0][1]=newPosY;
         corners[1][1]=newPosYRight;
         corners[2][1]=newPosYFrontRight;
         corners[3][1]=newPosYFront;
-
-
 
 
         corners[0][0]=newPosX;
@@ -376,7 +696,7 @@ public class Enemy {
                 }
 
             }
-        if( Math.sqrt(Math.pow(ballXPos - xPosition, 2) + Math.pow(ballYPos - yPosition, 2)) < Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Cube.defaultSize){
+        if( Math.sqrt(Math.pow(ballXPos - xPosition, 2) + Math.pow(ballYPos - yPosition, 2)) < Math.sqrt(Math.pow(width, 2) + Math.pow(depth, 2)) / Cube.defaultSize){
             return ballzPos > zPosition && ballzPos < zPosition + height / Cube.defaultSize;
         }
         return false;

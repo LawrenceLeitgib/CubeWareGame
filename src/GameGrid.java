@@ -8,11 +8,15 @@ public class GameGrid {
     static int GAME_HEIGHT;
     Player player;
     static int safeZone=20;
+
+    static int diSpawnZone=50;
     static int regenZone=6;
 
 
 
     int squareLength=40;
+    static double gravityAcceleration=60;
+
 
     static double PFX;
     static double  PFY;
@@ -70,7 +74,7 @@ public class GameGrid {
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
         if(Player.thirdPerspective)
-            PFY=0*GAME_HEIGHT/8.0;
+            PFY=GAME_HEIGHT/3.0;
         else{
             PFY=GAME_HEIGHT/2.0;
         }
@@ -140,15 +144,14 @@ public class GameGrid {
         }
 
          */
-
-        cubeContainer.draw(g);
         fireBallContainer.draw(g);
+        cubeContainer.draw(g);
+        //Player.draw1(g);
         enemiesContainer.draw(g);
-        Player.draw(g);
 
 
         g.setColor(Color.RED);
-        g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
+        if(!Player.thirdPerspective)g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
     }
     public double[] mousePosToGamePos(int xPos,int yPos){
         double[] gamePos=new double[2];
