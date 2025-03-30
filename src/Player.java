@@ -47,7 +47,7 @@ public class Player {
 
     static int[] chunkIn=new int[2];
 
-    static int numOfChunkToDraw=2;
+    static int numOfChunkToDraw=3;
 
     static boolean thirdPerspective=true;
     boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];

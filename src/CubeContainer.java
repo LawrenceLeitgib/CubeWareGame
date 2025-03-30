@@ -504,8 +504,8 @@ public class CubeContainer {
     public void updateData(double deltaTime){
         if((newChunkIn[0]!=Player.chunkIn[0])||(newChunkIn[1]!=Player.chunkIn[1])){
             CreateNewChunks();
-            CreateNewGround();
-            CreateNewStructure();
+            //CreateNewGround();
+            //CreateNewStructure();
         }
         newChunkIn[0] = Player.chunkIn[0];
         newChunkIn[1] = Player.chunkIn[1];
