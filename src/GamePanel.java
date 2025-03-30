@@ -1,5 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
@@ -8,24 +11,41 @@ public class GamePanel extends JPanel implements Runnable {
     static final int GAME_HEIGHT=(int)(GAME_WIDTH*(9.0/16 ));
     static final Dimension SCREEN_SIZE = new Dimension(GAME_WIDTH,GAME_HEIGHT);
     Thread gameThread;
-    Image image;
+    static Image image;
     Graphics graphics;
     Stats stats;
 
     GameGrid gameGrid;
 
+//    static BufferedImage smiley;
 
 
-    GamePanel(){
+
+
+
+
+
+    GamePanel() {
         this.setFocusable(true); //read key strock
         this.addKeyListener(new AL());
         this.addMouseListener(new ML());
         this.addMouseMotionListener(new ML());
         this.setPreferredSize(SCREEN_SIZE);
+
+        //smiley =new ImageIcon("pictures/smiley.png");
         stats=new Stats(GAME_WIDTH,GAME_HEIGHT);
 
         gameThread=new Thread(this);
         gameThread.start();
+/*
+        try{
+            smiley= ImageIO.read(getClass().getResourceAsStream("/pictures/smiley.png"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+ */
+
 
 
     }
@@ -41,7 +61,6 @@ public class GamePanel extends JPanel implements Runnable {
         image=createImage(getWidth(),getHeight());
         graphics = image.getGraphics();
         draw(graphics);
-
         g.drawImage(image,0,0,this);
 
     }
@@ -67,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 
 
-        gameGrid.draw(g);
+         gameGrid.draw(g);
         stats.draw(g);
 
     }
@@ -100,14 +119,22 @@ public class GamePanel extends JPanel implements Runnable {
         public void mousePressed(MouseEvent e) {
            // System.out.println(e.getX());
            // System.out.println("test");
+           // System.out.println(e.getButton());
 
-            GameGrid.mouseClicked =true;
+            if(e.getButton()==1)
+            GameGrid.mouseLeftClickDown =true;
+
+            if(e.getButton()==3)GameGrid.mouseRightClickDown =true;
 
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            GameGrid.mouseClicked =false;
+            if(e.getButton()==1)
+            GameGrid.mouseLeftClickDown =false;
+
+            if(e.getButton()==3)GameGrid.mouseRightClickDown =false;
+
 
         }
 
@@ -139,7 +166,7 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
         long lastTime = System.nanoTime();
-        double amountOfTicks=30;
+        double amountOfTicks=24;
         double ns=1000000000/amountOfTicks;
         double delta= 0;
         newGameGrid();
@@ -147,15 +174,14 @@ public class GamePanel extends JPanel implements Runnable {
             long now =System.nanoTime();
             delta+=(now-lastTime)/ns;
             lastTime=System.nanoTime();
+            //System.out.println(delta);
             if(delta >=1){
-                updateData(2/amountOfTicks);
+                updateData(1/amountOfTicks);
                 removeAll();
                 repaint();
                 removeAll();
                 delta--;
-
             }
-
         }
     }
 

@@ -205,12 +205,32 @@ public class CubeContainer {
         }
 
     }
+    public void drawBasicStructure(int x, int y, int z,int xSize,int ySize, int height) {
+
+        for(var i=0;i<height;i++){
+            for(var j=0;j<ySize;j++){
+                newCube(x,y+j,z+i);
+                newCube(x+xSize-1,y+j,z+i);
+            }
+
+            for(var j=0;j<xSize;j++){
+                newCube(x+j,y,z+i);
+                newCube(x+j,y+ySize-1,z+i);
+            }
+
+
+        }
+
+    }
     public void createCubes(){
+        //
+        drawBasicStructure(0,0,2,30,30,2);
+        newCube(0,-30,8);
        // drawHeart2(0,-10,4,20);
        // drawCircle(0,0,52+4,50);
         //fillircle(0,0,50+4,25);
         //drawBall(0,0,76,70);
-       // drawBall(0,0,36,30);
+        //drawBall(0,0,36,30);
         /*
         for(var i=0;i<20;i++){
             drawCircle(0,-5-i,20,i);
@@ -270,6 +290,8 @@ public class CubeContainer {
         }
 
          */
+
+
 
 
 

@@ -1,4 +1,7 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Cube {
     int xPosition;
@@ -77,6 +80,9 @@ public class Cube {
         this.chunk=chunk;
         this.xPositionA=xPosition;
         this.yPositionA=yPosition;
+
+
+
 
     }
     Cube(int xPosition, int yPosition, int zPosition, double depthRatio, Chunk chunk){
@@ -374,14 +380,30 @@ public class Cube {
             if (blockTopEmpty&&newPosY-newHeight>GameGrid.PFY) {
                 fillPolygonB(g,polygonTop[0],polygonTop[1],Color.GREEN  );
 
+
             }
 
 
 
 
-    }
+
+        }
+        /*
+        Polygon polygon1 = new Polygon(polygonTop[0],polygonTop[1],4 );
 
 
+        BufferedImage newSmiley=GamePanel.smiley;
+        g.setClip(polygon1);
+        g.drawImage(rotate(newSmiley,Math.PI*2-GameGrid.angleForXRotation),(int)((polygonTop[0][0]+polygonTop[0][2])/2.0)-GamePanel.smiley.getWidth()/2,(int)((polygonTop[1][0]+polygonTop[1][2])/2.0)-GamePanel.smiley.getHeight()/2,null);
+        g.setColor(Color.blue);
+        //g.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+        g.setClip(null);
+
+         */
+
+
+        //g.drawImage( GamePanel.smiley, (int)( corners[0][0]+newWidth/2), (int) (corners[0][1]-newHeight),null);
+       // g.drawImage((Image) GamePanel.smiley, (int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1], null);
 
 
     }
@@ -500,6 +522,25 @@ public class Cube {
         }
 
     }
+/*
+    public static BufferedImage rotate(BufferedImage bimg, Double angle) {
+        double sin = Math.abs(Math.sin(angle)),
+                cos = Math.abs(Math.cos(angle));
+        int w = bimg.getWidth();
+        int h = bimg.getHeight();
+        int neww = (int) Math.floor(w*cos + h*sin),
+                newh = (int) Math.floor(h*cos + w*sin);
+        BufferedImage rotated = new BufferedImage(neww, newh, bimg.getType());
+        Graphics2D graphic = rotated.createGraphics();
+        graphic.translate((neww-w)/2, (newh-h)/2);
+        graphic.rotate(angle, w/2, h/2);
+        graphic.drawRenderedImage(bimg, null);
+        graphic.dispose();
+        return rotated;
+    }
+
+
+ */
 
 
 

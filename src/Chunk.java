@@ -180,7 +180,7 @@ public class Chunk {
             }
 
         }*/
-      // drawLabyrinth();
+        //drawLabyrinth();
         /*
         for(var k=0;k<numOfCubeX;k++){
             for(var i=k;i<numOfCubeX-k;i++) {

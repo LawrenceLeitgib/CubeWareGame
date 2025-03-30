@@ -34,7 +34,12 @@ public class GameGrid {
     static FireBallContainer fireBallContainer;
    static  EnemiesContainer enemiesContainer;
 
-   static boolean mouseClicked =false;
+   static boolean mouseLeftClickDown =false;
+   static boolean mouseRightClickDown=false;
+
+   static boolean oneDown=false;
+
+   static boolean oneHaveBeenRelesed=false;
 
     //Enemy enemy;
 
@@ -74,14 +79,14 @@ public class GameGrid {
     }
     public void updateData(double deltaTime){
         //if(mouseClicked) fireBallContainer.createFireBall();
-
+       // System.out.println(mouseLeftClickDown+", "+mouseRightClickDown);
 
         if(isRotatingLeft){
-            angleForXRotation-=Math.PI/64;
+            angleForXRotation-=Math.PI/64*deltaTime*30;
 
         }
         if(isRotatingRight){
-            angleForXRotation+=Math.PI/64;
+            angleForXRotation+=Math.PI/64*deltaTime*30;
         }
         mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
         mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
@@ -192,11 +197,11 @@ public class GameGrid {
                // isRotatingRight=false;
                 break;
             case 72:
-
-
                // isRotatingLeft=false;
                 break;
-
+            case 49:
+                oneDown=false;
+                oneHaveBeenRelesed=true;
         }
 
     }
@@ -205,56 +210,30 @@ public class GameGrid {
         switch(e.getKeyCode()){
             case 75:
                 PFY+=50;
-                // PVY+=20;
-                //depthRatio+=0.02;
                 depthRatio=GAME_HEIGHT/(PVY-PFY);
-                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
-                // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
-                //System.out.println(depthRatio+" "+Player.cubeAway);
-                // System.out.println(Player.cubeAway);
-                // PFX+=10;
                 break;
             case 79:
                 PFY-=50.0;
-                //PVY-=20;
-                //depthRatio-=0.02;
                 depthRatio=GAME_HEIGHT/(PVY-PFY);
-                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
-                // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
-                //PFX-=10;
                 break;
             case 73:
                 PVY+=20;
-                //Player.cubeAway+=0.5;
-                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
-                // System.out.println(PVY);
-                //PVX+=10;
                 break;
             case 74:
                 PVY-=20;
-                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
-                //Player.cubeAway-=0.5;
-                // PVX-=10;
                 break;
-            case 85:
-                //PFX+=10;
-                //PVX+=10;
-                //Cube.xAddingNumber+=10;
-               // isRotatingRight=true;
-                break;
-            case 72:
-                //PFX-=10;
-                //PVX- =10;
-                //Cube.xAddingNumber-=10;
+            case 49:
+                if(oneHaveBeenRelesed){
+                    oneDown=true;
 
-               // isRotatingLeft=true;
-                break;
+                    oneHaveBeenRelesed=false;
+                }
 
         }
     }
 
     public void mouseClicked(MouseEvent e) {
-        fireBallContainer.createFireBall();
+        //fireBallContainer.createFireBall();
 
     }
 }

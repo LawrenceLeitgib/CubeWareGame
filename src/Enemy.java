@@ -15,7 +15,7 @@ public class Enemy {
     double newWidth;
     double newDepth;
 
-    double speed=0.00;
+    double speed=.5;
 
 
     double newPosX;
@@ -52,18 +52,24 @@ public class Enemy {
 
 
 
-        xPosition-=Math.cos(angleWithPlayer)*speed;
-          yPosition-=Math.sin(angleWithPlayer)*speed;
+        xPosition-=Math.cos(angleWithPlayer)*speed*deltaTime;
+          yPosition-=Math.sin(angleWithPlayer)*speed*deltaTime;
 
          for(var i=0;i<GameGrid.fireBallContainer.fireBallsList.length;i++){
              if(GameGrid.fireBallContainer.fireBallsList[i]){
 
              if(detectionCollisionWithBall(GameGrid.fireBallContainer.fireBalls[i].xPosition,GameGrid.fireBallContainer.fireBalls[i].yPosition,GameGrid.fireBallContainer.fireBalls[i].size)){
-                 HP-=GameGrid.fireBallContainer.fireBalls[i].damage;
-                 yPosition+=GameGrid.fireBallContainer.fireBalls[i].yVelocity/2;
-                 xPosition+=GameGrid.fireBallContainer.fireBalls[i].xVelocity/2;
-                 GameGrid.fireBallContainer.fireBalls[i]=null;
-                 GameGrid.fireBallContainer.fireBallsList[i]=false;
+                 if(HP<=GameGrid.fireBallContainer.fireBalls[i].damage){
+                     GameGrid.fireBallContainer.fireBalls[i].damage-=HP;
+                     HP=0;
+                 }else{
+                     HP-=GameGrid.fireBallContainer.fireBalls[i].damage;
+                     GameGrid.fireBallContainer.fireBalls[i].damage=0;
+                 }
+
+
+                 yPosition+=GameGrid.fireBallContainer.fireBalls[i].yVelocity/2*deltaTime;
+                 xPosition+=GameGrid.fireBallContainer.fireBalls[i].xVelocity/2*deltaTime;
              }
              }
          }
@@ -95,6 +101,7 @@ public class Enemy {
         if(Math.sqrt(Math.pow(Player.xPosition-xPosition,2)+Math.pow(Player.yPosition-yPosition,2))>40)  this.marketForDeletion=true;
         if(HP<=0){
             HP=0;
+            Stats.xp+=25;
             this.marketForDeletion=true;
         }
 

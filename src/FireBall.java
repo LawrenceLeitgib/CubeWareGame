@@ -47,14 +47,15 @@ public class FireBall {
     public void updateData(double deltaTime) {
         xVelocity=speed * Math.cos(angleOfShout);
         yVelocity=speed * Math.sin(angleOfShout);
-        xPosition += xVelocity;
-        yPosition +=yVelocity;
+        xPosition += xVelocity*deltaTime;
+        yPosition +=yVelocity*deltaTime;
         double correctionY=0.5;
         double correctionX=0;
         double difPosXA = (xPosition - correctionX - Player.xPosition);
         double difPosYA = (yPosition + correctionY - Player.yPosition);
 
         if(Math.sqrt(Math.pow(difPosYA,2)+Math.pow(difPosXA,2))>20)marketForDeletion=true;
+        if(damage<=0)marketForDeletion=true;
 
 
         double difPosZ=((Player.zPosition-zPosition)*Cube.defaultSize);
@@ -79,9 +80,9 @@ public class FireBall {
         g.setColor(new Color(10,10,10,60));
         g.fillOval((int) (newPosX2), (int) (newPosY2-newSize2/2), (int) newSize2, (int) newSize2);
         g.setColor(Color.yellow);
-        g.fillOval((int) (newPosX-newSize/10), (int) (newPosY-newSize/2-newSize/10), (int) ( newSize+newSize/50), (int) (newSize+newSize/50));
-        g.setColor(Color.orange);
         g.fillOval((int) (newPosX-newSize/5), (int) (newPosY-newSize/2-newSize/5), (int)( newSize+newSize/2.5), (int)(newSize+newSize/2.5));
+        g.setColor(Color.orange);
+        g.fillOval((int) (newPosX-newSize/10), (int) (newPosY-newSize/2-newSize/10), (int) ( newSize+newSize/5), (int) (newSize+newSize/5));
         g.setColor(Color.red);
         g.fillOval((int) (newPosX), (int) (newPosY-newSize/2), (int) newSize, (int) newSize);
     }

@@ -1,4 +1,3 @@
-import javax.xml.crypto.dsig.CanonicalizationMethod;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -17,8 +16,8 @@ public class Player {
     static double height=1.8*Cube.defaultSize;
 
     static double depth=.8*Cube.defaultSize;
-    double speed=0.2;
-    double gravityAcceleration=0.05;
+    double speed=5;
+    double gravityAcceleration=30;
     double xVelocity;
     double yVelocity;
     double zVelocity;
@@ -41,6 +40,13 @@ public class Player {
     static double newPosY;
     static double newPosX;
 
+    boolean lightningSprint=false;
+    int lightningSprintCount=0;
+
+    double lightningSprintTime =1;
+
+    double lightningSprintCount2= lightningSprintTime;
+
 
     static int[] chunkIn=new int[2];
     static int[] cameraChunkIn=new int[2];
@@ -54,8 +60,8 @@ public class Player {
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=0;
-        Player.yPosition=0;
-        Player.zPosition=3;
+        Player.yPosition=-30;
+        Player.zPosition=4;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
         chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX);
@@ -86,6 +92,20 @@ public class Player {
         if(Player.xPosition-10<0)cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX-1);
         if(Player.yPosition-10<0)cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY-1);
 
+        lightningSprintCount2+=deltaTime;
+        if(lightningSprint){
+            if(lightningSprintCount2>= lightningSprintTime){
+                lightningSprintCount2=0;
+                Stats.mana-=4;
+                lightningSprintCount=13;
+                if(Stats.mana<0){
+                    Stats.mana+=4;
+                    lightningSprintCount=0;
+                }
+            }
+        }
+
+
 
 //System.out.println(GameGrid.PVY-GameGrid.PFY);
         if(!thirdPerspective){
@@ -111,17 +131,17 @@ public class Player {
         updateMegaChunk();
 
 
-        double multiplierOfSpeed=1;
-        if(isSlowing)multiplierOfSpeed=slowMultiplier;
+        double multiplierOfSpeed=1*deltaTime;
+        if(isSlowing)multiplierOfSpeed=slowMultiplier*deltaTime;
         if(!isFlying){
 
             if(isJumping){
-                zVelocity=0.3;
+                zVelocity=10;
                 isJumping=false;
             }
-           setZVelocity(zVelocity-gravityAcceleration);
-           if(zVelocity<-0.6)zVelocity+=gravityAcceleration;
-           zPosition+=zVelocity;
+           setZVelocity(zVelocity-gravityAcceleration*deltaTime);
+           if(zVelocity<-15)zVelocity+=gravityAcceleration*deltaTime;
+           zPosition+=zVelocity*deltaTime;
            detectionCollision(1);
 
 
@@ -157,6 +177,13 @@ public class Player {
             xVelocity+=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
 
         }
+        if(lightningSprintCount>0){
+
+            yVelocity=0;
+            yVelocity-=100.2*Math.cos(GameGrid.angleForXRotation)*deltaTime/6;
+            xVelocity+=100.2*Math.sin(GameGrid.angleForXRotation)*deltaTime/6;
+            lightningSprintCount--;
+        }
 
 
         xPosition+=xVelocity;
@@ -183,29 +210,7 @@ public class Player {
 
         }
 
-        /*
-        if(isMovingRight) {
-            yPosition+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
-            xPosition+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
-            detectionCollision(4);
-        }
-       if(isMovingLeft){
-           yPosition-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
-           xPosition-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
-           detectionCollision(3);
-       }
-       if(isMovingBackward){
-           yPosition+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
-           xPosition-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
-           detectionCollision(6);
-       }
-       if(isMovingForward) {
-           yPosition-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
-           xPosition+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
-           detectionCollision(5);
 
-       }
-       */
         detectionCollision(0);
         xPosition=  (int)((xPosition)*1000)/1000.0;
         yPosition=  (int)((yPosition)*1000)/1000.0;
@@ -586,7 +591,7 @@ public class Player {
                 break;
             case 70:
                 flySwitch();
-                //FireBall.speed=.1;
+                //FireBall.speed=20;
                 break;
             case 32:
                 if(!isFlying)isJumping=true;
@@ -603,9 +608,10 @@ public class Player {
                 isMovingRight=true;
                 break;
             case 72:
-
-
                 isMovingLeft=true;
+                break;
+            case 81:
+                lightningSprint=true;
                 break;
 
 
@@ -653,6 +659,10 @@ public class Player {
 
                 isMovingLeft=false;
                 break;
+            case 81:
+                lightningSprint=false;
+                break;
+
 
         }
     }
