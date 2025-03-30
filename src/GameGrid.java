@@ -53,6 +53,7 @@ public class GameGrid {
 
     public void loadChunks(Graphics g,int[] grillCoord ){
         int chunkSize=200;
+        int numOfChunkAround=3;
         double xPosChunk = ((player.xPosition+chunkSize/2)/chunkSize);
         double yPosChunk = ((player.yPosition+chunkSize/2)/chunkSize);
 
@@ -62,16 +63,56 @@ public class GameGrid {
 
         int xPosChunkInt=(int)xPosChunk;
         int yPosChunkInt=(int)yPosChunk;
-        drawChunk(g,grillCoord,xPosChunk,yPosChunk,chunkSize);
+        drawChunk(g,grillCoord,xPosChunkInt,yPosChunkInt,chunkSize);
+
+        for(var i=-numOfChunkAround;i<=numOfChunkAround;i+=1) {
+            for (var j = -numOfChunkAround; j <= numOfChunkAround; j += 1) {
+                drawChunk(g,grillCoord,xPosChunkInt+i,yPosChunkInt+j,chunkSize);
+
+
+            }
+
+        }
 
     }
-    public void drawChunk(Graphics g,int[] grillCoord, double xPosChunk,double yPosChunk,int chunkSize){
-        int xPosChunkInt=(int)xPosChunk;
-        int yPosChunkInt=(int)yPosChunk;
-        for(var i=-1+xPosChunkInt*2;i<1+xPosChunkInt*2;i+=1){
+    public void drawChunk(Graphics g,int[] grillCoord, int xPosChunkInt,int yPosChunkInt,int chunkSize){
+        int numOfDivision=3;
+        int blockSize=chunkSize/numOfDivision;
+
+
+
+        g.setColor(Color.black);
+        /*for(var i=-1+xPosChunkInt*2;i<1+xPosChunkInt*2;i+=1){
             for(var j=-1+yPosChunkInt*2;j<1+yPosChunkInt*2;j+=1)
                 g.fillRect(grillCoord[0]+chunkSize/2*i,grillCoord[1]+chunkSize/2*j,chunkSize/4,chunkSize/4);
+        }*/
+
+        if ((xPosChunkInt+yPosChunkInt)%2==0){
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2,
+                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2,blockSize,blockSize);
+
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize,
+                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2,blockSize,blockSize);
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize,
+                    grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize,blockSize,blockSize);
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2,
+                   grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize,blockSize,blockSize);
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-blockSize/2,
+                    grillCoord[1]+chunkSize*yPosChunkInt-blockSize/2,blockSize,blockSize);
+
+        }else{
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2+blockSize,
+                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2,blockSize,blockSize);
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2,
+                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2+blockSize,blockSize,blockSize);
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize*2,
+                    grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize,blockSize,blockSize);
+            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize,
+                    grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize*2,blockSize,blockSize);
+
         }
+
+
         g.setColor(Color.red);
         g.drawLine(grillCoord[0]+xPosChunkInt*chunkSize-chunkSize/2,
                 grillCoord[1]+yPosChunkInt*chunkSize-chunkSize/2,
