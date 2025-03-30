@@ -12,10 +12,10 @@ public class Player {
     int width=20;
     int height=20;
 
-    int speed=6;
+    double speed=10;
 
-    int xVelocity;
-    int yVelocity;
+    double xVelocity;
+    double yVelocity;
 
     boolean isSlowing=false;
 
@@ -40,11 +40,11 @@ public class Player {
 
     }
 
-    public void setXVelocity(int xVelocity) {
+    public void setXVelocity(double xVelocity) {
         this.xVelocity = xVelocity;
     }
 
-    public void setYVelocity(int yVelocity) {
+    public void setYVelocity(double yVelocity) {
         this.yVelocity = yVelocity;
     }
 
