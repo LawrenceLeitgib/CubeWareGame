@@ -88,6 +88,12 @@ public class GameGrid {
         if(isRotatingRight){
             angleForXRotation+=Math.PI/64*deltaTime*30;
         }
+        while(angleForXRotation>=Math.PI*2){
+            angleForXRotation-=Math.PI*2;
+        }
+        while(angleForXRotation<0){
+            angleForXRotation+=Math.PI*2;
+        }
         mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
         mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
       //  System.out.println(mousePositionX+", "+mousePositionY);
@@ -101,7 +107,12 @@ public class GameGrid {
 
     }
     public void draw(Graphics g){
-
+        while(angleForXRotation>=Math.PI*2){
+            angleForXRotation-=Math.PI*2;
+        }
+        while(angleForXRotation<0){
+            angleForXRotation+=Math.PI*2;
+        }
 
         cubeContainer.draw(g);
         g.setColor(Color.red);

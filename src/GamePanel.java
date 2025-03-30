@@ -166,10 +166,11 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
         long lastTime = System.nanoTime();
-        double amountOfTicks=24;
+        double amountOfTicks=72;
         double ns=1000000000/amountOfTicks;
         double delta= 0;
         newGameGrid();
+        int count=0;
         while(true){
             long now =System.nanoTime();
             delta+=(now-lastTime)/ns;
@@ -177,9 +178,14 @@ public class GamePanel extends JPanel implements Runnable {
             //System.out.println(delta);
             if(delta >=1){
                 updateData(1/amountOfTicks);
-                removeAll();
-                repaint();
-                removeAll();
+                count++;
+                if(count>=2){
+                    removeAll();
+                    repaint();
+                    removeAll();
+                    count=0;
+                }
+
                 delta--;
             }
         }

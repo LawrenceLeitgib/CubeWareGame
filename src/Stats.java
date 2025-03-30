@@ -67,7 +67,7 @@ public class Stats {
 
 
     public void updateData(double deltaTime){
-        mana+=deltaTime;
+        mana+=deltaTime*1000;
         if(mana>=maxMana)mana=maxMana;
 
         if(xp>=xpUntilNextLevel){

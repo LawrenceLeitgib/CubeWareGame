@@ -100,6 +100,8 @@ public class Cube {
 
 
     public void updateData(double deltaTime) {
+        /*{
+
         depthRatio=GameGrid.depthRatio;
         while(GameGrid.angleForXRotation>=Math.PI*2){
             GameGrid.angleForXRotation-=Math.PI*2;
@@ -222,29 +224,140 @@ public class Cube {
                 countForDrawing++;
             }
         }
+    }*/
     }
     public void draw(Graphics g) {
+        {
 
-       // g.setColor(Color.WHITE);
-       // g.fillOval((int) (newPosX-5+newWidth/2), (int) (newPosY-5),10,10);
-        /*
-        g.setColor(Color.yellow);
-        g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
-        g.setColor(Color.green);
-        g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
-        g.setColor(Color.red);
-        g.fillOval((int) (corners[2][0]-5), (int) (corners[2][1]-5),10,10);
-        g.setColor(Color.blue);
-        g.fillOval((int) (corners[3][0]-5), (int) (corners[3][1]-5),10,10);
+            depthRatio=GameGrid.depthRatio;
 
 
-         */
+            double difPosXA=(xPosition-xCorrectorForRotation-Player.xPosition);
+            double difPosYA= (yPosition+yCorrectorForRotation-Player.yPosition);
+            xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
+            yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-yCorrectorForRotation);
+            double difPosXR=((Player.xPosition-xPositionA)*width);
+            double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*depth);
+            double difPosZ=((Player.zPosition-zPosition)*height);
+            double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
+            sizeRatio=GAME_HEIGHT/(difPosYR*1.0*depthRatio+GAME_HEIGHT);
+            if(difPosYR<sizeRatioValue){
+                sizeRatio=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+
+            }
+            newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+            //sizeRatio*(GameGrid.PVY-GameGrid.PFY+dif)=newPosY-GameGrid.PFY
+            newWidth=  (width*sizeRatio);
+            newHeight=  (height*sizeRatio);
+            newDepth=  (depth*sizeRatio);
+            newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*width)*sizeRatio-newWidth/2);
+
+            if(newPosY+newHeight<0)return;
+            if(newPosY>GAME_HEIGHT*2)return;
+            if(newPosX>GAME_WIDTH*2)return;
+            if(newPosX<-GAME_WIDTH)return;
 
 
+            if (Math.abs(difPosXR)<=width/2.0&&newPosY>GAME_HEIGHT*2&&difPosZ<0){
+                drawCube=false;
+            }else(drawCube)=true;
+
+            if(newPosY>GAME_HEIGHT*10)drawCube=false;
+
+            corners=getCorners(newPosX,newPosY,newWidth,newHeight,difPosZ,difPosXA,difPosYA);
+
+            int leftPosCheck=xPosition-1-chunk.chunkToNormNumX;
+            int rightPosCheck=xPosition+1-chunk.chunkToNormNumX;
+            int frontPosCheck=yPosition-1-chunk.chunkToNormNumY;
+            int backPosCheck=yPosition+1-chunk.chunkToNormNumY;
+            int topPosCheck=zPosition+1;
+            int bottomPosCheck=zPosition-1;
+
+            //countForDrawing=0;
+            if(leftPosCheck>=0) {
+                if (chunk.cubePositions[leftPosCheck][yPosition - chunk.chunkToNormNumY][zPosition]) {
+                    blockLeftEmpty = false;
+                    countForDrawing++;
+
+                }
+            }
+            else {
+                if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition - 1][CubeContainer.numOfChunkY + chunk.yPosition]) {
+                    if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition - 1][CubeContainer.numOfChunkY + chunk.yPosition].cubePositions[leftPosCheck + Chunk.numOfCubeX][yPosition - chunk.chunkToNormNumY][zPosition]) {
+                        blockLeftEmpty = false;
+                        countForDrawing++;
+                    }
+                }
+            }
+            if(rightPosCheck<Chunk.numOfCubeX) {
+                if(chunk.cubePositions[rightPosCheck][yPosition-chunk.chunkToNormNumY][zPosition]){
+                    blockRightEmpty=false;
+                    countForDrawing++;
+                }
+            }
+            else {
+                if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition +1][CubeContainer.numOfChunkY + chunk.yPosition]) {
+                    if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition +1][CubeContainer.numOfChunkY + chunk.yPosition].cubePositions[rightPosCheck - Chunk.numOfCubeX][yPosition - chunk.chunkToNormNumY][zPosition]) {
+                        blockRightEmpty = false;
+                        countForDrawing++;
+                    }
+                }
+            }
+
+            if(frontPosCheck>=0) {
+                if (chunk.cubePositions[xPosition - chunk.chunkToNormNumX][frontPosCheck][zPosition]) {
+                    blockFrontEmpty = false;
+                    countForDrawing++;
+                }
+            }
+            else{
+                if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition-1]) {
+                    if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition-1].cubePositions[xPosition - chunk.chunkToNormNumX][frontPosCheck+Chunk.numOfCubeY][zPosition]) {
+                        blockFrontEmpty = false;
+                        countForDrawing++;
+                    }
+                }
+
+            }
+            if(backPosCheck<Chunk.numOfCubeY){
+                if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][backPosCheck][zPosition]) {
+                    blockBackEmpty = false;
+                    countForDrawing++;
+                }
+            }
+            else{
+                if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition+1]) {
+                    if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition+1].cubePositions[xPosition - chunk.chunkToNormNumX][backPosCheck-Chunk.numOfCubeY][zPosition]) {
+                        blockBackEmpty = false;
+                        countForDrawing++;
+                    }
+                }
+
+            }
+
+            if(topPosCheck<Chunk.numOfCubeZ){
+                if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][yPosition-chunk.chunkToNormNumY][topPosCheck]){
+                    blockTopEmpty=false;
+                    countForDrawing++;
+                }
+            }
+            if(bottomPosCheck>=0){
+                if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][yPosition-chunk.chunkToNormNumY][bottomPosCheck]){
+                    blockBottomEmpty=false;
+                    countForDrawing++;
+                }
+            }
+        }
+
+
+
+/*
         if(newPosY+newHeight<0)return;
         if(newPosY>GAME_HEIGHT*2)return;
         if(newPosX>GAME_WIDTH*2)return;
         if(newPosX<-GAME_WIDTH)return;
+
+ */
 
         if(countForDrawing==6)return;
 

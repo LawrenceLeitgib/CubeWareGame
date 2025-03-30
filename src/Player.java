@@ -16,7 +16,7 @@ public class Player {
     static double height=1.8*Cube.defaultSize;
 
     static double depth=.8*Cube.defaultSize;
-    double speed=5;
+    double speed=20;
     double gravityAcceleration=30;
     double xVelocity;
     double yVelocity;
@@ -60,7 +60,7 @@ public class Player {
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=0;
-        Player.yPosition=-30;
+        Player.yPosition=-50;
         Player.zPosition=4;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;

@@ -54,7 +54,7 @@ public class FireBall {
         double difPosXA = (xPosition - correctionX - Player.xPosition);
         double difPosYA = (yPosition + correctionY - Player.yPosition);
 
-        if(Math.sqrt(Math.pow(difPosYA,2)+Math.pow(difPosXA,2))>20)marketForDeletion=true;
+        if(Math.sqrt(Math.pow(difPosYA,2)+Math.pow(difPosXA,2))>50)marketForDeletion=true;
         if(damage<=0)marketForDeletion=true;
 
 

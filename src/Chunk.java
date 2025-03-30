@@ -180,7 +180,7 @@ public class Chunk {
             }
 
         }*/
-        //drawLabyrinth();
+        drawLabyrinth();
         /*
         for(var k=0;k<numOfCubeX;k++){
             for(var i=k;i<numOfCubeX-k;i++) {
@@ -219,11 +219,172 @@ public class Chunk {
 
 
     }
-    public void draw(Graphics g) {
+    public void drawLayer(Graphics g,int z) {
         //if (xPosition == 0 && yPosition == 1) return;
         //if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
         //if(Player.yPosition-Player.cubeAway>(yPosition+1)*numOfCubeY)System.out.println(yPosition);
       ///  System.out.println(Cube.angleForXRotation/Math.PI);
+        int i=z;
+
+
+            if(GameGrid.angleForXRotation<Math.PI/4){
+                for(var j=0;j<numOfCubeY;j++){
+                    for(var k=numOfCubeX-1;k>=0;k--){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<Math.PI/2){
+                for(var k=numOfCubeX-1;k>=0;k--){
+                    for(var j=0;j<numOfCubeY;j++){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<3*Math.PI/4){
+                for(var k=numOfCubeX-1;k>=0;k--){
+                    for(var j=numOfCubeY-1;j>=0;j--){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<Math.PI){
+                for(var j=numOfCubeY-1;j>=0;j--){
+                    for(var k=numOfCubeX-1;k>=0;k--){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<5*Math.PI/4){
+                for(var j=numOfCubeY-1;j>=0;j--){
+                    for(var k=0;k<numOfCubeX;k++){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<3*Math.PI/2){
+                for(var k=0;k<numOfCubeX;k++){
+                    for(var j=numOfCubeY-1;j>=0;j--){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<7*Math.PI/4){
+                for(var k=0;k<numOfCubeX;k++){
+                    for(var j=0;j<numOfCubeY;j++){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<2*Math.PI){
+                for(var j=0;j<numOfCubeY;j++){
+                    for(var k=0;k<numOfCubeX;k++){
+                        if (cubePositions[k][j][i]) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+
+            if(GameGrid.angleForXRotation<Math.PI/4){
+                for(var j=0;j<numOfCubeY;j++){
+                    for(var k=numOfCubeX-1;k>=0;k--){
+                        if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                            cubes[k][j][i].draw(g);
+                        }
+
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<Math.PI/2){
+                for(var k=numOfCubeX-1;k>=0;k--){
+                    for(var j=0;j<numOfCubeY;j++){
+                        if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                            cubes[k][j][i].draw(g);
+                        }
+
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<3*Math.PI/4){
+                for(var k=numOfCubeX-1;k>=0;k--){
+                    for(var j=numOfCubeY-1;j>=0;j--){
+                        if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                            cubes[k][j][i].draw(g);
+                        }
+
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<Math.PI){
+                for(var j=numOfCubeY-1;j>=0;j--){
+                    for(var k=numOfCubeX-1;k>=0;k--){
+                        if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<5*Math.PI/4){
+                for(var j=numOfCubeY-1;j>=0;j--){
+                    for(var k=0;k<numOfCubeX;k++){
+                        if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY){
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<3*Math.PI/2){
+                for(var k=0;k<numOfCubeX;k++){
+                    for(var j=numOfCubeY-1;j>=0;j--){
+                        if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<7*Math.PI/4){
+                for(var k=0;k<numOfCubeX;k++){
+                    for(var j=0;j<numOfCubeY;j++){
+                        if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+            else if(GameGrid.angleForXRotation<2*Math.PI) {
+                for (var j = 0; j < numOfCubeY; j++) {
+                    for (var k = 0; k < numOfCubeX; k++) {
+                        if (cubePositions[k][j][i] && cubes[k][j][i].newPosY - cubes[k][j][i].newHeight < GameGrid.PFY) {
+                            cubes[k][j][i].draw(g);
+                        }
+                    }
+                }
+            }
+    }
+
+    public void draw(Graphics g) {
+        //if (xPosition == 0 && yPosition == 1) return;
+        //if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
+        //if(Player.yPosition-Player.cubeAway>(yPosition+1)*numOfCubeY)System.out.println(yPosition);
+        ///  System.out.println(Cube.angleForXRotation/Math.PI);
 
 
         for (var i = 0; i < numOfCubeZ; i++) {
