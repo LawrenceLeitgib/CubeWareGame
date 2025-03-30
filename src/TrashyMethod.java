@@ -1,185 +1,291 @@
 import java.awt.*;
 
 public abstract class TrashyMethod extends CubeContainer {
-    TrashyMethod(double depthRatio) {
-        super();
+    private GameGrid gameGrid;
+
+    TrashyMethod(GameGrid gameGrid, double depthRatio) {
+        super(gameGrid);
     }
+
+
     //for cube container
-    public void drawDick(int x, int y,int z){
-        newCube(x,y,z+6);
-        newCube(x,y,z+5);
-        newCube(x,y,z+4);
-        newCube(x,y,z+3);
-        newCube(x,y,z+2);
-        newCube(x,y,z+1);
-        newCube(x,y,z);
-        newCube(x-1,y,z);
-        newCube(x+1,y,z);
-        newCube(x-1,y,z+1);
-        newCube(x+1,y,z+1);
+    public void drawDick(int x, int y, int z) {
+        newCube(x, y, z + 6);
+        newCube(x, y, z + 5);
+        newCube(x, y, z + 4);
+        newCube(x, y, z + 3);
+        newCube(x, y, z + 2);
+        newCube(x, y, z + 1);
+        newCube(x, y, z);
+        newCube(x - 1, y, z);
+        newCube(x + 1, y, z);
+        newCube(x - 1, y, z + 1);
+        newCube(x + 1, y, z + 1);
 
-        newCube(x,y-1,z+6);
-        newCube(x,y-1,z+5);
-        newCube(x,y-1,z+4);
-        newCube(x,y-1,z+3);
-        newCube(x,y-1,z+2);
-        newCube(x,y-1,z+1);
-        newCube(x,y-1,z);
-        newCube(x-1,y-1,z);
-        newCube(x+1,y-1,z);
-        newCube(x-1,y-1,z+1);
-        newCube(x+1,y-1,z+1);
-
-    }
-    public void drawHeart(int x, int y,int z){
-
-        newCube(x,y,z);
-
-        newCube(x-1,y,z+1);
-        newCube(x,y,z+1);
-        newCube(x+1,y,z+1);
-
-        newCube(x-2,y,z+2);
-        newCube(x-1,y,z+2);
-        newCube(x,y,z+2);
-        newCube(x+1,y,z+2);
-        newCube(x+2,y,z+2);
-
-        newCube(x-3,y,z+3);
-        newCube(x-2,y,z+3);
-        newCube(x-1,y,z+3);
-        newCube(x,y,z+3);
-        newCube(x+1,y,z+3);
-        newCube(x+2,y,z+3);
-        newCube(x+3,y,z+3);
-
-        newCube(x-3,y,z+4);
-        newCube(x-2,y,z+4);
-        newCube(x-1,y,z+4);
-        newCube(x+1,y,z+4);
-        newCube(x+2,y,z+4);
-        newCube(x+3,y,z+4);
-
-        newCube(x-2,y,z+5);
-        newCube(x+2,y,z+5);
-
+        newCube(x, y - 1, z + 6);
+        newCube(x, y - 1, z + 5);
+        newCube(x, y - 1, z + 4);
+        newCube(x, y - 1, z + 3);
+        newCube(x, y - 1, z + 2);
+        newCube(x, y - 1, z + 1);
+        newCube(x, y - 1, z);
+        newCube(x - 1, y - 1, z);
+        newCube(x + 1, y - 1, z);
+        newCube(x - 1, y - 1, z + 1);
+        newCube(x + 1, y - 1, z + 1);
 
     }
-    public void drawMap(int x, int y,int z){
-        for(var i=-5;i<5;i++){
-            for(var j=0;j<10;j++){
-                newCube(i+x,j+y,z);
+
+    public void drawHeart(int x, int y, int z) {
+
+        newCube(x, y, z);
+
+        newCube(x - 1, y, z + 1);
+        newCube(x, y, z + 1);
+        newCube(x + 1, y, z + 1);
+
+        newCube(x - 2, y, z + 2);
+        newCube(x - 1, y, z + 2);
+        newCube(x, y, z + 2);
+        newCube(x + 1, y, z + 2);
+        newCube(x + 2, y, z + 2);
+
+        newCube(x - 3, y, z + 3);
+        newCube(x - 2, y, z + 3);
+        newCube(x - 1, y, z + 3);
+        newCube(x, y, z + 3);
+        newCube(x + 1, y, z + 3);
+        newCube(x + 2, y, z + 3);
+        newCube(x + 3, y, z + 3);
+
+        newCube(x - 3, y, z + 4);
+        newCube(x - 2, y, z + 4);
+        newCube(x - 1, y, z + 4);
+        newCube(x + 1, y, z + 4);
+        newCube(x + 2, y, z + 4);
+        newCube(x + 3, y, z + 4);
+
+        newCube(x - 2, y, z + 5);
+        newCube(x + 2, y, z + 5);
+
+
+    }
+
+    public void drawMap(int x, int y, int z) {
+        for (var i = -5; i < 5; i++) {
+            for (var j = 0; j < 10; j++) {
+                newCube(i + x, j + y, z);
             }
         }
-        for(var j=0;j<10;j++){
-            newCube(-1+x,j+y,z+1);
-            newCube(1+x,j+y,z+1);
+        for (var j = 0; j < 10; j++) {
+            newCube(-1 + x, j + y, z + 1);
+            newCube(1 + x, j + y, z + 1);
         }
-        for(var i=0;i<10;i++){
-            for(var j=0;j<10;j++){
-                if(j>=i)
-                    newCube(4+x,i+y,j-i+z+1);
+        for (var i = 0; i < 10; i++) {
+            for (var j = 0; j < 10; j++) {
+                if (j >= i)
+                    newCube(4 + x, i + y, j - i + z + 1);
             }
         }
 
 
-
-
     }
-    public void drawDick(int x, int y,int z,int height,int ballSize){
-        height=4*ballSize;
-        for(var i=0;i<ballSize;i++){
-            for(var j=0;j<ballSize;j++){
-                for(var k=0;k<ballSize;k++){
-                    newCube(i-ballSize+x,j+y,k+z);
-                    newCube(i+ballSize+x,j+y,k+z);
+
+    public void drawDick(int x, int y, int z, int height, int ballSize) {
+        height = 4 * ballSize;
+        for (var i = 0; i < ballSize; i++) {
+            for (var j = 0; j < ballSize; j++) {
+                for (var k = 0; k < ballSize; k++) {
+                    newCube(i - ballSize + x, j + y, k + z);
+                    newCube(i + ballSize + x, j + y, k + z);
                 }
-                for(var k=0;k<height;k++){
-                    newCube(i+x,j+y,k+z);
+                for (var k = 0; k < height; k++) {
+                    newCube(i + x, j + y, k + z);
                 }
 
             }
         }
 
 
+    }
 
-    }
-    public void drawCircle(int x,int y,int z,int r){
-        for(int i=-r;i<r;i++){
-            for(int k=-r;k<r;k++){
-                if(Math.sqrt(Math.pow(i,2)+Math.pow(k,2))<=r+1&&Math.sqrt(Math.pow(i,2)+Math.pow(k,2))>=r-1){
-                    newCube(x+i,y,z+k);
-                }
-            }
-        }
-    }
-    public void drawCircle2(int x, int y, int z, int r, byte type){
-        for(int i=-r;i<r;i++){
-            for(int k=-r;k<r;k++){
-                if(Math.sqrt(Math.pow(i,2)+Math.pow(k,2))<r&&Math.sqrt(Math.pow(i,2)+Math.pow(k,2))>=r-1){
-                    newCube(x+i,y+k,z,type);
+    public void drawCircle(int x, int y, int z, int r) {
+        for (int i = -r; i < r; i++) {
+            for (int k = -r; k < r; k++) {
+                if (Math.sqrt(Math.pow(i, 2) + Math.pow(k, 2)) <= r + 1 && Math.sqrt(Math.pow(i, 2) + Math.pow(k, 2)) >= r - 1) {
+                    newCube(x + i, y, z + k);
                 }
             }
         }
     }
-    public void fillircle(int x,int y,int z,int r){
-        for(int i=-r;i<r;i++){
-            for(int k=-r;k<r;k++){
-                if(Math.sqrt(Math.pow(i,2)+Math.pow(k,2))<r){
-                    newCube(x+i,y,z+k);
+
+    public void drawCircle2(int x, int y, int z, int r, byte type) {
+        for (int i = -r; i < r; i++) {
+            for (int k = -r; k < r; k++) {
+                if (Math.sqrt(Math.pow(i, 2) + Math.pow(k, 2)) < r && Math.sqrt(Math.pow(i, 2) + Math.pow(k, 2)) >= r - 1) {
+                    newCube(x + i, y + k, z, type);
+                }
+            }
+        }
+    }
+
+    public void fillircle(int x, int y, int z, int r) {
+        for (int i = -r; i < r; i++) {
+            for (int k = -r; k < r; k++) {
+                if (Math.sqrt(Math.pow(i, 2) + Math.pow(k, 2)) < r) {
+                    newCube(x + i, y, z + k);
                 }
             }
         }
 
     }
-    public void drawHeart2(int x, int y,int z,int size){
-        for(int k=0;k<size;k++){
-           for(int i=-k;i<k;i++){
-               newCube(x+i,y,z+k);
-           }
+
+    public void drawHeart2(int x, int y, int z, int size) {
+        for (int k = 0; k < size; k++) {
+            for (int i = -k; i < k; i++) {
+                newCube(x + i, y, z + k);
+            }
         }
 
     }
-    public void drawBall(int x, int y, int z,int r){
-        for(int i=-r;i<r;i++){
-            for(int j=-r;j<r;j++){
-                for(int k=-r;k<r;k++){
-                    if(Math.sqrt(Math.pow(i,2)+Math.pow(k,2)+Math.pow(j,2))<=r+1&&Math.sqrt(Math.pow(i,2)+Math.pow(k,2)+Math.pow(j,2))>=r-1){
-                        newCube(x+i,y+j,z+k);
+
+    public void drawBall(int x, int y, int z, int r) {
+        for (int i = -r; i < r; i++) {
+            for (int j = -r; j < r; j++) {
+                for (int k = -r; k < r; k++) {
+                    if (Math.sqrt(Math.pow(i, 2) + Math.pow(k, 2) + Math.pow(j, 2)) <= r + 1 && Math.sqrt(Math.pow(i, 2) + Math.pow(k, 2) + Math.pow(j, 2)) >= r - 1) {
+                        newCube(x + i, y + j, z + k);
                     }
                 }
             }
         }
 
     }
-    public void jump(int x,int y,int z){
-        newCube(0+x,-5+y,2+z);
-        newCube(-2+x,-7+y,3+z);
-        newCube(-4+x,-9+y,4+z);
-        newCube(-7+x,-11+y,4+z);
 
-        newCube(-6+x,-14+y,5+z);
-        newCube(-3+x,-16+y,6+z);
-        newCube(-2+x,-13+y,7+z);
-        newCube(1+x,-13+y,8+z);
-        newCube(2+x,-10+y,9+z);
-        newCube(4+x,-9+y,10+z);
-        newCube(2+x,-7+y,11+z);
-        newCube(0+x,-5+y,12+z);
+    public void jump(int x, int y, int z) {
+        newCube(0 + x, -5 + y, 2 + z);
+        newCube(-2 + x, -7 + y, 3 + z);
+        newCube(-4 + x, -9 + y, 4 + z);
+        newCube(-7 + x, -11 + y, 4 + z);
+
+        newCube(-6 + x, -14 + y, 5 + z);
+        newCube(-3 + x, -16 + y, 6 + z);
+        newCube(-2 + x, -13 + y, 7 + z);
+        newCube(1 + x, -13 + y, 8 + z);
+        newCube(2 + x, -10 + y, 9 + z);
+        newCube(4 + x, -9 + y, 10 + z);
+        newCube(2 + x, -7 + y, 11 + z);
+        newCube(0 + x, -5 + y, 12 + z);
     }
+
+
+    // For chunk Class:
+    public void drawLabyrinth() {
+
+        //int[][] List1={}
+        //comme dans square battle
+
+        int[][] List1 = {
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1},
+                {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+                {1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1},
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1},
+                {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+                {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1},
+                {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0},
+                {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+                {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1},
+                {1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0}
+        };
+
+        for (var k = 1; k < 4; k++) {
+            for (var i = 15; i >= 0; i--) {
+                for (var j = 15; j >= 0; j--) {
+                    if (List1[i][j] == 1) {
+                        newCube(j, i, k);
+                    }
+
+                }
+            }
+        }
+    }
+
+    //For Cube
+    private int[][][] getDivisionInPolygon(int[] listX, int[] listY, int num) {
+        int[][] newListX = new int[4][num];
+        int[][] newListY = new int[4][num];
+
+        double step = 1.0 / (num + 1);
+
+        for (int i = 0; i < num; i++) {
+            newListX[0][i] = (int) ((step * (num - i)) * listX[0] + (step * (i + 1)) * listX[1] + .5);
+            newListY[0][i] = (int) ((step * (num - i)) * listY[0] + (step * (i + 1)) * listY[1] + .5);
+
+            newListX[1][i] = (int) ((step * (num - i)) * listX[1] + (step * (i + 1)) * listX[2] + .5);
+            newListY[1][i] = (int) ((step * (num - i)) * listY[1] + (step * (i + 1)) * listY[2] + .5);
+
+            newListX[2][i] = (int) ((step * (num - i)) * listX[2] + (step * (i + 1)) * listX[3] + .5);
+            newListY[2][i] = (int) ((step * (num - i)) * listY[2] + (step * (i + 1)) * listY[3] + .5);
+
+            newListX[3][i] = (int) ((step * (num - i)) * listX[3] + (step * (i + 1)) * listX[0] + .5);
+            newListY[3][i] = (int) ((step * (num - i)) * listY[3] + (step * (i + 1)) * listY[0] + .5);
+
+        }
+
+
+        return new int[][][]{newListX, newListY};
+    }
+
+    private void fillPolygonB1(Graphics g, int[] listX, int[] listY, Color color) {
+        g.setColor(new Color(21, 92, 5));
+        g.setPaintMode();
+        Color newColor = GeneralsFunctions.darkenColor(color, 30);
+        double num = 0.2;
+        int[] newListX = new int[4];
+        int[] newListY = new int[4];
+        newListX[0] = (int) ((1 - num) * listX[0] + num * listX[2]);
+        newListX[1] = (int) ((1 - num) * listX[1] + num * listX[3]);
+        newListX[2] = (int) ((1 - num) * listX[2] + num * listX[0]);
+        newListX[3] = (int) ((1 - num) * listX[3] + num * listX[1]);
+        newListY[0] = (int) ((1 - num) * listY[0] + num * listY[2]);
+        newListY[1] = (int) ((1 - num) * listY[1] + num * listY[3]);
+        newListY[2] = (int) ((1 - num) * listY[2] + num * listY[0]);
+        newListY[3] = (int) ((1 - num) * listY[3] + num * listY[1]);
+        g.setColor(newColor);
+        g.fillPolygon(listX, listY, 4);
+        g.setColor(color);
+        g.fillPolygon(newListX, newListY, 4);
+        g.setColor(Color.BLACK);
+        for (var i = 0; i < 4; i++) {
+            int xNum = 1 + i;
+            if (xNum == 4) xNum = 0;
+            g.drawLine(listX[i], listY[i], listX[xNum], listY[xNum]);
+        }
+
+
+    }
+
+
+/*
     public void drawAllNul(Graphics g,int xNum,int yNum,int kNum,int jNum,int i,int x,int y){
-        int xPos=Player.cubeIn[0]+x- GameGrid.numOfChunkToDraw*Chunk.numOfCubeX-Chunk.numOfCubeX/2;
-        int yPos=Player.cubeIn[1]+y- GameGrid.numOfChunkToDraw*Chunk.numOfCubeY-Chunk.numOfCubeY/2;
+        int xPos=gameGrid.player.cubeIn[0]+x- GameGrid.numOfChunkToDraw*Chunk.numOfCubeX-Chunk.numOfCubeX/2;
+        int yPos=gameGrid.player.cubeIn[1]+y- GameGrid.numOfChunkToDraw*Chunk.numOfCubeY-Chunk.numOfCubeY/2;
         int[] xPosInfo=YAndXPositionToChunkPos(xPos);
         int[] yPosInfo=YAndXPositionToChunkPos(yPos);
-        /*
-        if( chunks[xNum- GameGrid.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum- GameGrid.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
+
+        if( chunks[xNum- GameGrid.numOfChunkToDraw+numOfChunkX+gameGrid.cubeContainer.newChunkIn[0]][yNum- GameGrid.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
             Cube cube=chunks[xNum- GameGrid.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum- GameGrid.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i];
             cube.draw(g,(xNum- GameGrid.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum,(yNum- GameGrid.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum,i);
         }
 
 
-*/
+
         if(i==2){
             //System.out.println(((xNum- GameGrid.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum)+" "+xPos);
             //System.out.println(xPosInfo[0]);
@@ -234,99 +340,10 @@ public abstract class TrashyMethod extends CubeContainer {
 
 
     }
-    //For chunk Class:
-    public void drawLabyrinth() {
-
-        //int[][] List1={}
-        //comme dans square battle
-
-        int[][] List1 = {
-                {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-                {1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
-                {0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0},
-                {1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1},
-                {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
-                {1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1},
-                {0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-                {1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1},
-                {1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1},
-                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1},
-                {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-                {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1},
-                {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0},
-                {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1},
-                {1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0}
-        };
-
-        for (var k = 1; k < 4; k++) {
-            for (var i = 15; i >= 0; i--) {
-                for (var j = 15; j >= 0; j--) {
-                    if (List1[i][j] == 1) {
-                        newCube(j, i, k);
-                    }
-
-                }
-            }
-        }
-    }
-    //For Cube
-    private int[][][] getDivisionInPolygon(int[] listX,int[] listY,int num){
-        int[][] newListX=new int[4][num];
-        int[][] newListY=new int[4][num];
-
-        double step=1.0/(num+1);
-
-        for(int i=0;i<num;i++){
-            newListX[0][i]= (int) ((step*(num-i))*listX[0]+(step*(i+1))*listX[1]+.5);
-            newListY[0][i]= (int) ((step*(num-i))*listY[0]+(step*(i+1))*listY[1]+.5);
-
-            newListX[1][i]= (int) ((step*(num-i))*listX[1]+(step*(i+1))*listX[2]+.5);
-            newListY[1][i]= (int) ((step*(num-i))*listY[1]+(step*(i+1))*listY[2]+.5);
-
-            newListX[2][i]= (int) ((step*(num-i))*listX[2]+(step*(i+1))*listX[3]+.5);
-            newListY[2][i]= (int) ((step*(num-i))*listY[2]+(step*(i+1))*listY[3]+.5);
-
-            newListX[3][i]= (int) ((step*(num-i))*listX[3]+(step*(i+1))*listX[0]+.5);
-            newListY[3][i]= (int) ((step*(num-i))*listY[3]+(step*(i+1))*listY[0]+.5);
-
-        }
-
-
-        return new int[][][]{newListX, newListY};
-    }
-    private void fillPolygonB1(Graphics g, int[] listX, int[] listY, Color color){
-        g.setColor(new Color(21, 92, 5));
-        g.setPaintMode();
-        Color newColor= GeneralsFunctions.darkenColor(color,30);
-        double num=0.2;
-        int[] newListX=new int[4];
-        int[] newListY=new int[4];
-        newListX[0]= (int) ((1-num)*listX[0]+num*listX[2]);
-        newListX[1]= (int) ((1-num)*listX[1]+num*listX[3]);
-        newListX[2]= (int) ((1-num)*listX[2]+num*listX[0]);
-        newListX[3]= (int) ((1-num)*listX[3]+num*listX[1]);
-        newListY[0]= (int) ((1-num)*listY[0]+num*listY[2]);
-        newListY[1]= (int) ((1-num)*listY[1]+num*listY[3]);
-        newListY[2]= (int) ((1-num)*listY[2]+num*listY[0]);
-        newListY[3]= (int) ((1-num)*listY[3]+num*listY[1]);
-        g.setColor(newColor);
-        g.fillPolygon(listX,listY,4);
-        g.setColor(color);
-        g.fillPolygon(newListX,newListY,4);
-        g.setColor(Color.BLACK);
-        for(var i=0;i<4;i++) {
-            int xNum = 1 + i;
-            if (xNum == 4) xNum = 0;
-            g.drawLine(listX[i],listY[i],listX[xNum],listY[xNum]);
-        }
-
-
-    }
     public void drawSpawn2(){
 
 
-        /*
+
         int a=0;
         for(var i=0;i<=21;i++){
             if(a>6)a=0;
@@ -340,12 +357,34 @@ public abstract class TrashyMethod extends CubeContainer {
             }
             a++;
         }
-         */
-        /*
+
+
         drawBasicStructure(-7,-40,2,15,15,2);
         drawBasicStructure(-15,-30,2,3,3,1);
         drawBasicStructure(-20,-30,2,3,7,1);
         drawBasicStructure(-30,-30,2,7,3,1);
-         */
+
     }
+    static double[] getObjectScreenPos2(double x, double y, double z, double angle) {
+        double xCorrectorForRotation = .5;
+        double yCorrectorForRotation = .5;
+        double sizeRatioValue = -GAME_HEIGHT / depthRatio;
+        double difPosXA = (x - xCorrectorForRotation - Player.xPosition);
+        double difPosYA = (y + yCorrectorForRotation - Player.yPosition);
+        double difPosZ = ((Player.zPosition - z) * defaultSize);
+        double xPositionA = (Player.xPosition + difPosXA * Math.cos(angle) + difPosYA * Math.sin(angle) + xCorrectorForRotation);
+        double yPositionA = (Player.yPosition - difPosXA * Math.sin(angle) + difPosYA * Math.cos(angle) - yCorrectorForRotation);
+        double difPosYR = ((Player.yPosition - (yPositionA - distancePlayerCamera)) * defaultSize);
+        double difPosXR = ((Player.xPosition - xPositionA) * defaultSize);
+        double sizeRatio = GAME_HEIGHT / (difPosYR * 1.0 * depthRatio + GAME_HEIGHT);
+        if (difPosYR < sizeRatioValue) {
+            sizeRatio = (-GAME_HEIGHT * depthRatio) / (Math.pow(sizeRatioValue * depthRatio + GAME_HEIGHT, 2)) * (difPosYR - sizeRatioValue) + GAME_HEIGHT / depthRatio;
+        }
+        double newPosYR = ((PVY - PFY) * sizeRatio + PFY + difPosZ * sizeRatio);
+        double newPosXR = (PVX - (difPosXR) * sizeRatio - (defaultSize * sizeRatio) / 2);
+        return new double[]{newPosXR, newPosYR, sizeRatio};
+    }
+
+
+ */
 }

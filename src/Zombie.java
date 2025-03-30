@@ -6,8 +6,8 @@ public class Zombie extends Entity {
     double changeDirectionTime=3;
     double changeDirectionCount=0;
     double angleWalking;
-    Zombie(double x, double y, double z, double strength, double hp, double xp) {
-        super(x, y, z, strength, hp, xp);
+    Zombie(GameGrid gameGrid,double x, double y, double z, double strength, double hp, double xp) {
+        super(gameGrid,x, y, z, strength, hp, xp);
         angleWalking=Math.random()*Math.PI*2;
     }
     public void setAggro(){

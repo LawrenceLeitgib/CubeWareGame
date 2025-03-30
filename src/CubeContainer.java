@@ -1,21 +1,23 @@
 import java.awt.*;
 public class CubeContainer {
-    static int numOfChunkX=1000;
-    static int numOfChunkY=1000;
-    static Chunk[][] chunks=new Chunk[numOfChunkX*2][numOfChunkY*2];
-    static boolean[][]chunksPosition=new boolean[numOfChunkX*2][numOfChunkY*2];
-    static boolean[][]chunksGenerate=new boolean[numOfChunkX*2][numOfChunkY*2];
-    static boolean[][]chunksGenerateGround=new boolean[numOfChunkX*2][numOfChunkY*2];
+    static final int numOfChunkX=1000;
+    static final int numOfChunkY=1000;
+    Chunk[][] chunks=new Chunk[numOfChunkX*2][numOfChunkY*2];
+    boolean[][]chunksPosition=new boolean[numOfChunkX*2][numOfChunkY*2];
+    boolean[][]chunksGenerate=new boolean[numOfChunkX*2][numOfChunkY*2];
+    boolean[][]chunksGenerateGround=new boolean[numOfChunkX*2][numOfChunkY*2];
     private final int[]  newChunkIn={0,0};
-    static Color[][] colorsList=new  Color[7][2];
-    CubeContainer(){
+    public static Color[][] colorsList=new  Color[7][2];
+    private final GameGrid gameGrid;
+    CubeContainer(GameGrid gameGrid){
+        this.gameGrid=gameGrid;
         setColorsList();
         CreateNewChunks();
-        CreateNewGround();
-        CreateNewStructure();
+        //CreateNewGround();
+        //CreateNewStructure();
         drawSpawn();
-        newChunkIn[0] = Player.chunkIn[0];
-        newChunkIn[1] = Player.chunkIn[1];
+        newChunkIn[0] = gameGrid.player.chunkIn[0];
+        newChunkIn[1] = gameGrid.player.chunkIn[1];
     }
     public void setColorsList(){
         colorsList[0][0]= new Color(5, 168, 30);
@@ -33,26 +35,26 @@ public class CubeContainer {
         colorsList[6][0]=new Color(29, 82, 0);
         colorsList[6][1]=new Color(29, 82, 0);
     }
-    public static void newCube(int x, int y, int z){
+    public void newCube(int x, int y, int z){
         newCube(x,y,z,0);
     }
-    static public void newCube(int x,int y,int z,int type){
+    public void newCube(int x,int y,int z,int type){
         int[] xInfo=YAndXPositionToChunkPos(x);
         int[] yInfo=YAndXPositionToChunkPos(y);
         if(!chunksPosition[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]){
            chunksPosition[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]=true;
-           chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]=new Chunk();
+           chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]=new Chunk(gameGrid);
         }
         if(!chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].cubePositions[xInfo[1]][yInfo[1]][z])Chunk.numberOfCube++;
-        chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].cubes[xInfo[1]][yInfo[1]][z]=new Cube(type);
+        chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].getCubes()[xInfo[1]][yInfo[1]][z]=new Cube(type,gameGrid);
         chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].cubePositions[xInfo[1]][yInfo[1]][z]=true;
         chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].zLayer[z]=true;
         GameGrid.bigZLayer[z]=true;
     }
-    static public void removeCube(int x,int y,int z){
+    public void removeCube(int x,int y,int z){
         int[] xInfo=YAndXPositionToChunkPos(x);
         int[] yInfo=YAndXPositionToChunkPos(y);
-        chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].cubes[xInfo[1]][yInfo[1]][z]=null;
+        chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].getCubes()[xInfo[1]][yInfo[1]][z]=null;
         chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].cubePositions[xInfo[1]][yInfo[1]][z]=false;
     }
     private void drawCircle3(int x, int y, int z, int r, int type){
@@ -67,7 +69,7 @@ public class CubeContainer {
             }
         }
     }
-    static void fillCircle2(int x, int y, int z, int r, int type){
+    private void fillCircle2(int x, int y, int z, int r, int type){
         for(int i=-r;i<r;i++){
             for(int k=-r;k<r;k++){
                 if(Math.sqrt(Math.pow(i,2)+Math.pow(k,2))<r){
@@ -156,7 +158,7 @@ public class CubeContainer {
         drawPortal(0,-19,2,1);
         createCubes();
     }
-    static public void drawTree(int x,int y, int z,int height){
+    public void drawTree(int x,int y, int z,int height){
         int[] xInfo=YAndXPositionToChunkPos(x);
         int[] yInfo=YAndXPositionToChunkPos(y);
 
@@ -166,7 +168,7 @@ public class CubeContainer {
         int newX=xInfo[1];
         int newY=yInfo[1];
 
-        if(chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubes[newX][newY][z-1].getType()!=0)return;
+        if(chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].getCubes()[newX][newY][z-1].getType()!=0)return;
         if(chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubePositions[newX][newY][z]){
             drawTree(x,y,z+1, height);
             return;
@@ -193,7 +195,7 @@ public class CubeContainer {
         }
 
     }
-    static public void drawMountain(int x,int y, int z,int r,int step){
+    public void drawMountain(int x,int y, int z,int r,int step){
         for(var i=0;i<r*step;i+=step){
             if(r-i<=2)return;
             fillCircle2(x,y,i/step+z,r-i,0);
@@ -214,60 +216,24 @@ public class CubeContainer {
 
     }
     public void createCubes(){
-        drawBasicStructure(-10,-10,0,20,20,5);
-        //drawtor(0,0,40,5,20,4);
-        //drawHeart(0,0,30);
-        //drawBall(0,20,30,20);
-       // drawCircle2(0,0,10,30,5);
-        //drawCircle(0,0,10,29,1);
-
-        /*
-        drawCircle3(0,0,2,29,1);
-        drawCircle3(0,0,2,30,1);
-        drawCircle3(0,0,3,30,1);
-        drawCircle3(0,0,2,31,1);
-
-
-        for(var i=0;i<20;i++){
-            for(var j=i*2;j<40-i*2;j++){
-                for(var k=i*2;k<40-i*2;k++){
-                    newCube(k+5,j+50,i+2,1);
-                    newCube(k-40,j+50,i+2,0);
-
-                }
-            }
-        }
-
-         */
-
-       // drawBasicStructure(0,-70,2,15,15,2);
-       // drawBasicStructure(1,-69,2,13,13,1);
-        //drawBasicStructure(-1,-71,2,17,17,1);
-        /*
-        drawMountain(0,60,2,30,4);
-        drawMountain(20,60,2,30,5);
-        drawMountain(30,40,2,20,2);
-        drawMountain(40,60,2,20,3);
-
-        */
-        //drawTree(0,-30,2,5);
+       //drawBasicStructure(-10,-10,0,20,20,5);
     }
-    static public void newChunk(int x,int y){
+    public void newChunk(int x,int y){
         if((!chunksPosition[numOfChunkX+x][numOfChunkY+y])){
-            chunks[numOfChunkX + x][numOfChunkY + y] = new Chunk();
+            chunks[numOfChunkX + x][numOfChunkY + y] = new Chunk(gameGrid);
             chunksPosition[numOfChunkX + x][numOfChunkY + y] = true;
         }
     }
-    static public void CreateNewChunks(){
-        for(int i = Player.chunkIn[0]- GameGrid.numOfChunkToDraw-2; i<=Player.chunkIn[0]+ GameGrid.numOfChunkToDraw+2; i++){
-            for(int j = Player.chunkIn[1]- GameGrid.numOfChunkToDraw-2; j<=Player.chunkIn[1]+ GameGrid.numOfChunkToDraw+2; j++){
+    public void CreateNewChunks(){
+        for(int i = gameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw -2; i<=gameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw +2; i++){
+            for(int j = gameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw -2; j<=gameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw +2; j++){
                 if(!chunksPosition[numOfChunkX+i][numOfChunkY+j]) newChunk(i,j);
             }
         }
     }
-    static public void CreateNewGround(){
-        for(int i = Player.chunkIn[0]- GameGrid.numOfChunkToDraw-2; i<=Player.chunkIn[0]+ GameGrid.numOfChunkToDraw+2; i++){
-            for(int j = Player.chunkIn[1]- GameGrid.numOfChunkToDraw-2; j<=Player.chunkIn[1]+ GameGrid.numOfChunkToDraw+2; j++){
+    public void CreateNewGround(){
+        for(int i = gameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw -2; i<=gameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw +2; i++){
+            for(int j = gameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw -2; j<=gameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw +2; j++){
                 if(!chunksGenerateGround[numOfChunkX+i][numOfChunkY+j]){
                     generateGround(i,j);
                     chunksGenerateGround[numOfChunkX+i][numOfChunkY+j]=true;
@@ -276,9 +242,9 @@ public class CubeContainer {
         }
 
     }
-    static public void CreateNewStructure(){
-        for(int i = Player.chunkIn[0]- GameGrid.numOfChunkToDraw; i<=Player.chunkIn[0]+ GameGrid.numOfChunkToDraw; i++){
-            for(int j = Player.chunkIn[1]- GameGrid.numOfChunkToDraw; j<=Player.chunkIn[1]+ GameGrid.numOfChunkToDraw; j++){
+    public void CreateNewStructure(){
+        for(int i = gameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw; i<=gameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw; i++){
+            for(int j = gameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw; j<=gameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw; j++){
                 if(!chunksGenerate[numOfChunkX+i][numOfChunkY+j]){
                     generateChunk(i,j);
                     chunksGenerate[numOfChunkX+i][numOfChunkY+j]=true;
@@ -287,7 +253,7 @@ public class CubeContainer {
         }
 
     }
-    private static void generateGround(int x, int y) {
+    private void generateGround(int x, int y) {
         int numX= (int) (Math.random()*16);
         int numY= (int) (Math.random()*16);
         int stepNum=(int) (Math.random()*5+3);
@@ -295,8 +261,7 @@ public class CubeContainer {
         if(Math.sqrt(Math.pow(x*Chunk.numOfCubeX+numX,2)+Math.pow(y*Chunk.numOfCubeY+numY,2))> GameGrid.safeZone*3)
             drawMountain(x*Chunk.numOfCubeX+numX,y*Chunk.numOfCubeY+numY,2,rNum,stepNum);
     }
-    private static void generateChunk(int x, int y)
-    {
+    private void generateChunk(int x, int y) {
         int numX= (int) (Math.random()*16);
         int numY= (int) (Math.random()*16);
         int heightNum=(int) (Math.random()*3);
@@ -305,27 +270,23 @@ public class CubeContainer {
 
     }
     public void updateData(double deltaTime){
-        if((newChunkIn[0]!=Player.chunkIn[0])||(newChunkIn[1]!=Player.chunkIn[1])){
+        if((newChunkIn[0]!=gameGrid.player.chunkIn[0])||(newChunkIn[1]!=gameGrid.player.chunkIn[1])){
             CreateNewChunks();
-            CreateNewGround();
-            CreateNewStructure();
+            //CreateNewGround();
+            //CreateNewStructure();
         }
-        newChunkIn[0] = Player.chunkIn[0];
-        newChunkIn[1] = Player.chunkIn[1];
+        newChunkIn[0] = gameGrid.player.chunkIn[0];
+        newChunkIn[1] = gameGrid.player.chunkIn[1];
     }
     static int[] YAndXPositionToChunkPos(int pos){
         //if(Chunk.numOfCubeX!=Chunk.numOfCubeX)System.out.println("there is a problem");
-        int chunkPos=0;
-        int posInChunk=pos;
-        while(posInChunk>=Chunk.numOfCubeX){
-            chunkPos+=1;
-            posInChunk-=Chunk.numOfCubeX;
-        }
-        while(posInChunk<0){
-            chunkPos-=1;
-            posInChunk+=Chunk.numOfCubeX;
+        if(pos>=0) return new int[]{pos/Chunk.numOfCubeX, pos%Chunk.numOfCubeX};
+        else {
+            if (pos % Chunk.numOfCubeX == 0) return new int[]{pos / Chunk.numOfCubeX - 2, 0};
+            else return new int[]{pos / Chunk.numOfCubeX - 1, Chunk.numOfCubeX + pos % Chunk.numOfCubeX};
+
         }
 
-        return new int[]{chunkPos, posInChunk};
+
     }
 }

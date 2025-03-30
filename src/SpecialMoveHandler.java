@@ -1,26 +1,25 @@
 import java.awt.event.KeyEvent;
 
 public class SpecialMoveHandler {
-    double shoutTime=0.2;
-    double shoutCount=0;
-    static boolean oneDown=false;
-    static boolean oneHaveBeenRelesed=true;
+    private final double shoutTime=0.2;
+    private double shoutCount=0;
     boolean lightningSprint=false;
     int lightningSprintCount=0;
     double lightningSprintTime =1;
     double lightningSprintCount2= lightningSprintTime;
-    SpecialMoveHandler(){
-
+    private final  GameGrid gameGrid;
+    SpecialMoveHandler(GameGrid gameGrid){
+     this.gameGrid=gameGrid;
     }
-    public static void createFireBall(){
+    public  void createFireBall(){
         Stats.mana-=1;
         if (Stats.mana<0){
             Stats.mana+=1;
             return;
         }
-        ProjectileContainer.Projectiles.add(new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+ ProjectileContainer.ProjectileHeight,GameGrid.mouseAngleInGame,20,.2,Stats.strength,true));
+        gameGrid.projectileContainer.Projectiles.add(new FireBall(gameGrid,gameGrid.player.xPosition,gameGrid.player.yPosition,gameGrid.player.zPosition+ ProjectileContainer.ProjectileHeight, InputHandler.mouseAngleInGame,20,.2,Stats.strength,true));
     }
-    public static void attackSpecial1(){
+    public void attackSpecial1(){
         if(Stats.currentLevel<Stats.SpecialAttack.get("FBT")[0])return;
         Stats.mana-=Stats.SpecialAttack.get("FBT")[1];
         if(Stats.mana<0){
@@ -29,18 +28,13 @@ public class SpecialMoveHandler {
         }
         for(var j=0;j<100;j++){
             double ang=2*Math.PI/100.0*j;
-            ProjectileContainer.Projectiles.add(new FireBall(Player.xPosition,Player.yPosition,Player.zPosition+ ProjectileContainer.ProjectileHeight,ang,20,.2,Stats.strength,true));
-
+            gameGrid.projectileContainer.Projectiles.add(new FireBall(gameGrid,gameGrid.player.xPosition,gameGrid.player.yPosition,gameGrid.player.zPosition+ ProjectileContainer.ProjectileHeight,ang,20,.2,Stats.strength,true));
         }
     }
 
     public void updateData(double deltaTime){
-        if(oneDown){
-            attackSpecial1();
-            oneDown=false;
 
-        }
-        if(GameGrid.mouseLeftClickDown){
+        if(InputHandler.mouseLeftClickDown){
             shoutCount+=deltaTime;
             // attackSpecial();
             if(shoutCount>=shoutTime){
@@ -67,9 +61,9 @@ public class SpecialMoveHandler {
         }
         if(lightningSprintCount>0){
 
-            Player.yVelocity=0;
-            Player.yVelocity-=200.2*Math.cos(GameGrid.angleForXRotation)*deltaTime*20;
-            Player.xVelocity+=200.2*Math.sin(GameGrid.angleForXRotation)*deltaTime*20;
+            gameGrid.player.yVelocity=0;
+            gameGrid.player.yVelocity-=200.2*Math.cos(GameGrid.angleForHorizontalRotation)*deltaTime*20;
+            gameGrid.player.xVelocity+=200.2*Math.sin(GameGrid.angleForHorizontalRotation)*deltaTime*20;
             lightningSprintCount--;
         }
 
@@ -77,27 +71,13 @@ public class SpecialMoveHandler {
     }
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
-            case 49:
-            if(oneHaveBeenRelesed){
-                oneDown=true;
-                oneHaveBeenRelesed=false;
-            }
-            break;
-            case 81:
-                lightningSprint=true;
-                break;
+            case 81-> lightningSprint = true;
+
         }
     }
     public void keyReleased(KeyEvent e) {
-        switch(e.getKeyCode()){
-            case 49:
-                oneDown=false;
-                oneHaveBeenRelesed=true;
-                break;
-
-            case 81:
-                lightningSprint=false;
-                break;
+        switch (e.getKeyCode()) {
+            case 81 -> lightningSprint = false;
         }
 
     }

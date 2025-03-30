@@ -8,13 +8,12 @@ import javax.swing.*;
 
 
 public class GamePanel extends JPanel implements Runnable {
-    static int GAME_WIDTH=1000;
+    static int GAME_WIDTH=1000;//1200
     static int GAME_HEIGHT=(int)(GAME_WIDTH*(9.0/16 ));
     static final Dimension SCREEN_SIZE = new Dimension(GAME_WIDTH,GAME_HEIGHT);
     Thread gameThread;
     static Image image;
     Graphics graphics;
-    Stats stats;
     private GameGrid gameGrid;
     static double xPos;
     static double yPos;
@@ -25,7 +24,6 @@ public class GamePanel extends JPanel implements Runnable {
     static Dictionary<String, Integer> GameStates = new Hashtable<>();
     static int gameState;
 
-    InputHandler inputHandler;
     static Rectangle[] rectForDraw=new Rectangle[100];
     GamePanel() {
         this.setFocusable(true); //read key strock
@@ -37,10 +35,8 @@ public class GamePanel extends JPanel implements Runnable {
         yPos=this.getLocationOnScreen().getY() ;
         xPos=this.getLocationOnScreen().getX();} catch (Exception ignored) {
         }
+        //System.out.println((-7)%16);
         newGameGrid();
-        stats=new Stats();
-        inputHandler=new InputHandler(gameGrid);
-
         gameThread=new Thread(this);
         gameThread.start();
         GameStates.put("Menu",0);
@@ -82,7 +78,7 @@ public class GamePanel extends JPanel implements Runnable {
         g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
     }
     static public void drawRectWithContext(Graphics g, Rectangle rect,Color color1,Color color2,int size){
-        if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
+        if(isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,rect)){
             drawRectWithBorder(g,rect,color1,color2,size);
         }else{
             drawRect(g,rect,color1);
@@ -90,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
     static public void drawRectWithContext2(Graphics g, Rectangle rect,Color color1,Color color2,int size){
-        if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
+        if(isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,rect)){
             drawRectWithBorder(g,rect,color1,color2,size);
         }
 
@@ -115,17 +111,16 @@ public class GamePanel extends JPanel implements Runnable {
         Rectangle r = getBounds();
         //r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
         if(GameGrid.GAME_HEIGHT!=r.height||GameGrid.GAME_WIDTH!=r.width) {
-            GameGrid.setGameHeight(r.height);
-            GameGrid.setGameWidth(r.width);
-            Stats.setGameHeight(r.height);
-            Stats.setGameWidth(r.width);
+            gameGrid.setGameHeight(r.height);
+            gameGrid.setGameWidth(r.width);
+            gameGrid.stats.setGameHeight(r.height);
+            gameGrid.stats.setGameWidth(r.width);
             GameGrid.defaultSize=r.width/10;
             rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
         }
         gameGrid.draw(g);
-        stats.draw(g);
         if(gameState==GameStates.get("Menu")){
-            Player.draw(g);
+            gameGrid.player.draw(g);
             g.setColor(new Color(84, 84, 84,200));
             g.fillRect(0,0,GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
             drawRectWithContext(g,rectForDraw[0],new Color(168, 113, 10),Color.yellow,4);
@@ -150,7 +145,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         if(gameState==GameStates.get("Running")){}
         if(gameState==GameStates.get("Stats")){
-            stats.drawE(g);
+            gameGrid.stats.drawE(g);
         }
 
     }
@@ -158,37 +153,35 @@ public class GamePanel extends JPanel implements Runnable {
         try{
             yPos=this.getLocationOnScreen().getY() ;
             xPos=this.getLocationOnScreen().getX();} catch (Exception ignored) {
-        }if(!Player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running"))this.setCursor(blankCursor);
+        }if(!gameGrid.player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running"))this.setCursor(blankCursor);
         else{this.setCursor(Cursor.getDefaultCursor());}
 
         if(gameState==GameStates.get("Menu")){
-            if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
-                if(GameGrid.mouseLeftClickDown)gameState=GameStates.get("Running");
+            if(isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,rectForDraw[0])){
+                if(InputHandler.mouseLeftClickDown)gameState=GameStates.get("Running");
             }
             return;
         }
         if(gameState==GameStates.get("Paused")){
-            if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
-                if(GameGrid.mouseLeftClickDown)gameState=GameStates.get("Running");
+            if(isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,rectForDraw[0])){
+                if(InputHandler.mouseLeftClickDown)gameState=GameStates.get("Running");
             }
             return;
         }
         if(gameState==GameStates.get("Dead")){
-            if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
-                if(GameGrid.mouseLeftClickDown)gameGrid.player.respawn();
+            if(isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,rectForDraw[0])){
+                if(InputHandler.mouseLeftClickDown)gameGrid.player.respawn();
             }
             return;
         }
         if(gameState==GameStates.get("Stats")){
-           stats.updateDataE(deltaTime);
+            gameGrid.stats.updateDataE(deltaTime);
            return;
         }
         if(gameState==GameStates.get("Running")){
 
         }
         gameGrid.updateData(deltaTime);
-        stats.updateData(deltaTime);
-        inputHandler.update(deltaTime);
 
     }
     @Override
@@ -244,7 +237,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public class AL extends KeyAdapter{
         public void keyPressed(KeyEvent e){
-            inputHandler.keyPressed(e);
+            gameGrid.inputHandler.keyPressed(e);
             if(e.getKeyCode()==27){
                 togglePause();
             }
@@ -255,7 +248,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
         public void keyReleased(KeyEvent e){
-            inputHandler.keyReleased(e);
+            gameGrid.inputHandler.keyReleased(e);
 
         }
     }
@@ -266,11 +259,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
         @Override
         public void mousePressed(MouseEvent e) {
-            inputHandler.mousePressed(e);
+            gameGrid.inputHandler.mousePressed(e);
         }
         @Override
         public void mouseReleased(MouseEvent e) {
-            inputHandler.mouseReleased(e);
+            gameGrid.inputHandler.mouseReleased(e);
         }
         @Override
         public void mouseEntered(MouseEvent e) {
@@ -281,11 +274,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
         @Override
         public void mouseDragged(MouseEvent e) {
-            inputHandler.mouseDragged(e);
+            gameGrid.inputHandler.mouseDragged(e);
         }
         @Override
         public void mouseMoved(MouseEvent e) {
-            inputHandler.mouseMoved(e);
+            gameGrid.inputHandler.mouseMoved(e);
         }
     }
 }

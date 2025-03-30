@@ -1,17 +1,19 @@
 import java.awt.*;
 public class Cube {
     private final byte type;
-    Cube(int type){
+    private final GameGrid gameGrid;
+    Cube(int type,GameGrid gameGrid){
         this.type=(byte)type;
+        this.gameGrid=gameGrid;
     }
-    Cube(){
-        this(0);
+    Cube(GameGrid gameGrid){
+        this(0,gameGrid);
     }
     public int getType() {
         return type;
     }
-    void draw(Graphics g,int x,int y,int z){
-        if(Math.sqrt(Math.pow(y-Player.yPosition,2)+Math.pow(x-Player.xPosition,2))>(2*GameGrid.numOfChunkToDraw+1)*Chunk.numOfCubeX/2.0)return;
+    public void draw(Graphics g,int x,int y,int z){
+        if(Math.sqrt(Math.pow(y-gameGrid.player.yPosition,2)+Math.pow(x-gameGrid.player.xPosition,2))>(2*GameGrid.numOfChunkToDraw+1)*Chunk.numOfCubeX/2.0)return;
         boolean[] sidesCheck=CheckToDraw(x,y,z);
         if(!sidesCheck[6]){
             return;
@@ -48,45 +50,45 @@ public class Cube {
         Color colorBack=CubeContainer.colorsList[type][1];
         Color colorBottom=CubeContainer.colorsList[type][1];
 
-        if(GameGrid.angleForXRotation<Math.PI/4) {
+        if(GameGrid.angleForHorizontalRotation <Math.PI/4) {
             if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight,type  );
             if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft,type  );
             if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack,type );
         }
-        else if(GameGrid.angleForXRotation<Math.PI/2) {
+        else if(GameGrid.angleForHorizontalRotation <Math.PI/2) {
             if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront,type );
             if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack,type );
             if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft,type  );
         }
-        else if(GameGrid.angleForXRotation<3*Math.PI/4) {
+        else if(GameGrid.angleForHorizontalRotation <3*Math.PI/4) {
             if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack,type );
             if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront,type );
             if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft,type  );
         }
-        else if(GameGrid.angleForXRotation<Math.PI) {
+        else if(GameGrid.angleForHorizontalRotation <Math.PI) {
             if (blockRightEmpty)  fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight,type  );
             if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft,type );
             if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront,type );
 
         }
-        else if(GameGrid.angleForXRotation<5*Math.PI/4) {
+        else if(GameGrid.angleForHorizontalRotation <5*Math.PI/4) {
 
             if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft,type );
             if (blockRightEmpty)   fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight,type  );
             if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront ,type);
         }
-        else if(GameGrid.angleForXRotation<3*Math.PI/2) {
+        else if(GameGrid.angleForHorizontalRotation <3*Math.PI/2) {
             if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack,type);
             if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront,type);
             if (blockRightEmpty)    fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight,type  );
 
         }
-        else if(GameGrid.angleForXRotation<7*Math.PI/4) {
+        else if(GameGrid.angleForHorizontalRotation <7*Math.PI/4) {
             if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],colorFront,type );
             if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack,type );
             if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight,type  );
         }
-        else if(GameGrid.angleForXRotation<2*Math.PI) {
+        else if(GameGrid.angleForHorizontalRotation <2*Math.PI) {
             if (blockLeftEmpty)fillPolygonB(g,polygonLeft[0],polygonLeft[1],colorLeft,type );
             if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],colorRight,type  );
             if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],colorBack,type );
@@ -113,27 +115,27 @@ public class Cube {
         boolean blockFrontEmpty=true;
         boolean blockBackEmpty=true;
         int countForDrawing=0;
-        if (CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z + 1]) {
+        if (gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z + 1]) {
             blockTopEmpty = false;
             countForDrawing++;
         }
-        if (z != 0 && CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z - 1]) {
+        if (z != 0 && gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z - 1]) {
             blockBottomEmpty = false;
             countForDrawing++;
         }
-        if (CubeContainer.chunks[leftPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[leftPosCheck[1]][thisPosCheckY[1]][z]) {
+        if (gameGrid.cubeContainer.chunks[leftPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[leftPosCheck[1]][thisPosCheckY[1]][z]) {
             blockLeftEmpty = false;
             countForDrawing++;
         }
-        if (CubeContainer.chunks[rightPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[rightPosCheck[1]][thisPosCheckY[1]][z]) {
+        if (gameGrid.cubeContainer.chunks[rightPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[rightPosCheck[1]][thisPosCheckY[1]][z]) {
             blockRightEmpty = false;
             countForDrawing++;
         }
-        if (CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][frontPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][frontPosCheck[1]][z]) {
+        if (gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][frontPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][frontPosCheck[1]][z]) {
             blockBackEmpty = false;
             countForDrawing++;
         }
-        if (CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][backPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][backPosCheck[1]][z]) {
+        if (gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][backPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][backPosCheck[1]][z]) {
             blockFrontEmpty = false;
             countForDrawing++;
         }
@@ -172,35 +174,13 @@ public class Cube {
                 corners[6][1],corners[5][1]});
     return allPolygon;
     }
-    static double[] getObjectScreenPos(double x, double y, double z){
-       return getObjectScreenPos(x,y,z,GameGrid.angleForXRotation);
-    }
-    static double[] getObjectScreenPos(double x, double y, double z,double angle){
-        double xCorrectorForRotation=.5;
-        double yCorrectorForRotation=.5;
-        double sizeRatioValue=-GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
-        double difPosXA=(x-xCorrectorForRotation-Player.xPosition);
-        double difPosYA= (y+yCorrectorForRotation-Player.yPosition);
-        double difPosZ=((Player.zPosition-z)* GameGrid.defaultSize);
-        double xPositionA=  (Player.xPosition+difPosXA*Math.cos(angle)+difPosYA*Math.sin(angle)+xCorrectorForRotation);
-        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(angle)+difPosYA*Math.cos(angle)-yCorrectorForRotation);
-        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))* GameGrid.defaultSize);
-        double difPosXR=((Player.xPosition-xPositionA)* GameGrid.defaultSize);
-        double sizeRatio= GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+ GameGrid.GAME_HEIGHT);
-        if(difPosYR<sizeRatioValue){
-            sizeRatio=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+ GameGrid.GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+ GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
-        }
-        double newPosYR=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
-        double newPosXR=  (GameGrid.PVX-(difPosXR)*sizeRatio-(GameGrid.defaultSize*sizeRatio)/2);
-        return new double[]{newPosXR, newPosYR, sizeRatio};
-    }
     private double[][] getCorners(int x, int y,int z){
         double[][] corners=new double[9][2];
         corners[8][0]=0;
-        double[] info0= getObjectScreenPos(x,y,z);
-        double[] info1= getObjectScreenPos(x+1,y,z);
-        double[] info2= getObjectScreenPos(x+1,y-1,z);
-        double[] info3= getObjectScreenPos(x,y-1,z);
+        double[] info0= GameGrid.getObjectScreenPos(x,y,z);
+        double[] info1= GameGrid.getObjectScreenPos(x+1,y,z);
+        double[] info2= GameGrid.getObjectScreenPos(x+1,y-1,z);
+        double[] info3= GameGrid.getObjectScreenPos(x,y-1,z);
         double[][] info= {info0,info1,info2,info3};
         corners[8][0]=info[0][2];
         for(int i=0;i<4;i++){

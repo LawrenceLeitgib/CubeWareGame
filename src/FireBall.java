@@ -1,8 +1,8 @@
 import java.awt.*;
 
 public class FireBall extends Projectile {
-    FireBall(double xPos, double yPos, double zPos, double angle, double speed, double size, double damage, boolean isFriendly) {
-        super(xPos, yPos, zPos, angle, speed, size, damage, isFriendly);
+    FireBall(GameGrid gameGrid,double xPos, double yPos, double zPos, double angle, double speed, double size, double damage, boolean isFriendly) {
+        super(gameGrid,xPos, yPos, zPos, angle, speed, size, damage, isFriendly);
     }
     public void draw(Graphics g) {
         super.draw(g);

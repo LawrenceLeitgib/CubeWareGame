@@ -16,13 +16,16 @@ abstract class Entity {
     static int[] chunkIn=new int[2];
     double angleWithPlayer;
     double distanceWithPlayer;
-    static int diSpawnDistance=60;
+    static int diSpawnDistance=200;
     double MaxHP;
     double HP;
     double strength;
     double xp;
+    double jumpSpeed=15;
     Color color;
-    Entity(double x, double y, double z,double strength,double hp,double xp){
+    static GameGrid gameGrid;
+    Entity(GameGrid gameGrid,double x, double y, double z,double strength,double hp,double xp){
+        this.gameGrid=gameGrid;
         xPosition=x;
         yPosition=y;
         zPosition=z;
@@ -85,7 +88,7 @@ abstract class Entity {
 
                 if(coli[3]||coli[4]||coli[5]||coli[6]){
                     if((coli[3]&&!coli[7])||(coli[4]&&!coli[8])||(coli[5]&&!coli[9])||(coli[6]&&!coli[10]))
-                        zVelocity=Player.jumpSpeed;
+                        zVelocity=jumpSpeed;
                 }
             }
         }
@@ -119,17 +122,17 @@ abstract class Entity {
         cubeIn[2]=(int)(zPosition);
         if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
         if(yPosition<0)cubeIn[1]=(int)(yPosition-0.5);
-        distanceWithPlayer=Math.sqrt(Math.pow(Player.xPosition-xPosition,2)+Math.pow(Player.yPosition-yPosition,2));
+        distanceWithPlayer=Math.sqrt(Math.pow(gameGrid.player.xPosition-xPosition,2)+Math.pow(gameGrid.player.yPosition-yPosition,2));
 
-        angleWithPlayer=Math.atan((Player.yPosition-yPosition)/(Player.xPosition-xPosition));
-        if(Player.xPosition-xPosition>0){
+        angleWithPlayer=Math.atan((gameGrid.player.yPosition-yPosition)/(gameGrid.player.xPosition-xPosition));
+        if(gameGrid.player.xPosition-xPosition>0){
             angleWithPlayer=Math.PI+angleWithPlayer;
-        }else  if(Player.xPosition-xPosition<0&&Player.yPosition-yPosition>0){
+        }else  if(gameGrid.player.xPosition-xPosition<0&&gameGrid.player.yPosition-yPosition>0){
             angleWithPlayer=2*Math.PI+angleWithPlayer;
         }
-        if(Player.xPosition-xPosition==0){
-            if(Player.yPosition-yPosition<=0)angleWithPlayer=Math.PI/2;
-            if(Player.yPosition-yPosition>0)angleWithPlayer=3*Math.PI/2;
+        if(gameGrid.player.xPosition-xPosition==0){
+            if(gameGrid.player.yPosition-yPosition<=0)angleWithPlayer=Math.PI/2;
+            if(gameGrid.player.yPosition-yPosition>0)angleWithPlayer=3*Math.PI/2;
         }
     }
     private void deathHandler(){
@@ -142,7 +145,7 @@ abstract class Entity {
     }
     public void draw(Graphics g){
 
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-gameGrid.player.yPosition,2)+Math.pow(xPosition-gameGrid.player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -167,7 +170,7 @@ abstract class Entity {
 
     }
     public void draw1(Graphics g){
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-gameGrid.player.yPosition,2)+Math.pow(xPosition-gameGrid.player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -192,7 +195,7 @@ abstract class Entity {
 
     }
     public void draw2(Graphics g){
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-gameGrid.player.yPosition,2)+Math.pow(xPosition-gameGrid.player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -219,7 +222,7 @@ abstract class Entity {
 
     }
     public void draw3(Graphics g){
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-gameGrid.player.yPosition,2)+Math.pow(xPosition-gameGrid.player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -254,11 +257,11 @@ abstract class Entity {
     }
     private double[][] getCorners(){
         double[][] corners=new double[16][2];
-        double a=GameGrid.angleForXRotation;
-        double[] info0= Cube.getObjectScreenPos(xPosition+(1-width)/2,yPosition-(1-depth)/2,zPosition,a);
-        double[] info1= Cube.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-(1-depth)/2,zPosition,a);
-        double[] info2= Cube.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
-        double[] info3= Cube.getObjectScreenPos(xPosition+(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
+        double a=GameGrid.angleForHorizontalRotation;
+        double[] info0= GameGrid.getObjectScreenPos(xPosition+(1-width)/2,yPosition-(1-depth)/2,zPosition,a);
+        double[] info1= GameGrid.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-(1-depth)/2,zPosition,a);
+        double[] info2= GameGrid.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
+        double[] info3= GameGrid.getObjectScreenPos(xPosition+(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
         double[][] info= {info0,info1,info2,info3};
         int n=4;
         for(int i=0;i<4;i++){
@@ -369,73 +372,73 @@ abstract class Entity {
 
 
         if(num==1 ||num==0)
-            collision[1]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosUnder]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosUnder]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosUnder]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosUnder];
+            collision[1]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosUnder]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosUnder]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosUnder]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosUnder];
 
 
         if(num==2 ||num==0)
-           collision[2]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosAbove]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosAbove]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosAbove]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosAbove];
+           collision[2]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosAbove]||
+                   gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosAbove]||
+                   gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosAbove]||
+                   gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosAbove];
 
 
         if(num==3 ||num==0)
-            collision[3]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosAboveForOther];
+            collision[3]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosAboveForOther];
 
         if(num==4 ||num==0)
-            collision[4]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosAboveForOther];
+            collision[4]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosAboveForOther];
 
         if(num==5 ||num==0)
-            collision[5]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosAboveForOther];
+            collision[5]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosAboveForOther];
         if(num==6 ||num==0)
-            collision[6]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosUnderForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosAboveForOther];
+            collision[6]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosUnderForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosAboveForOther];
 
 
         if(num==7 ||num==0)
-            collision[7]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosAboveForOther];
+            collision[7]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosAboveForOther];
 
         if(num==8 ||num==0)
-            collision[8]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosAboveForOther];
+            collision[8]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosAboveForOther];
 
         if(num==9 ||num==0)
-            collision[9]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosAboveForOther];
+            collision[9]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosAboveForOther];
         if(num==10 ||num==0)
-            collision[10]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosMiddleForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosAboveForOther]||
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosAboveForOther];
+            collision[10]= gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosMiddleForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosAboveForOther]||
+                    gameGrid.cubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosAboveForOther];
 
 
         double sensitivity=1;
@@ -482,18 +485,18 @@ abstract class Entity {
         return false;
     }
     private void projectileCollisionHandler(double deltaTime){
-        for(var i = 0; i< ProjectileContainer.Projectiles.size(); i++){
-            if(ProjectileContainer.Projectiles.get(i).isFriendly() ) {
-                Projectile p=ProjectileContainer.Projectiles.get(i);
+        for(var i = 0; i< gameGrid.projectileContainer.Projectiles.size(); i++){
+            if(gameGrid.projectileContainer.Projectiles.get(i).isFriendly() ) {
+                Projectile p=gameGrid.projectileContainer.Projectiles.get(i);
                 if (detectionCollisionWithProjectile(p.getxPosition(), p.getyPosition(), p.getzPosition(), p.getSize())) {
-                    yPosition += ProjectileContainer.Projectiles.get(i).getyVelocity()  * deltaTime;
-                    xPosition += ProjectileContainer.Projectiles.get(i).getxVelocity()  * deltaTime;
+                    yPosition += gameGrid.projectileContainer.Projectiles.get(i).getyVelocity()  * deltaTime;
+                    xPosition += gameGrid.projectileContainer.Projectiles.get(i).getxVelocity()  * deltaTime;
                     if (HP < p.getDamage()) {
                         p.setDamage(p.getDamage()-HP);
                         HP = 0;
                     } else {
-                        HP -= ProjectileContainer.Projectiles.get(i).getDamage();
-                        ProjectileContainer.Projectiles.remove(i);
+                        HP -= gameGrid.projectileContainer.Projectiles.get(i).getDamage();
+                        gameGrid.projectileContainer.Projectiles.remove(i);
                     }
                 }
             }
@@ -502,8 +505,8 @@ abstract class Entity {
 
     }
     private boolean detectionCollisionWithOther(double deltaTime){
-            for(int i = 0; i< EntityContainer.entities.size(); i++){
-                Entity E=EntityContainer.entities.get(i);
+            for(int i = 0; i< gameGrid.entityContainer.entities.size(); i++){
+                Entity E=gameGrid.entityContainer.entities.get(i);
                 if(E.zPosition==zPosition&&E.yPosition==yPosition&&E.xPosition==xPosition)continue;
                 if(zPosition< E.zPosition+ E.height&&zPosition+height> E.zPosition)
                     if(Math.sqrt(Math.pow(E.xPosition-xPosition,2)+Math.pow(E.yPosition-yPosition,2))<(E.width/2+width/2)){

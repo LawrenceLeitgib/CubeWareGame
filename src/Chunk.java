@@ -1,16 +1,23 @@
 public class Chunk {
-    static final byte numOfCubeX = 16;
     static int numberOfCube;
+    static final byte numOfCubeX = 16;
     static final byte numOfCubeY = 16;
     static final short numOfCubeZ = 200;
-    final Cube[][][] cubes = new Cube[numOfCubeX][numOfCubeY][numOfCubeZ];
+    final private Cube[][][] cubes = new Cube[numOfCubeX][numOfCubeY][numOfCubeZ];
     final boolean[][][] cubePositions = new boolean[numOfCubeX][numOfCubeY][numOfCubeZ];
     final boolean[] zLayer =new boolean[numOfCubeZ];
-    Chunk() {
+    private final GameGrid gameGrid;
+    Chunk(GameGrid gameGrid) {
+        this.gameGrid=gameGrid;
         createCubes();
     }
+
+    public Cube[][][] getCubes() {
+        return cubes;
+    }
+
     private void newCube(int x, int y, int z) {
-        cubes[x][y][z] = new Cube();
+        cubes[x][y][z] = new Cube(gameGrid);
         cubePositions[x][y][z] = true;
         zLayer[z]=true;
         GameGrid.bigZLayer[z]=true;

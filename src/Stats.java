@@ -27,7 +27,9 @@ public class Stats {
     static int numOfRectAS=2;
     static Rectangle[][] rectForAS=new Rectangle[numOfRectAS][2];
     double PFSMean;
-    Stats(){
+    private final  GameGrid gameGrid;
+    Stats(GameGrid gameGrid){
+        this.gameGrid=gameGrid;
         bigRect=centerRectangle(GameGrid.GAME_WIDTH/2,GameGrid.GAME_HEIGHT/2,GameGrid.GAME_WIDTH-100,GameGrid.GAME_HEIGHT-100);
         StatsStates.put("General",0);
         StatsStates.put("Special_Attack",1);
@@ -55,7 +57,7 @@ public class Stats {
     public void regenerate(double deltaTime){
         mana+=deltaTime*manaRecovery;
         health+=deltaTime*healthRecovery;
-        if(Player.distanceFromMiddle<GameGrid.regenZone){
+        if(gameGrid.player.distanceFromMiddle<GameGrid.regenZone){
             mana+=deltaTime*(maxMana);
             health+=deltaTime*(maxHealth);
         }
@@ -69,23 +71,23 @@ public class Stats {
             setPlayerStats();
         }
     }
-    public static void setRectForStats(){
+    public void setRectForStats(){
         for(var i=0;i<numOfRectForStat;i++){
             rectForStats[i]=new Rectangle(bigRect.x+5+i*(bigRect.width-10)/numOfRectForStat,bigRect.y+5,(bigRect.width-10)/numOfRectForStat,30);
         }
     }
-    public static void setRectForAS(){
+    public void setRectForAS(){
         for(var i=0;i<numOfRectAS;i++){
             rectForAS[i][0]=new Rectangle(bigRect.x+5,bigRect.y+40+35*i,200,30);
             rectForAS[i][1]=new Rectangle(bigRect.x+5+200+5,bigRect.y+40+35*i,bigRect.width-220,30);
 
         }
     }
-    public static void setGameWidth(int gameWidth) {
+    public void setGameWidth(int gameWidth) {
         bigRect=centerRectangle(GameGrid.GAME_WIDTH/2,GameGrid.GAME_HEIGHT/2,GameGrid.GAME_WIDTH-100,GameGrid.GAME_HEIGHT-100);
         setRectForStats();
     }
-    public static void setGameHeight(int gameHeight) {
+    public void setGameHeight(int gameHeight) {
         bigRect=centerRectangle(GameGrid.GAME_WIDTH/2,GameGrid.GAME_HEIGHT/2,GameGrid.GAME_WIDTH-100,GameGrid.GAME_HEIGHT-100);
         setRectForStats();
 
@@ -111,35 +113,33 @@ public class Stats {
         }
         PFSMean/=numOfPFS;
     }
-
-
     public void drawBar(Graphics g,Rectangle rect,Color c1,Color c2,Color c3,double a,double b){
         GamePanel.drawRectWithBorder2(g,rect,c1,c3,2);
         g.setColor(c2);
         g.fillRect(rect.x,rect.y, (int) (rect.width*a/b),rect.height);
     }
     public void drawGameInfo(Graphics g){
-        if(!GameGrid.F3Down)return;
+        if(!gameGrid.inputHandler.F3Down)return;
         g.setColor(new Color(100,100,100,200));
         g.fillRect(10,50,200,200);
         g.setColor(Color.black);
         g.setFont(new Font("Arial",Font.PLAIN,24));
         g.setColor(Color.red);
-        g.drawString("x: "+Player.xPosition,15,70);
-        g.drawString("y: "+Player.yPosition,15,90);
-        g.drawString("z: "+Player.zPosition,15,110);
+        g.drawString("x: "+gameGrid.player.xPosition,15,70);
+        g.drawString("y: "+gameGrid.player.yPosition,15,90);
+        g.drawString("z: "+gameGrid.player.zPosition,15,110);
         g.drawString("FPS: "+(int)(PFSMean+.5),15,130);
-        g.drawString("entities: "+ EntityContainer.entities.size(),15,150);
+        g.drawString("entities: "+ gameGrid.entityContainer.entities.size(),15,150);
         g.drawString("level: "+Stats.currentLevel,15,170);
-        g.drawString("ball: "+ ProjectileContainer.Projectiles.size(),15,190);
+        g.drawString("ball: "+ gameGrid.projectileContainer.Projectiles.size(),15,190);
         GamePanel.drawRectWithContext(g,GamePanel.rectForDraw[1],new Color(168, 113, 10),Color.yellow,4);
         g.setColor(Color.black);
         GamePanel.centerString(g,GamePanel.rectForDraw[1],"Kill All entities",new Font("Arial",Font.PLAIN,16));
 
-        if(GamePanel.isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,GamePanel.rectForDraw[1])){
-            if(GameGrid.mouseLeftClickDown){
-                Stats.xp+= EntityContainer.entities.size()*25;
-                EntityContainer.entities =new ArrayList<Entity>();
+        if(GamePanel.isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,GamePanel.rectForDraw[1])){
+            if(InputHandler.mouseLeftClickDown){
+                Stats.xp+= gameGrid.entityContainer.entities.size()*25;
+                gameGrid.entityContainer.entities =new ArrayList<Entity>();
             }
         }
     }
@@ -183,8 +183,8 @@ public class Stats {
     public void updateDataE(double deltaTime) {
 
         for(var i=0;i<numOfRectForStat;i++){
-            if(GamePanel.isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForStats[i])){
-                if(GameGrid.mouseLeftClickDown)statsState=i;
+            if(GamePanel.isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,rectForStats[i])){
+                if(InputHandler.mouseLeftClickDown)statsState=i;
             }
         }
     }
