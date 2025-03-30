@@ -1,19 +1,17 @@
 import java.awt.*;
 public class Cube {
     private final byte type;
-    private final GameGrid gameGrid;
-    Cube(int type,GameGrid gameGrid){
+    Cube(int type){
         this.type=(byte)type;
-        this.gameGrid=gameGrid;
     }
-    Cube(GameGrid gameGrid){
-        this(0,gameGrid);
+    Cube(){
+        this(0);
     }
     public int getType() {
         return type;
     }
     public void draw(Graphics g,int x,int y,int z){
-        if(Math.sqrt(Math.pow(y-gameGrid.player.yPosition,2)+Math.pow(x-gameGrid.player.xPosition,2))>(2*GameGrid.numOfChunkToDraw+1)*Chunk.numOfCubeX/2.0)return;
+        if(Math.sqrt(Math.pow(y-GameGrid.player.yPosition,2)+Math.pow(x-GameGrid.player.xPosition,2))>(2*GameGrid.numOfChunkToDraw+1)*Chunk.numOfCubeX/2.0)return;
         boolean[] sidesCheck=CheckToDraw(x,y,z);
         if(!sidesCheck[6]){
             return;
@@ -115,27 +113,27 @@ public class Cube {
         boolean blockFrontEmpty=true;
         boolean blockBackEmpty=true;
         int countForDrawing=0;
-        if (gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z + 1]) {
+        if (GameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z + 1]) {
             blockTopEmpty = false;
             countForDrawing++;
         }
-        if (z != 0 && gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z - 1]) {
+        if (z != 0 && GameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z - 1]) {
             blockBottomEmpty = false;
             countForDrawing++;
         }
-        if (gameGrid.cubeContainer.chunks[leftPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[leftPosCheck[1]][thisPosCheckY[1]][z]) {
+        if (GameGrid.cubeContainer.chunks[leftPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[leftPosCheck[1]][thisPosCheckY[1]][z]) {
             blockLeftEmpty = false;
             countForDrawing++;
         }
-        if (gameGrid.cubeContainer.chunks[rightPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[rightPosCheck[1]][thisPosCheckY[1]][z]) {
+        if (GameGrid.cubeContainer.chunks[rightPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[rightPosCheck[1]][thisPosCheckY[1]][z]) {
             blockRightEmpty = false;
             countForDrawing++;
         }
-        if (gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][frontPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][frontPosCheck[1]][z]) {
+        if (GameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][frontPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][frontPosCheck[1]][z]) {
             blockBackEmpty = false;
             countForDrawing++;
         }
-        if (gameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][backPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][backPosCheck[1]][z]) {
+        if (GameGrid.cubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][backPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][backPosCheck[1]][z]) {
             blockFrontEmpty = false;
             countForDrawing++;
         }

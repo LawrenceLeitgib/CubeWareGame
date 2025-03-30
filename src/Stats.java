@@ -27,9 +27,7 @@ public class Stats {
     static int numOfRectAS=2;
     static Rectangle[][] rectForAS=new Rectangle[numOfRectAS][2];
     double PFSMean;
-    private final  GameGrid gameGrid;
-    Stats(GameGrid gameGrid){
-        this.gameGrid=gameGrid;
+    Stats(){
         bigRect=centerRectangle(GameGrid.GAME_WIDTH/2,GameGrid.GAME_HEIGHT/2,GameGrid.GAME_WIDTH-100,GameGrid.GAME_HEIGHT-100);
         StatsStates.put("General",0);
         StatsStates.put("Special_Attack",1);
@@ -57,7 +55,7 @@ public class Stats {
     public void regenerate(double deltaTime){
         mana+=deltaTime*manaRecovery;
         health+=deltaTime*healthRecovery;
-        if(gameGrid.player.distanceFromMiddle<GameGrid.regenZone){
+        if(GameGrid.player.distanceFromMiddle<GameGrid.regenZone){
             mana+=deltaTime*(maxMana);
             health+=deltaTime*(maxHealth);
         }
@@ -119,27 +117,27 @@ public class Stats {
         g.fillRect(rect.x,rect.y, (int) (rect.width*a/b),rect.height);
     }
     public void drawGameInfo(Graphics g){
-        if(!gameGrid.inputHandler.F3Down)return;
+        if(!GameGrid.inputHandler.F3Down)return;
         g.setColor(new Color(100,100,100,200));
         g.fillRect(10,50,200,200);
         g.setColor(Color.black);
         g.setFont(new Font("Arial",Font.PLAIN,24));
         g.setColor(Color.red);
-        g.drawString("x: "+gameGrid.player.xPosition,15,70);
-        g.drawString("y: "+gameGrid.player.yPosition,15,90);
-        g.drawString("z: "+gameGrid.player.zPosition,15,110);
+        g.drawString("x: "+GameGrid.player.xPosition,15,70);
+        g.drawString("y: "+GameGrid.player.yPosition,15,90);
+        g.drawString("z: "+GameGrid.player.zPosition,15,110);
         g.drawString("FPS: "+(int)(PFSMean+.5),15,130);
-        g.drawString("entities: "+ gameGrid.entityContainer.entities.size(),15,150);
+        g.drawString("entities: "+ GameGrid.entityContainer.entities.size(),15,150);
         g.drawString("level: "+Stats.currentLevel,15,170);
-        g.drawString("ball: "+ gameGrid.projectileContainer.Projectiles.size(),15,190);
+        g.drawString("ball: "+ GameGrid.projectileContainer.Projectiles.size(),15,190);
         GamePanel.drawRectWithContext(g,GamePanel.rectForDraw[1],new Color(168, 113, 10),Color.yellow,4);
         g.setColor(Color.black);
         GamePanel.centerString(g,GamePanel.rectForDraw[1],"Kill All entities",new Font("Arial",Font.PLAIN,16));
 
         if(GamePanel.isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,GamePanel.rectForDraw[1])){
             if(InputHandler.mouseLeftClickDown){
-                Stats.xp+= gameGrid.entityContainer.entities.size()*25;
-                gameGrid.entityContainer.entities =new ArrayList<Entity>();
+                Stats.xp+= GameGrid.entityContainer.entities.size()*25;
+                GameGrid.entityContainer.entities =new ArrayList<Entity>();
             }
         }
     }

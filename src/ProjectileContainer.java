@@ -6,9 +6,8 @@ public class ProjectileContainer {
     boolean[] zLayers =new boolean[Chunk.numOfCubeZ];
     ArrayList<Projectile> Projectiles = new ArrayList<>();
     ArrayList<Projectile>[][][] projectile3D = new ArrayList[numOfProjectile *2][numOfProjectile *2][200];
-    private final  GameGrid gameGrid;
-    ProjectileContainer(GameGrid gameGrid){
-        this.gameGrid=gameGrid;
+    ProjectileContainer(){
+      
     }
     public void updateFireBalls3D(){
         zLayers =new boolean[Chunk.numOfCubeZ];
@@ -21,12 +20,12 @@ public class ProjectileContainer {
             int z = projectile.getCubeIn()[2];
             //System.out.println(x+100-Player.chunkIn[0]*Chunk.numOfCubeX+", "+(y+100-Player.chunkIn[1]*Chunk.numOfCubeY)+","+);
             if (z < 0) continue;
-            if (projectile3D[x + numOfProjectile - gameGrid.player.cubeIn[0]][y + numOfProjectile - gameGrid.player.cubeIn[1]][z] == null) {
+            if (projectile3D[x + numOfProjectile - GameGrid.player.cubeIn[0]][y + numOfProjectile - GameGrid.player.cubeIn[1]][z] == null) {
                 ArrayList<Projectile> fireBallsSub = new ArrayList<Projectile>();
                 fireBallsSub.add(projectile);
-                projectile3D[x + numOfProjectile - gameGrid.player.cubeIn[0]][y + numOfProjectile - gameGrid.player.cubeIn[1]][z] = fireBallsSub;
+                projectile3D[x + numOfProjectile - GameGrid.player.cubeIn[0]][y + numOfProjectile - GameGrid.player.cubeIn[1]][z] = fireBallsSub;
             } else {
-                projectile3D[x + numOfProjectile - gameGrid.player.cubeIn[0]][y + numOfProjectile - gameGrid.player.cubeIn[1]][z].add(projectile);
+                projectile3D[x + numOfProjectile - GameGrid.player.cubeIn[0]][y + numOfProjectile - GameGrid.player.cubeIn[1]][z].add(projectile);
             }
 
         }

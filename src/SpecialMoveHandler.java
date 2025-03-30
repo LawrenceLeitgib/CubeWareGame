@@ -17,7 +17,7 @@ public class SpecialMoveHandler {
             Stats.mana+=1;
             return;
         }
-        gameGrid.projectileContainer.Projectiles.add(new FireBall(gameGrid,gameGrid.player.xPosition,gameGrid.player.yPosition,gameGrid.player.zPosition+ ProjectileContainer.ProjectileHeight, InputHandler.mouseAngleInGame,20,.2,Stats.strength,true));
+        gameGrid.projectileContainer.Projectiles.add(new FireBall(gameGrid.player.xPosition,gameGrid.player.yPosition,gameGrid.player.zPosition+ ProjectileContainer.ProjectileHeight, InputHandler.mouseAngleInGame,20,.2,Stats.strength,true));
     }
     public void attackSpecial1(){
         if(Stats.currentLevel<Stats.SpecialAttack.get("FBT")[0])return;
@@ -28,7 +28,7 @@ public class SpecialMoveHandler {
         }
         for(var j=0;j<100;j++){
             double ang=2*Math.PI/100.0*j;
-            gameGrid.projectileContainer.Projectiles.add(new FireBall(gameGrid,gameGrid.player.xPosition,gameGrid.player.yPosition,gameGrid.player.zPosition+ ProjectileContainer.ProjectileHeight,ang,20,.2,Stats.strength,true));
+            gameGrid.projectileContainer.Projectiles.add(new FireBall(gameGrid.player.xPosition,gameGrid.player.yPosition,gameGrid.player.zPosition+ ProjectileContainer.ProjectileHeight,ang,20,.2,Stats.strength,true));
         }
     }
 

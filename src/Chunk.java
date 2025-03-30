@@ -6,9 +6,7 @@ public class Chunk {
     final private Cube[][][] cubes = new Cube[numOfCubeX][numOfCubeY][numOfCubeZ];
     final boolean[][][] cubePositions = new boolean[numOfCubeX][numOfCubeY][numOfCubeZ];
     final boolean[] zLayer =new boolean[numOfCubeZ];
-    private final GameGrid gameGrid;
-    Chunk(GameGrid gameGrid) {
-        this.gameGrid=gameGrid;
+    Chunk() {
         createCubes();
     }
 
@@ -17,7 +15,7 @@ public class Chunk {
     }
 
     private void newCube(int x, int y, int z) {
-        cubes[x][y][z] = new Cube(gameGrid);
+        cubes[x][y][z] = new Cube();
         cubePositions[x][y][z] = true;
         zLayer[z]=true;
         GameGrid.bigZLayer[z]=true;

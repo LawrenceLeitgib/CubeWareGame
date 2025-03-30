@@ -14,18 +14,17 @@ public class InputHandler {
     public boolean F3Down=true;
     static boolean oneDown=false;
     static boolean oneHaveBeenReleased =true;
-    private final GameGrid gameGrid;
-    public InputHandler(GameGrid gameGrid) {
-        this.gameGrid=gameGrid;
+    public InputHandler() {
+
     }
     public void update(double deltaTime){
         flySwitchHandler(deltaTime);
         if(oneDown){
-            gameGrid.player.SMH.attackSpecial1();
+            GameGrid.player.SMH.attackSpecial1();
             oneDown=false;
 
         }
-        if(!gameGrid.player.thirdPerspective){
+        if(!GameGrid.player.thirdPerspective){
             try {
                 moveMouse((int) GameGrid.PFX, (int) GameGrid.PFY);
             } catch (AWTException e) {
@@ -42,7 +41,7 @@ public class InputHandler {
         if(flyingCount>0){
             flyingCount+=deltaTime;
             if(spaceHasBeenClick){
-                gameGrid.player.toggleFly();
+                GameGrid.player.toggleFly();
                 spaceHasBeenClick=false;
             }
         }
@@ -71,55 +70,55 @@ public class InputHandler {
         }
         double sizeRatioForMouse=(yPos- GameGrid.PFY)/(GameGrid.PVY - GameGrid.PFY - ProjectileContainer.ProjectileHeight * GameGrid.defaultSize);
         double difPosYRForMouse=((GameGrid.GAME_HEIGHT /sizeRatioForMouse- GameGrid.GAME_HEIGHT)/ GameGrid.depthRatio);
-        double yPositionAForMouse=-(difPosYRForMouse/ GameGrid.defaultSize -gameGrid.player.yPosition- GameGrid.distancePlayerCamera);
+        double yPositionAForMouse=-(difPosYRForMouse/ GameGrid.defaultSize -GameGrid.player.yPosition- GameGrid.distancePlayerCamera);
         double mouseNewWidth=  GameGrid.defaultSize *sizeRatioForMouse;
-        double xPositionAForMouse=(xPos+mouseNewWidth/2- GameGrid.PVX)/sizeRatioForMouse/ GameGrid.defaultSize +gameGrid.player.xPosition;
+        double xPositionAForMouse=(xPos+mouseNewWidth/2- GameGrid.PVX)/sizeRatioForMouse/ GameGrid.defaultSize +GameGrid.player.xPosition;
         double correctorXY=0.5;
-        double A=xPositionAForMouse-gameGrid.player.xPosition-correctorXY;
-        double B=yPositionAForMouse-gameGrid.player.yPosition+correctorXY;
+        double A=xPositionAForMouse-GameGrid.player.xPosition-correctorXY;
+        double B=yPositionAForMouse-GameGrid.player.yPosition+correctorXY;
         double difPosYAForMouse=(B*(Math.cos(GameGrid.angleForHorizontalRotation)/Math.sin(GameGrid.angleForHorizontalRotation))+A)/(Math.sin(GameGrid.angleForHorizontalRotation)+Math.cos(GameGrid.angleForHorizontalRotation)*Math.cos(GameGrid.angleForHorizontalRotation)/Math.sin(GameGrid.angleForHorizontalRotation));
         double difPosXAForMouse=(A*(Math.cos(GameGrid.angleForHorizontalRotation)/Math.sin(GameGrid.angleForHorizontalRotation))-B)/(Math.sin(GameGrid.angleForHorizontalRotation)+Math.cos(GameGrid.angleForHorizontalRotation)*Math.cos(GameGrid.angleForHorizontalRotation)/Math.sin(GameGrid.angleForHorizontalRotation));
-        gamePos[1]=difPosYAForMouse+gameGrid.player.yPosition;
-        gamePos[0]=difPosXAForMouse+gameGrid.player.xPosition;
+        gamePos[1]=difPosYAForMouse+GameGrid.player.yPosition;
+        gamePos[0]=difPosXAForMouse+GameGrid.player.xPosition;
 
         if(GameGrid.angleForHorizontalRotation ==0){
-            gamePos[0]=A+gameGrid.player.xPosition;
-            gamePos[1]=B+gameGrid.player.yPosition;
+            gamePos[0]=A+GameGrid.player.xPosition;
+            gamePos[1]=B+GameGrid.player.yPosition;
         }
         if(GameGrid.angleForHorizontalRotation ==Math.PI/2){
-            gamePos[0]=-B+gameGrid.player.xPosition;
-            gamePos[1]=A+gameGrid.player.yPosition;
+            gamePos[0]=-B+GameGrid.player.xPosition;
+            gamePos[1]=A+GameGrid.player.yPosition;
         }
         if(GameGrid.angleForHorizontalRotation ==Math.PI){
-            gamePos[0]=-A+gameGrid.player.xPosition;
-            gamePos[1]=-B+gameGrid.player.yPosition;
+            gamePos[0]=-A+GameGrid.player.xPosition;
+            gamePos[1]=-B+GameGrid.player.yPosition;
         }
 
         if(GameGrid.angleForHorizontalRotation ==3*Math.PI/2){
-            gamePos[0]=B+gameGrid.player.xPosition;
-            gamePos[1]=-A+gameGrid.player.yPosition;
+            gamePos[0]=B+GameGrid.player.xPosition;
+            gamePos[1]=-A+GameGrid.player.yPosition;
         }
         return gamePos;
     }
     public double getMouseAngleInGame(double xPos,double yPos){
-        double angle = Math.atan((gameGrid.player.yPosition - yPos) / (gameGrid.player.xPosition - xPos));
-        if(gameGrid.player.xPosition-xPos>0){
+        double angle = Math.atan((GameGrid.player.yPosition - yPos) / (GameGrid.player.xPosition - xPos));
+        if(GameGrid.player.xPosition-xPos>0){
             angle=Math.PI+angle;
-        }else  if(gameGrid.player.xPosition-xPos<0&& gameGrid.player.yPosition -yPos>0){
+        }else  if(GameGrid.player.xPosition-xPos<0&& GameGrid.player.yPosition -yPos>0){
             angle=2*Math.PI+angle;
         }
-        if(gameGrid.player.xPosition-xPos==0){
-            if(gameGrid.player.yPosition -yPos<=0)angle=Math.PI/2;
-            if(gameGrid.player.yPosition -yPos>0)angle=3*Math.PI/2;
+        if(GameGrid.player.xPosition-xPos==0){
+            if(GameGrid.player.yPosition -yPos<=0)angle=Math.PI/2;
+            if(GameGrid.player.yPosition -yPos>0)angle=3*Math.PI/2;
 
         }
         return angle;
     }
     public void keyPressed(KeyEvent e) {
         //System.out.println(e.getKeyCode()+" = "+e.getKeyChar());
-        gameGrid.player.keyPressed(e);
-        gameGrid.player.SMH.keyPressed(e);
-        gameGrid.keyPressed(e);
+        GameGrid.player.keyPressed(e);
+        GameGrid.player.SMH.keyPressed(e);
+        GameGrid.keyPressed(e);
         switch(e.getKeyCode()){
             case 32->{
                 if(spaceHasBeenReleased){
@@ -137,8 +136,8 @@ public class InputHandler {
         }
     }
     public void keyReleased(KeyEvent e) {
-        gameGrid.player.keyReleased(e);
-        gameGrid.player.SMH.keyReleased(e);
+        GameGrid.player.keyReleased(e);
+        GameGrid.player.SMH.keyReleased(e);
         switch (e.getKeyCode()){
             case 32->spaceHasBeenReleased = true;
             case 49 -> {
@@ -159,7 +158,7 @@ public class InputHandler {
         if(e.getButton()==3) mouseRightClickDown =false;
     }
     public void mouseDragged(MouseEvent e){
-        if(!gameGrid.player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running")){
+        if(!GameGrid.player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running")){
             try {
                 double[] delta =moveMouse(GameGrid.PFX, GameGrid.PFY);
                 GameGrid.angleForHorizontalRotation -=delta[0]/200.0;
@@ -173,7 +172,7 @@ public class InputHandler {
         mouseAngleInGame=getMouseAngleInGame(InputHandler.mouseInGame[0], InputHandler.mouseInGame[1]);
     }
     public void mouseMoved(MouseEvent e){
-        if(!gameGrid.player.thirdPerspective &&GamePanel.gameState==GamePanel.GameStates.get("Running")){
+        if(!GameGrid.player.thirdPerspective &&GamePanel.gameState==GamePanel.GameStates.get("Running")){
             try {
                 double[] delta =moveMouse((int) GameGrid.PFX, (int) GameGrid.PFY);
                 GameGrid.angleForHorizontalRotation -=delta[0]/200.0;

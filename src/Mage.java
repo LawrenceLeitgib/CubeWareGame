@@ -5,8 +5,8 @@ public class Mage extends Entity{
     double shoutTime=1.5;
     double shoutDistance=10;
 
-    Mage(GameGrid gameGrid,double x, double y, double z, double strength, double hp, double xp) {
-        super(gameGrid,x, y, z, strength, hp, xp);
+    Mage(double x, double y, double z, double strength, double hp, double xp) {
+        super(x, y, z, strength, hp, xp);
         color= new Color(75, 0, 59);
     }
 
@@ -27,7 +27,7 @@ public class Mage extends Entity{
     }
 
     public void createFireBall(){
-        gameGrid.projectileContainer.Projectiles.add(new FireBall(gameGrid,getxPosition(),getyPosition(),getzPosition()+ ProjectileContainer.ProjectileHeight,Math.PI+angleWithPlayer,13,.2,strength,false));
+        GameGrid.projectileContainer.Projectiles.add(new FireBall(getxPosition(),getyPosition(),getzPosition()+ ProjectileContainer.ProjectileHeight,Math.PI+angleWithPlayer,13,.2,strength,false));
     }
 
     public void setNewPositions(double deltaTime){

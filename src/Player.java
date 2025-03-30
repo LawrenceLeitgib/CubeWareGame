@@ -6,7 +6,6 @@ public class Player {
     double xPosition;
     double yPosition;
     double zPosition;
-    double cubeAway=2;
     double width=.8;
     double height=1.8;
     double depth=.8;
@@ -826,12 +825,13 @@ public class Player {
             if(thirdPerspective){
                 thirdPerspective=false;
                 GameGrid.PFY= GameGrid.GAME_HEIGHT/2.0;
+
                 //GameGrid.PVY=GAME_HEIGHT*.8;
                 GameGrid.PVY=GameGrid.PFY+height* GameGrid.defaultSize;
                 GameGrid.depthRatio= GameGrid.GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
                 GameGrid.isRotatingLeft=false;
                 GameGrid.isRotatingRight=false;
-                cubeAway=-5;
+                GameGrid.distancePlayerCamera=-5;
 
             }
             else{
@@ -841,7 +841,7 @@ public class Player {
                 thirdPerspective=true;
                 isMovingLeft=false;
                 isMovingRight=false;
-                cubeAway=2;
+                GameGrid.distancePlayerCamera=2;
             }
         }
     }

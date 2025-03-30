@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class GameGrid {
+final public class GameGrid {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
     static double gravityAcceleration=60;
@@ -12,19 +12,19 @@ public class GameGrid {
     static int defaultSize=100;
     static int safeZone=20;
     static int regenZone=6;
-    static int numOfChunkToDraw=4;
+    static int numOfChunkToDraw=3;
     static boolean[] bigZLayer=new boolean[Chunk.numOfCubeZ];
     static double distancePlayerCamera =2;
-    InputHandler inputHandler;
-    CubeContainer cubeContainer;
+    static InputHandler inputHandler;
+    static CubeContainer cubeContainer;
     static double depthRatio=1;
     static double angleForHorizontalRotation =0.0;
     static boolean isRotatingLeft=false;
     static boolean isRotatingRight=false;
-    ProjectileContainer projectileContainer;
-    EntityContainer entityContainer;
-    Stats stats;
-    Player player;
+    static ProjectileContainer projectileContainer;
+    static EntityContainer entityContainer;
+    static Stats stats;
+    static Player player;
     static double[] cameraPos =new double[2];
     static final double[] PlayerPos=new double[3];
     GameGrid(int GAME_WIDTH,int GAME_HEIGHT) {
@@ -34,20 +34,18 @@ public class GameGrid {
         PlayerPos[2]=player.zPosition;
         setGameWidth(GAME_WIDTH);
         setGameHeight(GAME_HEIGHT);
-        cubeContainer = new CubeContainer(this);
-        projectileContainer = new ProjectileContainer(this);
-        entityContainer = new EntityContainer(this);
-        inputHandler=new InputHandler(this);
-        stats=new Stats(this);
+        cubeContainer = new CubeContainer();
+        projectileContainer = new ProjectileContainer();
+        entityContainer = new EntityContainer();
+        inputHandler=new InputHandler();
+        stats=new Stats();
     }
-
     static double[] getObjectScreenPos(double x, double y, double z){
        return getObjectScreenPos(x,y,z, angleForHorizontalRotation);
     }
     static double[] getObjectScreenPos(double x, double y, double z, double angle){
         return getObjectScreenPos(x,y,z,angle,PlayerPos[0],PlayerPos[1],PlayerPos[2]);
     }
-
     static double[] getObjectScreenPos(double x, double y, double z, double angle,double Px, double Py, double Pz){
         double xCorrectorForRotation=.5;
         double yCorrectorForRotation=.5;
@@ -67,12 +65,12 @@ public class GameGrid {
         double newPosXR=  (PVX -(difPosXR)*sizeRatio-(defaultSize *sizeRatio)/2);
         return new double[]{newPosXR, newPosYR, sizeRatio};
     }
-    public void setGameWidth(int gameWidth) {
+    static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
         PFX=GAME_WIDTH/2.0;
         PVX=GAME_WIDTH/2.0;
     }
-    public void setGameHeight(int gameHeight) {
+    static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
         if(player.thirdPerspective)
             PFY=GAME_HEIGHT/3.0;
@@ -81,8 +79,7 @@ public class GameGrid {
         }
         PVY=GAME_HEIGHT;
     }
-
-    public void updateData(double deltaTime){
+    static void updateData(double deltaTime){
         cameraPos[0]=player.xPosition-Math.sin(angleForHorizontalRotation)*(distancePlayerCamera +.5);
         cameraPos[1]=player.yPosition+Math.cos(angleForHorizontalRotation)*(distancePlayerCamera +.5);
         double rotationMultiplier=1;
@@ -113,7 +110,7 @@ public class GameGrid {
         inputHandler.update(deltaTime);
         stats.updateData(deltaTime);
     }
-    public void bigZLayerHandler(){
+    static void bigZLayerHandler(){
         for(var k=0;k<Chunk.numOfCubeZ;k++){
             bigZLayer[k]=false;
         }
@@ -132,18 +129,18 @@ public class GameGrid {
             }
         }
     }
-    public boolean checkToSkip3(int i){
+    static boolean checkToSkip3(int i){
         double[] info1= getObjectScreenPos(player.xPosition,player.yPosition,i+1);
         return info1[1] < PFY;
     }
-    public void drawPlayer(Graphics g, int i, int xPos, int yPos){
+    static void drawPlayer(Graphics g, int i, int xPos, int yPos){
         if(xPos==player.cubeIn[0]&&yPos==player.cubeIn[1]){
             if(player.cubeIn[2]==i)player.draw1(g);
             if(player.cubeIn[2]+1==i)player.draw2(g);
             if(player.cubeIn[2]+2==i)player.draw3(g);
         }
     }
-    public void drawEntities(Graphics g, int i, int xPos, int yPos){
+    static void drawEntities(Graphics g, int i, int xPos, int yPos){
         int xNumForEnemy=xPos+entityContainer.numOfEntities-player.cubeIn[0];
         int yNumForEnemy=yPos+entityContainer.numOfEntities-player.cubeIn[1];
         if(xNumForEnemy>=0 && xNumForEnemy<entityContainer.numOfEntities*2 && yNumForEnemy>=0 && yNumForEnemy<entityContainer.numOfEntities*2) {
@@ -164,7 +161,7 @@ public class GameGrid {
             }
         }
     }
-    public  void drawProjectile(Graphics g, int i, int xPos, int yPos){
+    static void drawProjectile(Graphics g, int i, int xPos, int yPos){
         int xNumForFireBall=xPos+ projectileContainer.numOfProjectile -player.cubeIn[0];
         int yNumForFireBall=yPos+ projectileContainer.numOfProjectile -player.cubeIn[1];
         if(xNumForFireBall>=0 &&xNumForFireBall< projectileContainer.numOfProjectile *2&&yNumForFireBall>=0 &&yNumForFireBall< projectileContainer.numOfProjectile *2) {
@@ -175,16 +172,14 @@ public class GameGrid {
             }
         }
     }
-
-
-    public void drawCube(Graphics g, int i, int xPos, int yPos){
+    static void drawCube(Graphics g, int i, int xPos, int yPos){
         int[] xPosInfo= CubeContainer.YAndXPositionToChunkPos(xPos);
         int[] yPosInfo= CubeContainer.YAndXPositionToChunkPos(yPos);
         if( cubeContainer.chunks[xPosInfo[0]+ CubeContainer.numOfChunkX][yPosInfo[0]+ CubeContainer.numOfChunkY].cubePositions[xPosInfo[1]][yPosInfo[1]][i]){
             cubeContainer.chunks[xPosInfo[0]+ CubeContainer.numOfChunkX][yPosInfo[0]+ CubeContainer.numOfChunkY].getCubes()[xPosInfo[1]][yPosInfo[1]][i].draw(g,xPos,yPos,i);
         }
     }
-    public void drawAll(Graphics g, int i, int x, int y){
+    static void drawAll(Graphics g, int i, int x, int y){
         int xPos=player.cubeIn[0]+x- numOfChunkToDraw*Chunk.numOfCubeX-Chunk.numOfCubeX/2;
         int yPos=player.cubeIn[1]+y- numOfChunkToDraw*Chunk.numOfCubeY-Chunk.numOfCubeY/2;
 
@@ -193,7 +188,7 @@ public class GameGrid {
         drawEntities(g,i,xPos,yPos);
         drawProjectile(g,i,xPos,yPos);
     }
-    public void drawLayer(Graphics g,int i){
+    static void drawLayer(Graphics g, int i){
         if(angleForHorizontalRotation <Math.PI/4){
             for(var j = 0; j<Chunk.numOfCubeY*(1+ numOfChunkToDraw*2); j++){
                 for(var k = Chunk.numOfCubeX*(numOfChunkToDraw*2+1)-1; k>=0; k--){
@@ -251,7 +246,7 @@ public class GameGrid {
             }
         }
     }
-    public void draw(Graphics g){
+    static void draw(Graphics g){
         projectileContainer.draw();
         entityContainer.draw();
         bigZLayerHandler();
@@ -272,7 +267,7 @@ public class GameGrid {
         if(!player.thirdPerspective)g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
         stats.draw(g);
     }
-    public void keyPressed(KeyEvent e) {
+    static void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case 75 -> {
                 PFY += 50;

@@ -14,7 +14,6 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     static Image image;
     Graphics graphics;
-    private GameGrid gameGrid;
     static double xPos;
     static double yPos;
     static double FPS;
@@ -23,7 +22,6 @@ public class GamePanel extends JPanel implements Runnable {
     Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
     static Dictionary<String, Integer> GameStates = new Hashtable<>();
     static int gameState;
-
     static Rectangle[] rectForDraw=new Rectangle[100];
     GamePanel() {
         this.setFocusable(true); //read key strock
@@ -31,12 +29,13 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseListener(new ML());
         this.addMouseMotionListener(new ML());
         this.setPreferredSize(SCREEN_SIZE);
+
         try{
         yPos=this.getLocationOnScreen().getY() ;
         xPos=this.getLocationOnScreen().getX();} catch (Exception ignored) {
         }
         //System.out.println((-7)%16);
-        newGameGrid();
+        new GameGrid(GAME_WIDTH,GAME_HEIGHT);
         gameThread=new Thread(this);
         gameThread.start();
         GameStates.put("Menu",0);
@@ -47,9 +46,6 @@ public class GamePanel extends JPanel implements Runnable {
         gameState=GameStates.get("Menu");
         rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
         rectForDraw[1]=new Rectangle(15,200,100,20);
-    }
-    public void newGameGrid(){
-        gameGrid = new GameGrid(GAME_WIDTH,GAME_HEIGHT);
     }
     public void paint(Graphics g){
         image=createImage(getWidth(),getHeight());
@@ -111,16 +107,16 @@ public class GamePanel extends JPanel implements Runnable {
         Rectangle r = getBounds();
         //r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
         if(GameGrid.GAME_HEIGHT!=r.height||GameGrid.GAME_WIDTH!=r.width) {
-            gameGrid.setGameHeight(r.height);
-            gameGrid.setGameWidth(r.width);
-            gameGrid.stats.setGameHeight(r.height);
-            gameGrid.stats.setGameWidth(r.width);
+            GameGrid.setGameHeight(r.height);
+            GameGrid.setGameWidth(r.width);
+            GameGrid.stats.setGameHeight(r.height);
+            GameGrid.stats.setGameWidth(r.width);
             GameGrid.defaultSize=r.width/10;
             rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
         }
-        gameGrid.draw(g);
+        GameGrid.draw(g);
         if(gameState==GameStates.get("Menu")){
-            gameGrid.player.draw(g);
+            GameGrid.player.draw(g);
             g.setColor(new Color(84, 84, 84,200));
             g.fillRect(0,0,GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
             drawRectWithContext(g,rectForDraw[0],new Color(168, 113, 10),Color.yellow,4);
@@ -145,7 +141,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         if(gameState==GameStates.get("Running")){}
         if(gameState==GameStates.get("Stats")){
-            gameGrid.stats.drawE(g);
+            GameGrid.stats.drawE(g);
         }
 
     }
@@ -153,7 +149,7 @@ public class GamePanel extends JPanel implements Runnable {
         try{
             yPos=this.getLocationOnScreen().getY() ;
             xPos=this.getLocationOnScreen().getX();} catch (Exception ignored) {
-        }if(!gameGrid.player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running"))this.setCursor(blankCursor);
+        }if(!GameGrid.player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running"))this.setCursor(blankCursor);
         else{this.setCursor(Cursor.getDefaultCursor());}
 
         if(gameState==GameStates.get("Menu")){
@@ -170,18 +166,18 @@ public class GamePanel extends JPanel implements Runnable {
         }
         if(gameState==GameStates.get("Dead")){
             if(isInsideRect(InputHandler.mousePositionX, InputHandler.mousePositionY,rectForDraw[0])){
-                if(InputHandler.mouseLeftClickDown)gameGrid.player.respawn();
+                if(InputHandler.mouseLeftClickDown)GameGrid.player.respawn();
             }
             return;
         }
         if(gameState==GameStates.get("Stats")){
-            gameGrid.stats.updateDataE(deltaTime);
+            GameGrid.stats.updateDataE(deltaTime);
            return;
         }
         if(gameState==GameStates.get("Running")){
 
         }
-        gameGrid.updateData(deltaTime);
+        GameGrid.updateData(deltaTime);
 
     }
     @Override
@@ -237,7 +233,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public class AL extends KeyAdapter{
         public void keyPressed(KeyEvent e){
-            gameGrid.inputHandler.keyPressed(e);
+            GameGrid.inputHandler.keyPressed(e);
             if(e.getKeyCode()==27){
                 togglePause();
             }
@@ -248,7 +244,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
         public void keyReleased(KeyEvent e){
-            gameGrid.inputHandler.keyReleased(e);
+            GameGrid.inputHandler.keyReleased(e);
 
         }
     }
@@ -259,11 +255,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
         @Override
         public void mousePressed(MouseEvent e) {
-            gameGrid.inputHandler.mousePressed(e);
+            GameGrid.inputHandler.mousePressed(e);
         }
         @Override
         public void mouseReleased(MouseEvent e) {
-            gameGrid.inputHandler.mouseReleased(e);
+            GameGrid.inputHandler.mouseReleased(e);
         }
         @Override
         public void mouseEntered(MouseEvent e) {
@@ -274,11 +270,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
         @Override
         public void mouseDragged(MouseEvent e) {
-            gameGrid.inputHandler.mouseDragged(e);
+            GameGrid.inputHandler.mouseDragged(e);
         }
         @Override
         public void mouseMoved(MouseEvent e) {
-            gameGrid.inputHandler.mouseMoved(e);
+            GameGrid.inputHandler.mouseMoved(e);
         }
     }
 }

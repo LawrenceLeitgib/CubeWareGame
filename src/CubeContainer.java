@@ -8,16 +8,14 @@ public class CubeContainer {
     boolean[][]chunksGenerateGround=new boolean[numOfChunkX*2][numOfChunkY*2];
     private final int[]  newChunkIn={0,0};
     public static Color[][] colorsList=new  Color[7][2];
-    private final GameGrid gameGrid;
-    CubeContainer(GameGrid gameGrid){
-        this.gameGrid=gameGrid;
+    CubeContainer(){
         setColorsList();
         CreateNewChunks();
         //CreateNewGround();
         //CreateNewStructure();
         drawSpawn();
-        newChunkIn[0] = gameGrid.player.chunkIn[0];
-        newChunkIn[1] = gameGrid.player.chunkIn[1];
+        newChunkIn[0] = GameGrid.player.chunkIn[0];
+        newChunkIn[1] = GameGrid.player.chunkIn[1];
     }
     public void setColorsList(){
         colorsList[0][0]= new Color(5, 168, 30);
@@ -43,10 +41,10 @@ public class CubeContainer {
         int[] yInfo=YAndXPositionToChunkPos(y);
         if(!chunksPosition[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]){
            chunksPosition[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]=true;
-           chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]=new Chunk(gameGrid);
+           chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]]=new Chunk();
         }
         if(!chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].cubePositions[xInfo[1]][yInfo[1]][z])Chunk.numberOfCube++;
-        chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].getCubes()[xInfo[1]][yInfo[1]][z]=new Cube(type,gameGrid);
+        chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].getCubes()[xInfo[1]][yInfo[1]][z]=new Cube(type);
         chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].cubePositions[xInfo[1]][yInfo[1]][z]=true;
         chunks[numOfChunkX+xInfo[0]][numOfChunkY+yInfo[0]].zLayer[z]=true;
         GameGrid.bigZLayer[z]=true;
@@ -207,7 +205,7 @@ public class CubeContainer {
             for(int j=-dIter;j<dIter;j++){
                 for(int k=-dIter;k<dIter;k++){
                     double sqrt = Math.pow(Math.sqrt(Math.pow(i, 2) + Math.pow(j, 2))-R,2)+ Math.pow(k, 2);
-                    if(sqrt <=Math.pow(r,2)+2&& sqrt >=Math.pow(r,2)-10){
+                    if(sqrt <=Math.pow(r,2)+10&& sqrt >=Math.pow(r,2)-10){
                         newCube(x+i,y+j,z+k,Math.abs(i%5));
                     }
                 }
@@ -217,23 +215,68 @@ public class CubeContainer {
     }
     public void createCubes(){
        //drawBasicStructure(-10,-10,0,20,20,5);
+       // drawtor(0,0,30,10,30);
+/*
+        int type=2;
+        int temp=GameGrid.numOfChunkToDraw;
+        GameGrid.numOfChunkToDraw=2;
+        double angle=-GameGrid.angleForHorizontalRotation/8;
+        for(int y=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y<GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y++){
+            for(int x=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x<GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x++){
+                removeCube(x+GameGrid.player.cubeIn[0],y+GameGrid.player.cubeIn[1],3);
+            }
+        }
+        GameGrid.numOfChunkToDraw=1;
+        for(int y=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y<GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y++){
+            if(y==GameGrid.numOfChunkToDraw*Chunk.numOfCubeY-1)type=6;
+            else if(y==-GameGrid.numOfChunkToDraw*Chunk.numOfCubeY)type=1;
+            else type=4;
+            for(int x=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x<GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x++){
+                //newCube(x,y,3,type);
+               // newCube((int) (Math.cos(angle)*x+.5)+(int)(Math.sin(angle)*y+.5)+GameGrid.player.cubeIn[0], (int) (-Math.sin(angle)*x+.5)+(int)(Math.cos(angle)*y+.5)+GameGrid.player.cubeIn[1],3,type);
+
+               newCube((int) (Math.cos(angle)*x+Math.sin(angle)*y+.5)+GameGrid.player.cubeIn[0], (int) (-Math.sin(angle)*x+Math.cos(angle)*y+.5)+GameGrid.player.cubeIn[1],3,type);
+            }
+            type++;
+            if(type>=5)type=2;
+        }
+        GameGrid.numOfChunkToDraw=temp;
+
+ */
+
+
+
+        /*
+        int distance = (int)16;
+
+        double angle=Math.PI/16;
+        for(int i=distance;i>0;i--){
+            for(int j=distance;j>0;j--){
+                newCube((int) (i*Math.cos(angle*j)), (int) (i*Math.sin(angle*j)),3,type);
+            }
+            type++;
+            if(type>=6)type=0;
+        }
+
+         */
+
     }
     public void newChunk(int x,int y){
         if((!chunksPosition[numOfChunkX+x][numOfChunkY+y])){
-            chunks[numOfChunkX + x][numOfChunkY + y] = new Chunk(gameGrid);
+            chunks[numOfChunkX + x][numOfChunkY + y] = new Chunk();
             chunksPosition[numOfChunkX + x][numOfChunkY + y] = true;
         }
     }
     public void CreateNewChunks(){
-        for(int i = gameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw -2; i<=gameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw +2; i++){
-            for(int j = gameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw -2; j<=gameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw +2; j++){
+        for(int i = GameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw -2; i<=GameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw +2; i++){
+            for(int j = GameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw -2; j<=GameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw +2; j++){
                 if(!chunksPosition[numOfChunkX+i][numOfChunkY+j]) newChunk(i,j);
             }
         }
     }
     public void CreateNewGround(){
-        for(int i = gameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw -2; i<=gameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw +2; i++){
-            for(int j = gameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw -2; j<=gameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw +2; j++){
+        for(int i = GameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw -2; i<=GameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw +2; i++){
+            for(int j = GameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw -2; j<=GameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw +2; j++){
                 if(!chunksGenerateGround[numOfChunkX+i][numOfChunkY+j]){
                     generateGround(i,j);
                     chunksGenerateGround[numOfChunkX+i][numOfChunkY+j]=true;
@@ -243,8 +286,8 @@ public class CubeContainer {
 
     }
     public void CreateNewStructure(){
-        for(int i = gameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw; i<=gameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw; i++){
-            for(int j = gameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw; j<=gameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw; j++){
+        for(int i = GameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw; i<=GameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw; i++){
+            for(int j = GameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw; j<=GameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw; j++){
                 if(!chunksGenerate[numOfChunkX+i][numOfChunkY+j]){
                     generateChunk(i,j);
                     chunksGenerate[numOfChunkX+i][numOfChunkY+j]=true;
@@ -270,13 +313,14 @@ public class CubeContainer {
 
     }
     public void updateData(double deltaTime){
-        if((newChunkIn[0]!=gameGrid.player.chunkIn[0])||(newChunkIn[1]!=gameGrid.player.chunkIn[1])){
+        if((newChunkIn[0]!=GameGrid.player.chunkIn[0])||(newChunkIn[1]!=GameGrid.player.chunkIn[1])){
             CreateNewChunks();
-            //CreateNewGround();
-            //CreateNewStructure();
+            CreateNewGround();
+            CreateNewStructure();
         }
-        newChunkIn[0] = gameGrid.player.chunkIn[0];
-        newChunkIn[1] = gameGrid.player.chunkIn[1];
+        //createCubes();
+        newChunkIn[0] = GameGrid.player.chunkIn[0];
+        newChunkIn[1] = GameGrid.player.chunkIn[1];
     }
     static int[] YAndXPositionToChunkPos(int pos){
         //if(Chunk.numOfCubeX!=Chunk.numOfCubeX)System.out.println("there is a problem");

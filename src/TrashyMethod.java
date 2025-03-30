@@ -1,10 +1,9 @@
 import java.awt.*;
 
 public abstract class TrashyMethod extends CubeContainer {
-    private GameGrid gameGrid;
 
-    TrashyMethod(GameGrid gameGrid, double depthRatio) {
-        super(gameGrid);
+    TrashyMethod(double depthRatio) {
+        super();
     }
 
 
