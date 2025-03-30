@@ -1,38 +1,52 @@
 import java.awt.*;
 
-public class Enemy {
+public class Entity {
+
     boolean marketForDeletion;
     double xPosition;
     double yPosition;
     double zPosition;
-    double height=2*Cube.defaultSize;
-    double width=.8*Cube.defaultSize;
-    double depth=.8*Cube.defaultSize;
     double newHeight;
     double newWidth;
     double newDepth;
-    //double speed=1.5;
-    double speed=3;
     double newPosX;
     double newPosY;
-    double MaxHP=100;
-    double HP=100;
     double[][] corners;
     int[] cubeIn=new int[3];
+    static int[] chunkIn=new int[2];
+    double sizeRatio;
+
+
+
+    double height=2*Cube.defaultSize;
+    double width=.8*Cube.defaultSize;
+    double depth=.8*Cube.defaultSize;
+    double speed=.5;
+    //double runningMultiplier=4.5*2;
+
+    double runningMultiplier=7;
+
     double xVelocity=0;
     double yVelocity=0;
     double zVelocity=0;
-    double sizeRatio;
     double angleWithPlayer;
     double distanceWithPlayer;
     static int diSpawnDistance=60;
-    static int[] chunkIn=new int[2];
-    double damage=1;
-    Enemy(double x,double y,double z){
+    double MaxHP;
+    double HP;
+    double strength=1;
+    double xp;
+
+    Color color;
+    Entity(double x, double y, double z,double strength,double hp,double xp){
         xPosition=x;
         yPosition=y;
         zPosition=z;
-
+        this.strength=strength;
+        this.MaxHP=hp;
+        this.HP=hp;
+        this.xp=xp;
+        this.color=Color.red;
         while(detectionCollisionWithBlocks(0)[0]){
             zPosition++;
         }
@@ -45,9 +59,9 @@ public class Enemy {
         deathHandler();
     }
 
-    private void setNewPositions(double deltaTime){
-        xVelocity=-Math.cos(angleWithPlayer)*speed;
-        yVelocity=-Math.sin(angleWithPlayer)*speed;
+    public void setNewPositions(double deltaTime){
+        //xVelocity=-Math.cos(angleWithPlayer)*speed*runningMultiplier;
+        //yVelocity=-Math.sin(angleWithPlayer)*speed*runningMultiplier;
         detectionCollisionWithOther(deltaTime);
         zVelocity-=GameGrid.gravityAcceleration*deltaTime;
         if(zVelocity<-90)zVelocity+=GameGrid.gravityAcceleration*deltaTime;
@@ -89,6 +103,7 @@ public class Enemy {
         }
         detectionCollisionWithBlocks(0);
     }
+
     private void setBasicData(){
         chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX);
         chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
@@ -119,28 +134,9 @@ public class Enemy {
         if(distanceWithPlayer>diSpawnDistance) this.marketForDeletion=true;
         if(HP<=0){
             HP=0;
-            Stats.xp+=25;
+            Stats.xp+=xp;
             this.marketForDeletion=true;
         }
-    }
-    private void projectileCollisionHandler(double deltaTime){
-        for(var i = 0; i< ProjectileContainer.Projectiles.size(); i++){
-            if(ProjectileContainer.Projectiles.get(i).isFriendly) {
-                if (detectionCollisionWithProjectile(ProjectileContainer.Projectiles.get(i).xPosition, ProjectileContainer.Projectiles.get(i).yPosition, ProjectileContainer.Projectiles.get(i).zPosition, ProjectileContainer.Projectiles.get(i).size)) {
-                    yPosition += ProjectileContainer.Projectiles.get(i).yVelocity  * deltaTime;
-                    xPosition += ProjectileContainer.Projectiles.get(i).xVelocity  * deltaTime;
-                    if (HP < ProjectileContainer.Projectiles.get(i).damage) {
-                        ProjectileContainer.Projectiles.get(i).damage -= HP;
-                        HP = 0;
-                    } else {
-                        HP -= ProjectileContainer.Projectiles.get(i).damage;
-                        ProjectileContainer.Projectiles.remove(i);
-                    }
-                }
-            }
-        }
-
-
     }
     public void draw(Graphics g){
 
@@ -220,7 +216,7 @@ public class Enemy {
             if(corners[i][0]>GameGrid.GAME_WIDTH*2)return;
             if(corners[i][0]<-GameGrid.GAME_WIDTH)return;
         }
-        g.setColor(Color.green);
+        g.setColor(color);
         //g.drawRect((int) (newPosX), (int)( newPosY-newHeight), (int) newWidth, (int) newHeight);
         g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
         g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
@@ -265,7 +261,7 @@ public class Enemy {
             if(corners[i][0]>GameGrid.GAME_WIDTH*2)return;
             if(corners[i][0]<-GameGrid.GAME_WIDTH)return;
         }
-        g.setColor(Color.yellow);
+        g.setColor(color);
         //g.drawRect((int) (newPosX), (int)( newPosY-newHeight), (int) newWidth, (int) newHeight);
 
         g.drawLine((int) corners[12][0], (int) corners[12][1], (int) corners[8][0], (int) corners[8][1]);
@@ -280,17 +276,6 @@ public class Enemy {
             g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
 
         }
-
-    }
-
-    public void drawHealthBar(Graphics g){
-        if(HP>=MaxHP)return;
-
-        Rectangle healthRect=new Rectangle((int)( (corners[4][0]+corners[6][0])/2-newWidth/2), (int)((corners[4][1]+corners[6][1])/2-newWidth/5), (int) newWidth, (int) (newWidth/10));
-        Rectangle healthRect2=new Rectangle((int) ((corners[4][0]+corners[6][0])/2-newWidth/2), (int) ((corners[4][1]+corners[6][1])/2-newWidth/5), (int)( newWidth*HP/MaxHP), (int) (newWidth/10));
-
-        GamePanel.drawRectWithBorder2(g,healthRect,Color.red,Color.black,2);
-        GamePanel.drawRectWithBorder2(g,healthRect2,Color.GREEN,Color.black,2);
 
     }
     public void draw3(Graphics g){
@@ -328,7 +313,7 @@ public class Enemy {
             if(corners[i][0]>GameGrid.GAME_WIDTH*2)return;
             if(corners[i][0]<-GameGrid.GAME_WIDTH)return;
         }
-        g.setColor(Color.red);
+        g.setColor(color);
         //g.drawRect((int) (newPosX), (int)( newPosY-newHeight), (int) newWidth, (int) newHeight);
         g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
         g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
@@ -341,7 +326,173 @@ public class Enemy {
         g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[15][0], (int) corners[15][1]);
         drawHealthBar(g);
     }
-    private boolean[] detectionCollisionWithBlocks(int num){
+    public void drawHealthBar(Graphics g){
+        if(HP>=MaxHP)return;
+        Rectangle healthRect=new Rectangle((int)( (corners[4][0]+corners[6][0])/2-newWidth/2), (int)((corners[4][1]+corners[6][1])/2-newWidth/5), (int) newWidth, (int) (newWidth/10));
+        Rectangle healthRect2=new Rectangle((int) ((corners[4][0]+corners[6][0])/2-newWidth/2), (int) ((corners[4][1]+corners[6][1])/2-newWidth/5), (int)( newWidth*HP/MaxHP), (int) (newWidth/10));
+        GamePanel.drawRectWithBorder2(g,healthRect,Color.red,Color.black,2);
+        GamePanel.drawRectWithBorder2(g,healthRect2,Color.GREEN,Color.black,2);
+
+    }
+    private double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight,double difPosZ,double difPosXA,double difPosYA){
+        double sizeRatioValue=(GameGrid.depthRatio-GameGrid.GAME_HEIGHT)/GameGrid.depthRatio;
+        double xCorrectorForRotation=0.5;
+
+        double difPosXARight=(xPosition+Cube.defaultSize/Cube.defaultSize-xCorrectorForRotation-Player.xPosition);
+        double yPositionARight=  (Player.yPosition-difPosXARight*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-xCorrectorForRotation);
+        double xPositionARight=  (Player.xPosition+difPosXARight*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
+        double difPosYRRight= ((Player.yPosition-(yPositionARight-Player.cubeAway))*Cube.defaultSize);
+        double sizeRatioRight=GameGrid.GAME_HEIGHT/(difPosYRRight*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+
+
+        if(difPosYRRight<sizeRatioValue){
+            sizeRatioRight=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+GameGrid.GAME_HEIGHT,2))*(difPosYRRight-sizeRatioValue)+GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
+
+        }
+        double newPosYRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioRight+GameGrid.PFY+difPosZ*sizeRatioRight);
+        double newPosXRight=  (GameGrid.PVX-((Player.xPosition-xPositionARight)*Cube.defaultSize)*sizeRatioRight-(Cube.defaultSize*sizeRatioRight)/2);
+
+        double difPosYAFront=(yPosition-Cube.defaultSize/Cube.defaultSize+xCorrectorForRotation-Player.yPosition);
+        double yPositionAFront=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYAFront*Math.cos(GameGrid.angleForXRotation)-xCorrectorForRotation);
+        double xPositionAFront=  (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYAFront*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
+        double difPosYRFront= ((Player.yPosition-(yPositionAFront-Player.cubeAway))*Cube.defaultSize);
+        double sizeRatioFront=GameGrid.GAME_HEIGHT/(difPosYRFront*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+
+        if(difPosYRFront<sizeRatioValue){
+            sizeRatioFront=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+GameGrid.GAME_HEIGHT,2))*(difPosYRFront-sizeRatioValue)+GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
+
+        }
+
+        double newPosYFront=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFront+GameGrid.PFY+difPosZ*sizeRatioFront);
+        double newPosXFront=  (GameGrid.PVX-((Player.xPosition-xPositionAFront)*Cube.defaultSize)*sizeRatioFront-(Cube.defaultSize*sizeRatioFront)/2);
+
+
+        double yPositionAFrontRight=  (Player.yPosition-difPosXARight*Math.sin(GameGrid.angleForXRotation)+difPosYAFront*Math.cos(GameGrid.angleForXRotation)-xCorrectorForRotation);
+        double xPositionAFrontRight=  (Player.xPosition+difPosXARight*Math.cos(GameGrid.angleForXRotation)+difPosYAFront*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
+        double difPosYRFrontRight= ((Player.yPosition-(yPositionAFrontRight-Player.cubeAway))*Cube.defaultSize);
+        double sizeRatioFrontRight=GameGrid.GAME_HEIGHT/(difPosYRFrontRight*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+        if(difPosYRFrontRight<sizeRatioValue){
+            sizeRatioFrontRight=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+GameGrid.GAME_HEIGHT,2))*(difPosYRFrontRight-sizeRatioValue)+GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
+
+        }
+
+
+        double newPosYFrontRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFrontRight+GameGrid.PFY+difPosZ*sizeRatioFrontRight);
+        double newPosXFrontRight=  (GameGrid.PVX-((Player.xPosition-xPositionAFrontRight)*Cube.defaultSize)*sizeRatioFrontRight-(Cube.defaultSize*sizeRatioFrontRight)/2);
+
+        double [][] corners=new double[16][2];
+        corners[0][1]=newPosY;
+        corners[1][1]=newPosYRight;
+        corners[2][1]=newPosYFrontRight;
+        corners[3][1]=newPosYFront;
+
+
+        corners[0][0]=newPosX;
+        corners[1][0]=newPosXRight;
+        corners[2][0]=newPosXFrontRight;
+        corners[3][0]=newPosXFront;
+
+
+
+        double [][] corners2=new double[4][2];
+        double [][] corners3=new double[4][2];
+
+
+
+        corners2[0][0]=(corners[0][0]*(width/2+Cube.defaultSize/2.0)+corners[1][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+        corners2[0][1]=(corners[0][1]*(width/2+Cube.defaultSize/2.0)+corners[1][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+
+        corners2[1][0]=(corners[1][0]*(depth/2+Cube.defaultSize/2.0)+corners[2][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners2[1][1]=(corners[1][1]*(depth/2+Cube.defaultSize/2.0)+corners[2][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+        corners2[2][0]=(corners[2][0]*(width/2+Cube.defaultSize/2.0)+corners[3][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+        corners2[2][1]=(corners[2][1]*(width/2+Cube.defaultSize/2.0)+corners[3][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+
+        corners2[3][0]=(corners[3][0]*(depth/2+Cube.defaultSize/2.0)+corners[0][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners2[3][1]=(corners[3][1]*(depth/2+Cube.defaultSize/2.0)+corners[0][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+
+        corners3[0][0]=(corners[0][0]*(depth/2+Cube.defaultSize/2.0)+corners[3][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners3[0][1]=(corners[0][1]*(depth/2+Cube.defaultSize/2.0)+corners[3][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+        corners3[1][0]=(corners[1][0]*(width/2+Cube.defaultSize/2.0)+corners[0][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+        corners3[1][1]=(corners[1][1]*(width/2+Cube.defaultSize/2.0)+corners[0][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+
+        corners3[2][0]=(corners[2][0]*(depth/2+Cube.defaultSize/2.0)+corners[1][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners3[2][1]=(corners[2][1]*(depth/2+Cube.defaultSize/2.0)+corners[1][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+        corners3[3][0]=(corners[3][0]*(width/2+Cube.defaultSize/2.0)+corners[2][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+        corners3[3][1]=(corners[3][1]*(width/2+Cube.defaultSize/2.0)+corners[2][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
+
+
+
+        corners[0][0]=(corners2[0][0]*(depth/2+Cube.defaultSize/2.0)+corners3[3][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners[0][1]=(corners2[0][1]*(depth/2+Cube.defaultSize/2.0)+corners3[3][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+
+        corners[1][0]=(corners3[1][0]*(depth/2+Cube.defaultSize/2.0)+corners2[2][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners[1][1]=(corners3[1][1]*(depth/2+Cube.defaultSize/2.0)+corners2[2][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+        corners[2][0]=(corners2[2][0]*(depth/2+Cube.defaultSize/2.0)+corners3[1][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners[2][1]=(corners2[2][1]*(depth/2+Cube.defaultSize/2.0)+corners3[1][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+
+        corners[3][0]=(corners3[3][0]*(depth/2+Cube.defaultSize/2.0)+corners2[0][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+        corners[3][1]=(corners3[3][1]*(depth/2+Cube.defaultSize/2.0)+corners2[0][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
+
+
+
+
+        double sizeRatio1=(corners[0][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
+        double sizeRatio2=(corners[1][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
+        double sizeRatio3=(corners[2][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
+        double sizeRatio4=(corners[3][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
+
+
+
+        corners[4][0]= corners[0][0];
+        corners[5][0]=corners[1][0];
+        corners[6][0]= corners[2][0];
+        corners[7][0]=corners[3][0];
+        corners[4][1]=corners[0][1]-height*sizeRatio1;
+        corners[5][1]=corners[1][1]-height*sizeRatio2;
+        corners[6][1]=corners[2][1]-height*sizeRatio3;
+        corners[7][1]=corners[3][1]-height*sizeRatio4;
+
+        corners[8][0]= corners[0][0];
+        corners[9][0]=corners[1][0];
+        corners[10][0]= corners[2][0];
+        corners[11][0]=corners[3][0];
+        corners[8][1]=corners[0][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio1;
+        corners[9][1]=corners[1][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio2;
+        corners[10][1]=corners[2][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio3;
+        corners[11][1]=corners[3][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio4;
+
+        corners[12][0]= corners[0][0];
+        corners[13][0]=corners[1][0];
+        corners[14][0]= corners[2][0];
+        corners[15][0]=corners[3][0];
+
+        if((2-zPosition+cubeIn[2])*Cube.defaultSize>height){
+            corners[12][1]=corners[4][1];
+            corners[13][1]=corners[5][1];
+            corners[14][1]=corners[6][1];
+            corners[15][1]=corners[7][1];
+        }
+        else {
+
+            corners[12][1]=corners[8][1]-Cube.defaultSize*sizeRatio1;
+            corners[13][1]=corners[9][1]-Cube.defaultSize*sizeRatio2;
+            corners[14][1]=corners[10][1]-Cube.defaultSize*sizeRatio3;
+            corners[15][1]=corners[11][1]-Cube.defaultSize*sizeRatio4;}
+
+
+
+
+        return corners;
+    }
+
+    public boolean[] detectionCollisionWithBlocks(int num){
         boolean[] collision=new boolean[11];
         Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
 
@@ -606,14 +757,47 @@ public class Enemy {
 
         return collision;
     }
+    private boolean detectionCollisionWithProjectile(double ProjectilePosX, double ProjectilePosY, double ProjectilePosZ, double ProjectileSize){
+
+        if(ProjectilePosX<xPosition+(width/2)/Cube.defaultSize &&ProjectilePosX>xPosition-(width/2)/Cube.defaultSize)
+            if(ProjectilePosY>yPosition-(depth/2+Cube.defaultSize/2.0)/Cube.defaultSize&&ProjectilePosY<yPosition+(depth/2-Cube.defaultSize/2.0)/Cube.defaultSize){
+                if(ProjectilePosZ>zPosition&&ProjectilePosZ<zPosition+height/Cube.defaultSize){
+
+                    return true;
+                }
+
+            }
+        if( Math.sqrt(Math.pow(ProjectilePosX - xPosition, 2) + Math.pow(ProjectilePosY - yPosition, 2)) < Math.sqrt(Math.pow(width, 2) + Math.pow(depth, 2)) / Cube.defaultSize){
+            return ProjectilePosZ > zPosition && ProjectilePosZ < zPosition + height / Cube.defaultSize;
+        }
+        return false;
+    }
+
+    private void projectileCollisionHandler(double deltaTime){
+        for(var i = 0; i< ProjectileContainer.Projectiles.size(); i++){
+            if(ProjectileContainer.Projectiles.get(i).isFriendly) {
+                if (detectionCollisionWithProjectile(ProjectileContainer.Projectiles.get(i).xPosition, ProjectileContainer.Projectiles.get(i).yPosition, ProjectileContainer.Projectiles.get(i).zPosition, ProjectileContainer.Projectiles.get(i).size)) {
+                    yPosition += ProjectileContainer.Projectiles.get(i).yVelocity  * deltaTime;
+                    xPosition += ProjectileContainer.Projectiles.get(i).xVelocity  * deltaTime;
+                    if (HP < ProjectileContainer.Projectiles.get(i).damage) {
+                        ProjectileContainer.Projectiles.get(i).damage -= HP;
+                        HP = 0;
+                    } else {
+                        HP -= ProjectileContainer.Projectiles.get(i).damage;
+                        ProjectileContainer.Projectiles.remove(i);
+                    }
+                }
+            }
+        }
+
+
+    }
     public boolean detectionCollisionWithOther(double deltaTime){
-            for(int i = 0; i< EntityContainer.enemies.size(); i++){
-                Enemy E=EntityContainer.enemies.get(i);
+            for(int i = 0; i< EntityContainer.entities.size(); i++){
+                Entity E=EntityContainer.entities.get(i);
                 if(E.zPosition==zPosition&&E.yPosition==yPosition&&E.xPosition==xPosition)continue;
                 if(zPosition< E.zPosition+ E.height/Cube.defaultSize&&zPosition+height/Cube.defaultSize> E.zPosition)
                     if(Math.sqrt(Math.pow(E.xPosition-xPosition,2)+Math.pow(E.yPosition-yPosition,2))<(E.width/2+width/2)/Cube.defaultSize){
-
-
                         double angleWithOther=Math.atan((E.yPosition-yPosition)/(E.xPosition-xPosition));
                         if(E.xPosition-xPosition>0){
                             angleWithOther=Math.PI+angleWithOther;
@@ -654,8 +838,7 @@ public class Enemy {
         return false;
 
     }
-
-    private void rejectionFromSpawn(double deltaTime){
+    public void rejectionFromSpawn(double deltaTime){
         double  distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
         if(distanceFromMiddle<=GameGrid.safeZone) {
             xPosition +=xPosition/distanceFromMiddle*speed*deltaTime;
@@ -664,178 +847,6 @@ public class Enemy {
         if(distanceFromMiddle<=GameGrid.safeZone-2){
             this.marketForDeletion=true;
         }
-    }
-    private double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight,double difPosZ,double difPosXA,double difPosYA){
-        double sizeRatioValue=(GameGrid.depthRatio-GameGrid.GAME_HEIGHT)/GameGrid.depthRatio;
-        double xCorrectorForRotation=0.5;
-
-        double difPosXARight=(xPosition+Cube.defaultSize/Cube.defaultSize-xCorrectorForRotation-Player.xPosition);
-        double yPositionARight=  (Player.yPosition-difPosXARight*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-xCorrectorForRotation);
-        double xPositionARight=  (Player.xPosition+difPosXARight*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
-        double difPosYRRight= ((Player.yPosition-(yPositionARight-Player.cubeAway))*Cube.defaultSize);
-        double sizeRatioRight=GameGrid.GAME_HEIGHT/(difPosYRRight*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-
-
-        if(difPosYRRight<sizeRatioValue){
-            sizeRatioRight=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+GameGrid.GAME_HEIGHT,2))*(difPosYRRight-sizeRatioValue)+GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
-
-        }
-        double newPosYRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioRight+GameGrid.PFY+difPosZ*sizeRatioRight);
-        double newPosXRight=  (GameGrid.PVX-((Player.xPosition-xPositionARight)*Cube.defaultSize)*sizeRatioRight-(Cube.defaultSize*sizeRatioRight)/2);
-
-        double difPosYAFront=(yPosition-Cube.defaultSize/Cube.defaultSize+xCorrectorForRotation-Player.yPosition);
-        double yPositionAFront=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYAFront*Math.cos(GameGrid.angleForXRotation)-xCorrectorForRotation);
-        double xPositionAFront=  (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYAFront*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
-        double difPosYRFront= ((Player.yPosition-(yPositionAFront-Player.cubeAway))*Cube.defaultSize);
-        double sizeRatioFront=GameGrid.GAME_HEIGHT/(difPosYRFront*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-
-        if(difPosYRFront<sizeRatioValue){
-            sizeRatioFront=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+GameGrid.GAME_HEIGHT,2))*(difPosYRFront-sizeRatioValue)+GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
-
-        }
-
-        double newPosYFront=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFront+GameGrid.PFY+difPosZ*sizeRatioFront);
-        double newPosXFront=  (GameGrid.PVX-((Player.xPosition-xPositionAFront)*Cube.defaultSize)*sizeRatioFront-(Cube.defaultSize*sizeRatioFront)/2);
-
-
-        double yPositionAFrontRight=  (Player.yPosition-difPosXARight*Math.sin(GameGrid.angleForXRotation)+difPosYAFront*Math.cos(GameGrid.angleForXRotation)-xCorrectorForRotation);
-        double xPositionAFrontRight=  (Player.xPosition+difPosXARight*Math.cos(GameGrid.angleForXRotation)+difPosYAFront*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
-        double difPosYRFrontRight= ((Player.yPosition-(yPositionAFrontRight-Player.cubeAway))*Cube.defaultSize);
-        double sizeRatioFrontRight=GameGrid.GAME_HEIGHT/(difPosYRFrontRight*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        if(difPosYRFrontRight<sizeRatioValue){
-            sizeRatioFrontRight=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+GameGrid.GAME_HEIGHT,2))*(difPosYRFrontRight-sizeRatioValue)+GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
-
-        }
-
-
-        double newPosYFrontRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFrontRight+GameGrid.PFY+difPosZ*sizeRatioFrontRight);
-        double newPosXFrontRight=  (GameGrid.PVX-((Player.xPosition-xPositionAFrontRight)*Cube.defaultSize)*sizeRatioFrontRight-(Cube.defaultSize*sizeRatioFrontRight)/2);
-
-        double [][] corners=new double[16][2];
-        corners[0][1]=newPosY;
-        corners[1][1]=newPosYRight;
-        corners[2][1]=newPosYFrontRight;
-        corners[3][1]=newPosYFront;
-
-
-        corners[0][0]=newPosX;
-        corners[1][0]=newPosXRight;
-        corners[2][0]=newPosXFrontRight;
-        corners[3][0]=newPosXFront;
-
-
-
-        double [][] corners2=new double[4][2];
-        double [][] corners3=new double[4][2];
-
-
-
-        corners2[0][0]=(corners[0][0]*(width/2+Cube.defaultSize/2.0)+corners[1][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-        corners2[0][1]=(corners[0][1]*(width/2+Cube.defaultSize/2.0)+corners[1][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-
-        corners2[1][0]=(corners[1][0]*(depth/2+Cube.defaultSize/2.0)+corners[2][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners2[1][1]=(corners[1][1]*(depth/2+Cube.defaultSize/2.0)+corners[2][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-        corners2[2][0]=(corners[2][0]*(width/2+Cube.defaultSize/2.0)+corners[3][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-        corners2[2][1]=(corners[2][1]*(width/2+Cube.defaultSize/2.0)+corners[3][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-
-        corners2[3][0]=(corners[3][0]*(depth/2+Cube.defaultSize/2.0)+corners[0][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners2[3][1]=(corners[3][1]*(depth/2+Cube.defaultSize/2.0)+corners[0][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-
-        corners3[0][0]=(corners[0][0]*(depth/2+Cube.defaultSize/2.0)+corners[3][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners3[0][1]=(corners[0][1]*(depth/2+Cube.defaultSize/2.0)+corners[3][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-        corners3[1][0]=(corners[1][0]*(width/2+Cube.defaultSize/2.0)+corners[0][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-        corners3[1][1]=(corners[1][1]*(width/2+Cube.defaultSize/2.0)+corners[0][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-
-        corners3[2][0]=(corners[2][0]*(depth/2+Cube.defaultSize/2.0)+corners[1][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners3[2][1]=(corners[2][1]*(depth/2+Cube.defaultSize/2.0)+corners[1][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-        corners3[3][0]=(corners[3][0]*(width/2+Cube.defaultSize/2.0)+corners[2][0]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-        corners3[3][1]=(corners[3][1]*(width/2+Cube.defaultSize/2.0)+corners[2][1]*(Cube.defaultSize/2.0-width/2))/(Cube.defaultSize);
-
-
-
-        corners[0][0]=(corners2[0][0]*(depth/2+Cube.defaultSize/2.0)+corners3[3][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners[0][1]=(corners2[0][1]*(depth/2+Cube.defaultSize/2.0)+corners3[3][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-
-        corners[1][0]=(corners3[1][0]*(depth/2+Cube.defaultSize/2.0)+corners2[2][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners[1][1]=(corners3[1][1]*(depth/2+Cube.defaultSize/2.0)+corners2[2][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-        corners[2][0]=(corners2[2][0]*(depth/2+Cube.defaultSize/2.0)+corners3[1][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners[2][1]=(corners2[2][1]*(depth/2+Cube.defaultSize/2.0)+corners3[1][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-
-        corners[3][0]=(corners3[3][0]*(depth/2+Cube.defaultSize/2.0)+corners2[0][0]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-        corners[3][1]=(corners3[3][1]*(depth/2+Cube.defaultSize/2.0)+corners2[0][1]*(Cube.defaultSize/2.0-depth/2))/(Cube.defaultSize);
-
-
-
-
-        double sizeRatio1=(corners[0][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
-        double sizeRatio2=(corners[1][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
-        double sizeRatio3=(corners[2][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
-        double sizeRatio4=(corners[3][1]-GameGrid.PFY)/(GameGrid.PVY-GameGrid.PFY+(Player.zPosition-zPosition)*Cube.defaultSize);
-
-
-
-        corners[4][0]= corners[0][0];
-        corners[5][0]=corners[1][0];
-        corners[6][0]= corners[2][0];
-        corners[7][0]=corners[3][0];
-        corners[4][1]=corners[0][1]-height*sizeRatio1;
-        corners[5][1]=corners[1][1]-height*sizeRatio2;
-        corners[6][1]=corners[2][1]-height*sizeRatio3;
-        corners[7][1]=corners[3][1]-height*sizeRatio4;
-
-        corners[8][0]= corners[0][0];
-        corners[9][0]=corners[1][0];
-        corners[10][0]= corners[2][0];
-        corners[11][0]=corners[3][0];
-        corners[8][1]=corners[0][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio1;
-        corners[9][1]=corners[1][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio2;
-        corners[10][1]=corners[2][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio3;
-        corners[11][1]=corners[3][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio4;
-
-        corners[12][0]= corners[0][0];
-        corners[13][0]=corners[1][0];
-        corners[14][0]= corners[2][0];
-        corners[15][0]=corners[3][0];
-
-        if((2-zPosition+cubeIn[2])*Cube.defaultSize>height){
-            corners[12][1]=corners[4][1];
-            corners[13][1]=corners[5][1];
-            corners[14][1]=corners[6][1];
-            corners[15][1]=corners[7][1];
-        }
-        else {
-
-            corners[12][1]=corners[8][1]-Cube.defaultSize*sizeRatio1;
-            corners[13][1]=corners[9][1]-Cube.defaultSize*sizeRatio2;
-            corners[14][1]=corners[10][1]-Cube.defaultSize*sizeRatio3;
-            corners[15][1]=corners[11][1]-Cube.defaultSize*sizeRatio4;}
-
-
-
-
-        return corners;
-    }
-    private boolean detectionCollisionWithProjectile(double ProjectilePosX, double ProjectilePosY, double ProjectilePosZ, double ProjectileSize){
-
-        if(ProjectilePosX<xPosition+(width/2)/Cube.defaultSize &&ProjectilePosX>xPosition-(width/2)/Cube.defaultSize)
-            if(ProjectilePosY>yPosition-(depth/2+Cube.defaultSize/2.0)/Cube.defaultSize&&ProjectilePosY<yPosition+(depth/2-Cube.defaultSize/2.0)/Cube.defaultSize){
-                if(ProjectilePosZ>zPosition&&ProjectilePosZ<zPosition+height/Cube.defaultSize){
-
-                    return true;
-                }
-
-            }
-        if( Math.sqrt(Math.pow(ProjectilePosX - xPosition, 2) + Math.pow(ProjectilePosY - yPosition, 2)) < Math.sqrt(Math.pow(width, 2) + Math.pow(depth, 2)) / Cube.defaultSize){
-            return ProjectilePosZ > zPosition && ProjectilePosZ < zPosition + height / Cube.defaultSize;
-        }
-        return false;
     }
 
 }

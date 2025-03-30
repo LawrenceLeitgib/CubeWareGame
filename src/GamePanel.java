@@ -190,9 +190,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
         if(gameState==GameStates.get("Running")){
-            drawRectWithContext(g,rectForDraw[1],new Color(168, 113, 10),Color.yellow,4);
-            g.setColor(Color.black);
-            centerString(g,rectForDraw[1],"Kill All entities",new Font("Arial",Font.PLAIN,16));
 
         }
         if(gameState==GameStates.get("Stats")){
@@ -232,12 +229,7 @@ public class GamePanel extends JPanel implements Runnable {
            return;
         }
         if(gameState==GameStates.get("Running")){
-            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[1])){
-                if(GameGrid.mouseLeftClickDown){
-                    Stats.xp+= EntityContainer.enemies.size()*25;
-                    EntityContainer.enemies=new ArrayList<Enemy>();
-                }
-            }
+
         }
         gameGrid.updateData(deltaTime);
         stats.updateData(deltaTime);
@@ -326,6 +318,8 @@ public class GamePanel extends JPanel implements Runnable {
             gameState=GameStates.get("Running");
         }
     }
+
+
 
     public class ML implements MouseListener,MouseMotionListener {
 

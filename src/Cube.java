@@ -19,7 +19,7 @@ public class Cube {
     private double newPosY;
     private double newHeight;
     double sizeRatio;
-    private double[][] corners=new double[16][2];
+    private final double[][] corners=new double[8][2];
     int countForDrawing=0;
     Chunk chunk;
     private double xPositionA;
@@ -47,12 +47,14 @@ public class Cube {
         this.yPosition=yPosition;
         this.zPosition=zPosition;
         Cube.depthRatio=GameGrid.depthRatio;
-        this.colorTop=colorTop;
-        this.colorSide=colorSide;
+        //this.colorTop=colorTop;
+        //this.colorSide=colorSide;
         this.chunk=chunk;
         this.xPositionA=xPosition;
         this.yPositionA=yPosition;
         this.type=type;
+        this.colorTop=CubeContainer.colorsList[type][0];
+        this.colorSide=CubeContainer.colorsList[type][1];
         colorLeft=colorSide;
         colorRight=colorSide;
         colorFront=colorSide;
@@ -75,22 +77,14 @@ public class Cube {
             return;
         }
         if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
-
-        colorTop=CubeContainer.colorsList[type][0];
-        colorSide=CubeContainer.colorsList[type][1];
-        colorLeft=colorSide;
-        colorRight=colorSide;
-        colorFront=colorSide;
-        colorBack=colorSide;
-        colorBottom=colorSide;
-
         drawCube=true;
-        corners=getCorners();
+        getCorners();
         if(drawCube)
         drawOnAngle(g);
     }
     public void drawOnAngle(Graphics g){
         setAllPolygon(corners);
+
         //(Player.zPosition-zPosition-1.3)
        /* double deltaXWithCamera=xPosition-GameGrid.cameraPos[0]-Math.sin(GameGrid.angleForXRotation)*(Player.zPosition-zPosition-1.2);
         double deltaYWithCamera=yPosition-GameGrid.cameraPos[1]+Math.cos(GameGrid.angleForXRotation)*(Player.zPosition-zPosition-1.2);
@@ -155,12 +149,15 @@ public class Cube {
 
 
         */
+
         if (blockBottomEmpty&&newPosY<GameGrid.PFY) {
             fillPolygonB(g,polygonBottom[0],polygonBottom[1] ,colorBottom,type);
         }
         if (blockTopEmpty&&newPosY-newHeight>GameGrid.PFY) {
             fillPolygonB(g,polygonTop[0],polygonTop[1],colorTop,"top",type);
         }
+
+
     }
     private boolean CheckToDraw(){
         int leftPosCheck=xPosition-1- chunk.chunkToNormNumX;
@@ -291,87 +288,63 @@ public class Cube {
         }
         return newList;
     }
-    private double[][] getCorners(){
-        double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
-        depthRatio=GameGrid.depthRatio;
-        double difPosXA=(xPosition-xCorrectorForRotation-Player.xPosition);
-        double difPosYA= (yPosition+yCorrectorForRotation-Player.yPosition);
-        xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
-        yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-yCorrectorForRotation);
-        double difPosXR=((Player.xPosition-xPositionA)*width);
-        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*depth);
+
+
+    private double[] getPosOtherBlock(int x, int y,double sizeRatioValue){
+        double difPosXA=(xPosition+x-xCorrectorForRotation-Player.xPosition);
+        double difPosYA= (yPosition+y+yCorrectorForRotation-Player.yPosition);
         double difPosZ=((Player.zPosition-zPosition)*height);
-        sizeRatio=GAME_HEIGHT/(difPosYR*1.0*depthRatio+GAME_HEIGHT);
+        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-yCorrectorForRotation);
+        double xPositionA=  (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*depth);
+        double difPosXR=((Player.xPosition-xPositionA)*width);
+        double sizeRatio=GAME_HEIGHT/(difPosYR*1.0*depthRatio+GAME_HEIGHT);
         if(difPosYR<sizeRatioValue){
             sizeRatio=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+
         }
-        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
-        double newWidth = (width * sizeRatio);
-        newHeight=  (height*sizeRatio);
-        double newPosX = (GameGrid.PVX - ((Player.xPosition - xPositionA) * width) * sizeRatio - newWidth / 2);
-        if(newPosY+newHeight<0){drawCube=false;return new double[8][2];}
-        if(newPosY>GAME_HEIGHT*2){drawCube=false;return new double[8][2];}
-        if(newPosX >GAME_WIDTH*2){drawCube=false;return new double[8][2];}
-        if(newPosX <-GAME_WIDTH){drawCube=false;return new double[8][2];}
+        double newPosYR=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        double newPosXR=  (GameGrid.PVX-((Player.xPosition-xPositionA)*width)*sizeRatio-(width*sizeRatio)/2);
+
         if (Math.abs(difPosXR)<=width/2.0&&newPosY>GAME_HEIGHT*2&&difPosZ<0){
-            {drawCube=false;return new double[8][2];}
+            {drawCube=false;return new double[3];}
         }
-        double difPosXARight=(xPosition+1-xCorrectorForRotation-Player.xPosition);
-        double yPositionARight=  (Player.yPosition-difPosXARight*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-yCorrectorForRotation);
-        double xPositionARight=  (Player.xPosition+difPosXARight*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
-        double difPosYRRight= ((Player.yPosition-(yPositionARight-Player.cubeAway))*depth);
-        double sizeRatioRight=GAME_HEIGHT/(difPosYRRight*1.0*depthRatio+GAME_HEIGHT);
-        if(difPosYRRight<sizeRatioValue){
-            sizeRatioRight=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYRRight-sizeRatioValue)+GAME_HEIGHT/depthRatio;
 
-        }
-        double newPosYRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioRight+GameGrid.PFY+difPosZ*sizeRatioRight);
-        double newPosXRight=  (GameGrid.PVX-((Player.xPosition-xPositionARight)*width)*sizeRatioRight-(width*sizeRatioRight)/2);
-        double difPosYAFront=(yPosition-1+yCorrectorForRotation-Player.yPosition);
-        double yPositionAFront=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYAFront*Math.cos(GameGrid.angleForXRotation)-yCorrectorForRotation);
-        double xPositionAFront=  (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYAFront*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
-        double difPosYRFront= ((Player.yPosition-(yPositionAFront-Player.cubeAway))*depth);
-        double sizeRatioFront=GAME_HEIGHT/(difPosYRFront*1.0*depthRatio+GAME_HEIGHT);
-        if(difPosYRFront<sizeRatioValue){
-            sizeRatioFront=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYRFront-sizeRatioValue)+GAME_HEIGHT/depthRatio;
-        }
-        double newPosYFront=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFront+GameGrid.PFY+difPosZ*sizeRatioFront);
-        double newPosXFront=  (GameGrid.PVX-((Player.xPosition-xPositionAFront)*width)*sizeRatioFront-(width*sizeRatioFront)/2);
-        double yPositionAFrontRight=  (Player.yPosition-difPosXARight*Math.sin(GameGrid.angleForXRotation)+difPosYAFront*Math.cos(GameGrid.angleForXRotation)-yCorrectorForRotation);
-        double xPositionAFrontRight=  (Player.xPosition+difPosXARight*Math.cos(GameGrid.angleForXRotation)+difPosYAFront*Math.sin(GameGrid.angleForXRotation)+xCorrectorForRotation);
-        double difPosYRFrontRight= ((Player.yPosition-(yPositionAFrontRight-Player.cubeAway))*depth);
-        double sizeRatioFrontRight=GAME_HEIGHT/(difPosYRFrontRight*1.0*depthRatio+GAME_HEIGHT);
-        if(difPosYRFrontRight<sizeRatioValue){
-            sizeRatioFrontRight=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYRFrontRight-sizeRatioValue)+GAME_HEIGHT/depthRatio;
-        }
-        double newPosYFrontRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFrontRight+GameGrid.PFY+difPosZ*sizeRatioFrontRight);
-        double newPosXFrontRight=  (GameGrid.PVX-((Player.xPosition-xPositionAFrontRight)*width)*sizeRatioFrontRight-(width*sizeRatioFrontRight)/2);
-        double [][] corners=new double[8][2];
+        return new double[]{newPosXR, newPosYR, sizeRatio};
+
+    }
+
+    private void getCorners(){
+        double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
+        depthRatio=GameGrid.depthRatio;
+        double[] info0=getPosOtherBlock(0,0,sizeRatioValue);
+        double[] info1=getPosOtherBlock(1,0,sizeRatioValue);
+        double[] info2=getPosOtherBlock(1,-1,sizeRatioValue);
+        double[] info3=getPosOtherBlock(0,-1,sizeRatioValue);
+        sizeRatio=info0[2];
+        newPosY=info0[1];
+        newHeight=info0[2]*height;
+        if(info0[1]+newHeight<0){drawCube=false;return;}
+        if(info0[1]>GAME_HEIGHT*2){drawCube=false;return;}
+        if(info0[0] >GAME_WIDTH*2){drawCube=false;return;}
+        if(info0[0] <-GAME_WIDTH){drawCube=false;return;}
         corners[0][1]=newPosY;
-        corners[1][1]=newPosYRight;
-        corners[2][1]=newPosYFrontRight;
-        corners[3][1]=newPosYFront;
+        corners[1][1]=info1[1];
+        corners[2][1]=info2[1];;
+        corners[3][1]=info3[1];;
+        corners[4][1]=newPosY-height*sizeRatio;
+        corners[5][1]=info1[1]-height*info1[2];
+        corners[6][1]=info2[1]-height*info2[2];;
+        corners[7][1]=info3[1]-height*info3[2];;
 
-        corners[4][1]=newPosY-newHeight;
-        corners[5][1]=newPosYRight-height*sizeRatioRight;
-        corners[6][1]=newPosYFrontRight-height*sizeRatioFrontRight;
-        corners[7][1]=newPosYFront-height*sizeRatioFront;
-
-
-        corners[0][0]=newPosX;
-        corners[1][0]=newPosXRight;
-        corners[2][0]=newPosXFrontRight;
-        corners[3][0]=newPosXFront;
-
-        corners[4][0]=newPosX;
-        corners[5][0]=newPosXRight;
-        corners[6][0]=newPosXFrontRight;
-        corners[7][0]=newPosXFront;
-
-
-
-
-        return corners;
+        corners[0][0]=info0[0];
+        corners[1][0]=info1[0];
+        corners[2][0]=info2[0];
+        corners[3][0]=info3[0];
+        corners[4][0]=info0[0];
+        corners[5][0]=info1[0];
+        corners[6][0]=info2[0];
+        corners[7][0]=info3[0];
     }
     static public void fillPolygonB1(Graphics g,int[] listX,int[] listY,Color color){
         g.setColor(new Color(21, 92, 5));
@@ -427,8 +400,8 @@ public class Cube {
         fillPolygonB(g, listX,listY, color,"side",type);
     }
     static private  void fillPolygonB(Graphics g,int[] listX,int[] listY,Color color,String side,int type){
-        g.setColor(new Color(21, 92, 5));
-        g.setPaintMode();
+
+//        g.setPaintMode();
         Color colorDarken=darkenColor(color,30);
         Color colorBrighter=darkenColor(color,-50);
 
@@ -436,11 +409,9 @@ public class Cube {
         Color colorBrighterForLines=darkenColor(colorBrighter,100);
         Color colorForLines=darkenColor(color,100);
 
-        // double num=0.2;
-
-        int[][]l1=getSmallerCorners(listX,listY,.1);
+        //int[][]l1=getSmallerCorners(listX,listY,.1);
         int[][]l2=getSmallerCorners(listX,listY,.2);
-        int[][]l3=getSmallerCorners(listX,listY,.3);
+        //int[][]l3=getSmallerCorners(listX,listY,.3);
         int[][]l4=getSmallerCorners(listX,listY,.4);
         int[] newListX=l2[0];
         int[] newListY=l2[1];
@@ -513,10 +484,16 @@ public class Cube {
             //g.fillPolygon(new int[]{l3D[0][3][0],l3D[0][1][2],listX[2],listX[3]},new int[]{l3D[1][3][0],l3D[1][1][2],listY[2],listY[3]},4);
 
         }
-
-
+    }
+    /*static private  void fillPolygonB(Graphics g,int[] listX,int[] listY,Color color,String side,int type){
+        g.setColor(color);
+        g.fillPolygon(listX,listY,4);
+        g.setColor(Color.black);
+        g.drawPolygon(listX,listY,4);
 
     }
+
+     */
     static int[][] getSmallerCorners(int[] listX,int[] listY,double num){
         int[] newListX=new int[4];
         int[] newListY=new int[4];

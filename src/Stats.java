@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -53,7 +54,7 @@ public class Stats {
         xpUntilNextLevel=xpUntilNextLevelBase*Math.pow(1.1 ,currentLevel);
         maxMana=10+currentLevel;
         mana=maxMana;
-        maxHealth=10+currentLevel;
+        maxHealth=10+currentLevel+10000;
         health=maxHealth;
         strength=10+currentLevel;
         healthRecovery=1+.05*currentLevel;
@@ -123,29 +124,8 @@ public class Stats {
         g.setColor(c2);
         g.fillRect(rect.x,rect.y, (int) (rect.width*a/b),rect.height);
     }
-
-    public void draw(Graphics g){
-
-        FPSDisplay();
-
-        Rectangle HealthRect=new Rectangle(10,10,200,15);
-
-
-        /*drawRectWithBorder(g,10,10,200,15,2,Color.RED,Color.black);
-        g.setColor(Color.green);
-        g.fillRect(10,10, (int) (200*health/maxHealth),15);
-          GamePanel.drawRectWithBorder2(g,HealthRect,Color.RED,Color.BLACK,2);
-        GamePanel.drawRect(g,HealthRect,Color.green);
-
-         */
-
-        drawBar(g,HealthRect, Color.red,Color.green,Color.BLACK,  health,  maxHealth);
-
-        drawRectWithBorder(g,10,30,200,15,2,new Color(131, 201, 201),Color.black);
-        g.setColor(new Color(0,0,255));
-        g.fillRect(10,30, (int) (200*mana/maxMana),15);
-
-        if(GamePanel.gameState==GamePanel.GameStates.get("Running")){
+    public void drawGameInfo(Graphics g){
+        if(!GameGrid.F3Down)return;
         g.setColor(new Color(100,100,100,200));
         g.fillRect(10,50,200,200);
         g.setColor(Color.black);
@@ -155,28 +135,40 @@ public class Stats {
         g.drawString("y: "+Player.yPosition,15,90);
         g.drawString("z: "+Player.zPosition,15,110);
         g.drawString("FPS: "+(int)(PFSMean+.5),15,130);
-        g.drawString("entities: "+ EntityContainer.enemies.size(),15,150);
+        g.drawString("entities: "+ EntityContainer.entities.size(),15,150);
         g.drawString("level: "+Stats.currentLevel,15,170);
-        g.drawString("ball: "+ ProjectileContainer.Projectiles.size(),15,190);}
+        g.drawString("ball: "+ ProjectileContainer.Projectiles.size(),15,190);
+        GamePanel.drawRectWithContext(g,GamePanel.rectForDraw[1],new Color(168, 113, 10),Color.yellow,4);
+        g.setColor(Color.black);
+        GamePanel.centerString(g,GamePanel.rectForDraw[1],"Kill All entities",new Font("Arial",Font.PLAIN,16));
 
+        if(GamePanel.isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,GamePanel.rectForDraw[1])){
+            if(GameGrid.mouseLeftClickDown){
+                Stats.xp+= EntityContainer.entities.size()*25;
+                EntityContainer.entities =new ArrayList<Entity>();
+            }
+        }
+    }
 
+    public void draw(Graphics g){
+        FPSDisplay();
+        Rectangle healthRect=new Rectangle(10,10,200,15);
+        Rectangle manaRect=new Rectangle(10,30,200,15);
+        Rectangle xpRect=new Rectangle(GAME_WIDTH-10-200,10,200,15);
 
+        drawBar(g,healthRect, Color.red,Color.green,Color.BLACK,  health,  maxHealth);
+        drawBar(g,manaRect, new Color(131, 201, 201),new Color(0,0,255),Color.BLACK,  mana,  maxMana);
+        drawBar(g,xpRect, new Color(0, 150, 80),new Color(0, 255, 140),Color.BLACK,  xp,  xpUntilNextLevel);
 
-        drawRectWithBorder(g,GAME_WIDTH-10-200,10,200,15,2,new Color(0, 150, 80),Color.black);
-        g.setColor(new Color(0, 255, 140));
-        g.fillRect(GAME_WIDTH-10-200,10, (int) (200*xp/xpUntilNextLevel),15);
 
         g.setFont(new Font("Arial",Font.PLAIN,16));
         g.setColor(Color.black);
         g.drawString("XP:"+String.valueOf((int)(xp*10+0.5)/10.0)+" / "+String.valueOf((int)(xpUntilNextLevel*10+0.5)/10.0),GAME_WIDTH-200,23);
 
 
-
-
-        //g.setColor(Color.black);
-        //g.setFont(new Font("Arial",Font.PLAIN,18));
-        //g.drawString("Health",15,22);
-
+        if(GamePanel.gameState==GamePanel.GameStates.get("Running")){
+            drawGameInfo(g);
+        }
     }
     public void updateData(double deltaTime){
         regenerate(deltaTime);

@@ -9,7 +9,7 @@ public class Player {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
 
-    static double cubeAway=2;
+    static double cubeAway=10;
     static double width=.8*Cube.defaultSize;
     static double height=1.8*Cube.defaultSize;
     static double depth=.8*Cube.defaultSize;
@@ -79,12 +79,13 @@ public class Player {
     public void updateData(double deltaTime) {
         SMH.updateData(deltaTime);
         setNewPositions(deltaTime);
+        projectileCollisionHandler(deltaTime);
         detectionCollisionWithContext();
         detectionCollisionWithEnemy(deltaTime);
         setCubeAndChunkIn();
+        detectionCollision(0);
         updateMegaChunk();
         flySwitchHandler(deltaTime);
-        detectionCollision(0);
         xPosition=  (int)((xPosition)*1000)/1000.0;
         yPosition=  (int)((yPosition)*1000)/1000.0;
         zPosition=  (int)((zPosition)*1000)/1000.0;
@@ -190,7 +191,7 @@ public class Player {
         Stats.xp=0;
         GamePanel.gameState=GamePanel.GameStates.get("Running");
         newChunkAround();
-        EntityContainer.enemies = new ArrayList<Enemy>();
+        EntityContainer.entities = new ArrayList<Entity>();
         ProjectileContainer.Projectiles =new ArrayList<Projectile>();
 
 
@@ -494,24 +495,62 @@ public class Player {
     public void detectionCollisionWithEnemy(double deltaTime){
         pushCount+=deltaTime;
         if(pushCount>=pushTime){
-            for(int i = 0; i< EntityContainer.enemies.size(); i++){
-                if(zPosition< EntityContainer.enemies.get(i).zPosition+ EntityContainer.enemies.get(i).height/Cube.defaultSize&&zPosition+height/Cube.defaultSize> EntityContainer.enemies.get(i).zPosition)
-                    if(Math.sqrt(Math.pow(EntityContainer.enemies.get(i).xPosition-xPosition,2)+Math.pow(EntityContainer.enemies.get(i).yPosition-yPosition,2))<(EntityContainer.enemies.get(i).width/2+width/2)/Cube.defaultSize){
-                        xPosition-=Math.cos(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                        xVelocity=-Math.cos(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                        yPosition-=Math.sin(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                        yVelocity=-Math.sin(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+            for(int i = 0; i< EntityContainer.entities.size(); i++){
+                if(zPosition< EntityContainer.entities.get(i).zPosition+ EntityContainer.entities.get(i).height/Cube.defaultSize&&zPosition+height/Cube.defaultSize> EntityContainer.entities.get(i).zPosition)
+                    if(Math.sqrt(Math.pow(EntityContainer.entities.get(i).xPosition-xPosition,2)+Math.pow(EntityContainer.entities.get(i).yPosition-yPosition,2))<(EntityContainer.entities.get(i).width/2+width/2)/Cube.defaultSize){
+                        xPosition-=Math.cos(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
+                        xVelocity=-Math.cos(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
+                        yPosition-=Math.sin(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
+                        yVelocity=-Math.sin(EntityContainer.entities.get(i).angleWithPlayer)*speed*20*deltaTime;
                         detectionCollision(3);
                         detectionCollision(4);
                         detectionCollision(5);
                         detectionCollision(6);
-                        Stats.health-= EntityContainer.enemies.get(i).damage;
+                        Stats.health-= EntityContainer.entities.get(i).strength;
                         pushCount = 0;
                     }
             }
         }
 
     }
+
+    private boolean detectionCollisionWithProjectile(double ProjectilePosX, double ProjectilePosY, double ProjectilePosZ, double ProjectileSize){
+
+        if(ProjectilePosX<xPosition+(width/2)/Cube.defaultSize &&ProjectilePosX>xPosition-(width/2)/Cube.defaultSize)
+            if(ProjectilePosY>yPosition-(depth/2+Cube.defaultSize/2.0)/Cube.defaultSize&&ProjectilePosY<yPosition+(depth/2-Cube.defaultSize/2.0)/Cube.defaultSize){
+                if(ProjectilePosZ>zPosition&&ProjectilePosZ<zPosition+height/Cube.defaultSize){
+
+                    return true;
+                }
+
+            }
+        if( Math.sqrt(Math.pow(ProjectilePosX - xPosition, 2) + Math.pow(ProjectilePosY - yPosition, 2)) < Math.sqrt(Math.pow(width, 2) + Math.pow(depth, 2)) / Cube.defaultSize){
+            return ProjectilePosZ > zPosition && ProjectilePosZ < zPosition + height / Cube.defaultSize;
+        }
+        return false;
+    }
+    private void projectileCollisionHandler(double deltaTime){
+        for(var i = 0; i< ProjectileContainer.Projectiles.size(); i++){
+            if(!ProjectileContainer.Projectiles.get(i).isFriendly) {
+                if (detectionCollisionWithProjectile(ProjectileContainer.Projectiles.get(i).xPosition, ProjectileContainer.Projectiles.get(i).yPosition, ProjectileContainer.Projectiles.get(i).zPosition, ProjectileContainer.Projectiles.get(i).size)) {
+                    yVelocity = ProjectileContainer.Projectiles.get(i).yVelocity  * deltaTime*2;
+                    xVelocity = ProjectileContainer.Projectiles.get(i).xVelocity  * deltaTime*2;
+                    yPosition += ProjectileContainer.Projectiles.get(i).yVelocity  * deltaTime*2;
+                    xPosition += ProjectileContainer.Projectiles.get(i).xVelocity  * deltaTime*2;
+                    detectionCollision(3);
+                    detectionCollision(4);
+                    detectionCollision(5);
+                    detectionCollision(6);
+                    Stats.health-=ProjectileContainer.Projectiles.get(i).damage;
+                    ProjectileContainer.Projectiles.remove(i);
+
+                }
+            }
+        }
+
+
+    }
+
     public void setZVelocity(double zVelocity) {
 
         this.zVelocity = zVelocity;
@@ -552,9 +591,7 @@ public class Player {
        if(zPosition<0)zPosAbove=(int)(zPosition+height/Cube.defaultSize-1);
        double forOtherSensitivity=0.02;
 
-
-
-
+       
        int xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2);
        if(xPosition<0)xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2-1);
 

@@ -467,7 +467,7 @@ public class CubeContainer {
     public void updateData(double deltaTime){
         if((newChunkIn[0]!=Player.chunkIn[0])||(newChunkIn[1]!=Player.chunkIn[1])){
             CreateNewChunks();
-          //  CreateNewGround();
+            CreateNewGround();
             //CreateNewStructure();
         }
         newChunkIn[0] = Player.chunkIn[0];
@@ -498,6 +498,7 @@ public class CubeContainer {
         if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
             chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
         }
+
         if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
             if(Player.cubeIn[2]==i)Player.draw1(g);
             if(Player.cubeIn[2]+1==i)Player.draw2(g);
@@ -505,23 +506,31 @@ public class CubeContainer {
         }
         int xNumForEnemy=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+ EntityContainer.numOfEntities -Player.cubeIn[0];
         int yNumForEnemy=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+ EntityContainer.numOfEntities -Player.cubeIn[1];
+        try {
+
+
         if(xNumForEnemy>=0 &&xNumForEnemy< EntityContainer.numOfEntities *2&&yNumForEnemy>=0 &&yNumForEnemy< EntityContainer.numOfEntities *2) {
-            if (EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i] != null) {
-                for (var l = 0; l < EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i].size(); l++) {
-                    if( EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i].get(l).cubeIn[2]==i) EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i].get(l).draw1(g);
+            if (EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i] != null) {
+                for (var l = 0; l < EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i].size(); l++) {
+                    if( EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i].get(l).cubeIn[2]==i) EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i].get(l).draw1(g);
                 }
             }
-            if (i>0&& EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1] != null) {
-                for (var l = 0; l < EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1].size(); l++) {
-                    if( EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1].get(l).cubeIn[2]+1==i) EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1].get(l).draw2(g);
+            if (i>0&& EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1] != null) {
+                for (var l = 0; l < EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1].size(); l++) {
+                    if( EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1].get(l).cubeIn[2]+1==i) EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-1].get(l).draw2(g);
                 }
             }
-            if (i>1&& EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2] != null) {
-                for (var l = 0; l < EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2].size(); l++) {
-                    if( EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2].get(l).cubeIn[2]+2==i) EntityContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2].get(l).draw3(g);
+            if (i>1&& EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2] != null) {
+                for (var l = 0; l < EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2].size(); l++) {
+                    if( EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2].get(l).cubeIn[2]+2==i) EntityContainer.entities3D[xNumForEnemy][yNumForEnemy][i-2].get(l).draw3(g);
                 }
             }
         }
+        }catch (NullPointerException ignored){
+
+        }
+
+
         int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+ ProjectileContainer.numOfProjectile -Player.cubeIn[0];
         int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+ ProjectileContainer.numOfProjectile -Player.cubeIn[1];
         if(xNumForFireBall>=0 &&xNumForFireBall< ProjectileContainer.numOfProjectile *2&&yNumForFireBall>=0 &&yNumForFireBall< ProjectileContainer.numOfProjectile *2) {
@@ -531,6 +540,8 @@ public class CubeContainer {
                 }
             }
         }
+
+
     }
     public void drawAll2(Graphics g,int xNum,int yNum,int kNum,int jNum,int i){
         int xPosForCube=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum;
@@ -549,24 +560,8 @@ public class CubeContainer {
         }
         double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
         double newHeight=  (Cube.defaultSize*sizeRatio);
-                        /*
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                drawAll(g, xNum,yNum, kNum, jNum,i);
-
-                            }
-
-                        }
-
-                         */
-        // System.out.println(i);
-        //   if(i==3)System.out.println(newPosY-newHeight<GameGrid.PFY);
-        // if(i==0&&k==0&&j==0)System.out.println("test");
         if(newPosY-newHeight<GameGrid.PFY){
-
             drawAll(g, xNum,yNum, kNum, jNum,i);
-            //chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
         }
 
     }

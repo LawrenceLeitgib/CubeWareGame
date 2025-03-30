@@ -48,6 +48,7 @@ public class GameGrid {
 
 
    static double[] cameraPos =new double[2];
+   static boolean F3Down=true;
 
     GameGrid(){
         player = new Player(0,0,0);
@@ -69,7 +70,7 @@ public class GameGrid {
         else{
             PFY=GAME_HEIGHT/2.0;
         }
-        PVY=3*GAME_HEIGHT/3;
+        PVY=GAME_HEIGHT;
     }
     public void newPlayer(){
         player = new Player(0,0,0);
@@ -198,6 +199,7 @@ public class GameGrid {
             case 72:
                // isRotatingLeft=false;
                 break;
+
         }
 
     }
@@ -218,6 +220,9 @@ public class GameGrid {
             case 74:
                 PVY-=20;
                 break;
+            case 114:
+                toggleF3();
+            break;
 
 
         }
@@ -282,6 +287,9 @@ public class GameGrid {
         // System.out.println("truc "+mouseAngleInGame+", "+mouseInGame[0]+","+mouseInGame[1]);
     }
 
+    private void toggleF3(){
+        F3Down= !F3Down;
+    }
 
 
 }
