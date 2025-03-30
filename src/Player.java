@@ -48,10 +48,11 @@ public class Player {
 
 
     public void draw(Graphics g){
-        g.setColor(new Color(0,255,0));
-        g.fillRect(GAME_WIDTH/2-width/2,GAME_HEIGHT/2-height/2,width,height);
+        g.setColor(new Color(3, 40, 252));
+        g.fillRect(GAME_WIDTH/2-width/2,2*GAME_HEIGHT/3-height/2,width,height);
         g.setColor(Color.black);
-        g.setFont(new Font("Arial",Font.PLAIN,12));
+        g.setFont(new Font("Arial",Font.PLAIN,16));
+        g.setColor(Color.red);
         g.drawString(String.valueOf(yPosition),15,90);
         g.drawString(Double.toString(xPosition),15,70);
     }

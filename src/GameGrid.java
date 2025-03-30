@@ -5,11 +5,15 @@ public class GameGrid {
     static int GAME_HEIGHT;
     Player player;
 
+    Cube cube;
+
     int squareLength=40;
     GameGrid(int GAME_WIDTH,int GAME_HEIGHT){
         this.GAME_WIDTH=GAME_WIDTH;
         this.GAME_HEIGHT=GAME_HEIGHT;
         player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0);
+        cube = new Cube(GAME_WIDTH,GAME_HEIGHT,0,0);
+
     }
 
     public void newPlayer(){
@@ -45,7 +49,7 @@ public class GameGrid {
         int[] newCorrd = new int[2];
 
         newCorrd[0]= (int) (-x+GAME_WIDTH/2);
-        newCorrd[1]=(int) (-y+GAME_HEIGHT/2);
+        newCorrd[1]=(int) (-y+2*GAME_HEIGHT/3);
 
 
         return newCorrd;
@@ -63,16 +67,20 @@ public class GameGrid {
 
         int xPosChunkInt=(int)xPosChunk;
         int yPosChunkInt=(int)yPosChunk;
+
+        /*
         drawChunk(g,grillCoord,xPosChunkInt,yPosChunkInt,chunkSize);
 
         for(var i=-numOfChunkAround;i<=numOfChunkAround;i+=1) {
             for (var j = -numOfChunkAround; j <= numOfChunkAround; j += 1) {
                 drawChunk(g,grillCoord,xPosChunkInt+i,yPosChunkInt+j,chunkSize);
-
-
             }
-
         }
+
+         */
+        g.setColor(Color.RED);
+        g.fillOval(GAME_WIDTH/2-4,GAME_HEIGHT/3-4,8,8);
+        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
 
     }
     public void drawChunk(Graphics g,int[] grillCoord, int xPosChunkInt,int yPosChunkInt,int chunkSize){
