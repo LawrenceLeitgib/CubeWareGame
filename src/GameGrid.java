@@ -8,61 +8,38 @@ public class GameGrid {
     static int GAME_HEIGHT;
     Player player;
     static int safeZone=20;
-
-    //static int diSpawnZone=50;
     static int regenZone=6;
-
-
-
-    int squareLength=40;
     static double gravityAcceleration=60;
-
-
     static double PFX;
     static double  PFY;
     static  double PVX;
     static double PVY;
     CubeContainer cubeContainer;
-
     static double depthRatio=1.0;
-
     static double angleForXRotation=0.0;
-
-
     static boolean isRotatingLeft=false;
     static boolean isRotatingRight=false;
-
     static int mousePositionX;
     static int mousePositionY;
-
     static double mouseAngleInGame;
-
     static double[] mouseInGame;
-
     static ProjectileContainer fireBallContainer;
-   static EntityContainer entityContainer;
-
-   static boolean mouseLeftClickDown =false;
-   static boolean mouseRightClickDown=false;
-
-
-
-   static double[] cameraPos =new double[2];
-   static boolean F3Down=true;
-
+    static EntityContainer entityContainer;
+    static boolean mouseLeftClickDown =false;
+    static boolean mouseRightClickDown=false;
+    static double[] cameraPos =new double[2];
+    static boolean F3Down=true;
     GameGrid(){
         player = new Player(0,0,0);
         cubeContainer=new CubeContainer(depthRatio);
         fireBallContainer=new ProjectileContainer();
         entityContainer =new EntityContainer();
     }
-
     public static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
         PFX=GAME_WIDTH/2.0;
         PVX=GAME_WIDTH/2.0;
     }
-
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
         if(Player.thirdPerspective)
@@ -72,16 +49,11 @@ public class GameGrid {
         }
         PVY=GAME_HEIGHT;
     }
-    public void newPlayer(){
-        player = new Player(0,0,0);
-
-    }
     public double[] moveMouse(double x,double y) throws AWTException {
         double[] delta=new double[2];
         Robot robot = new Robot();
         delta[0]=x-mousePositionX-1;
-        //if( delta[0]==0)delta[0]=+.3;
-        //System.out.println(mousePositionX);
+
         delta[1]=y-mousePositionY-1;
         robot.mouseMove((int) (GamePanel.xPos+x-1), (int) (GamePanel.yPos+y-1));
 
@@ -134,12 +106,12 @@ public class GameGrid {
         }
         double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY- ProjectileContainer.ProjectileHeight *Cube.defaultSize);
         double difPosYRForMouse=((GAME_HEIGHT/sizeRatioForMouse-GAME_HEIGHT)/depthRatio);
-        double yPositionAForMouse=-(difPosYRForMouse/Cube.depth-Player.yPosition-Player.cubeAway);
-        double mouseNewWidth=  Cube.width*sizeRatioForMouse;
-        double xPositionAForMouse=(xPos+mouseNewWidth/2-GameGrid.PVX)/sizeRatioForMouse/Cube.width+Player.xPosition;
-        double correteurXY=0.5;
-        double A=xPositionAForMouse-Player.xPosition-correteurXY;
-        double B=yPositionAForMouse-Player.yPosition+correteurXY;
+        double yPositionAForMouse=-(difPosYRForMouse/Cube.defaultSize-Player.yPosition-Player.cubeAway);
+        double mouseNewWidth=  Cube.defaultSize*sizeRatioForMouse;
+        double xPositionAForMouse=(xPos+mouseNewWidth/2-GameGrid.PVX)/sizeRatioForMouse/Cube.defaultSize+Player.xPosition;
+        double correctorXY=0.5;
+        double A=xPositionAForMouse-Player.xPosition-correctorXY;
+        double B=yPositionAForMouse-Player.yPosition+correctorXY;
         double difPosYAForMouse=(B*(Math.cos(angleForXRotation)/Math.sin(angleForXRotation))+A)/(Math.sin(angleForXRotation)+Math.cos(angleForXRotation)*Math.cos(angleForXRotation)/Math.sin(angleForXRotation));
         double difPosXAForMouse=(A*(Math.cos(angleForXRotation)/Math.sin(angleForXRotation))-B)/(Math.sin(angleForXRotation)+Math.cos(angleForXRotation)*Math.cos(angleForXRotation)/Math.sin(angleForXRotation));
         gamePos[1]=difPosYAForMouse+Player.yPosition;
@@ -164,12 +136,8 @@ public class GameGrid {
         }
         return gamePos;
     }
-
     public double getMouseAngleInGame(double xPos,double yPos){
-        double angle=0;
-        angle=Math.atan((Player.yPosition-yPos)/(Player.xPosition-xPos));
-
-
+        double angle = Math.atan((Player.yPosition - yPos) / (Player.xPosition - xPos));
         if(Player.xPosition-xPos>0){
             angle=Math.PI+angle;
         }else  if(Player.xPosition-xPos<0&&Player.yPosition-yPos>0){
@@ -180,20 +148,11 @@ public class GameGrid {
             if(Player.yPosition-yPos>0)angle=3*Math.PI/2;
 
         }
-        /*
-        if(mousePositionX==PFX&&mousePositionY==PFY){
-            return 3*Math.PI/2;
-        }
-
-         */
-
-
         return angle;
     }
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()){
             case 85:
-
                // isRotatingRight=false;
                 break;
             case 72:
@@ -203,7 +162,6 @@ public class GameGrid {
         }
 
     }
-
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
             case 75:
@@ -227,7 +185,6 @@ public class GameGrid {
 
         }
     }
-
     public void mousePressed(MouseEvent e) {
         if(e.getButton()==1)
             GameGrid.mouseLeftClickDown =true;
@@ -241,7 +198,6 @@ public class GameGrid {
 
         if(e.getButton()==3)GameGrid.mouseRightClickDown =false;
     }
-
     public void mouseDragged(MouseEvent e) {
         if(!Player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running")){
             try {
@@ -250,19 +206,13 @@ public class GameGrid {
             } catch (AWTException e2) {
                 throw new RuntimeException(e2);
             }
-
-
         }
         mousePositionX =e.getX();
         mousePositionY =e.getY();
-
-
-
         mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
         mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
 
     }
-
     public void mouseMoved(MouseEvent e) {
 
 
@@ -286,10 +236,7 @@ public class GameGrid {
 
         // System.out.println("truc "+mouseAngleInGame+", "+mouseInGame[0]+","+mouseInGame[1]);
     }
-
     private void toggleF3(){
         F3Down= !F3Down;
     }
-
-
 }

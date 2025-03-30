@@ -1,9 +1,9 @@
 public class Chunk {
-    static int numOfCubeX = 16;
-    static int numOfCubeY = 16;
-    static int numOfCubeZ = 200;
-    int xPosition;
-    int yPosition;
+    static final int numOfCubeX = 16;
+    static final int numOfCubeY = 16;
+    static final int numOfCubeZ = 200;
+    final int xPosition;
+    final int yPosition;
     Cube[][][] cubes = new Cube[numOfCubeX][numOfCubeY][numOfCubeZ];
     boolean[][][] cubePositions = new boolean[numOfCubeX][numOfCubeY][numOfCubeZ];
     boolean[] zLayer =new boolean[numOfCubeZ];
@@ -13,7 +13,7 @@ public class Chunk {
         createCubes();
     }
     public void newCube(int x, int y, int z) {
-        cubes[x][y][z] = new Cube(x + xPosition * numOfCubeX, y + yPosition * numOfCubeY, z);
+        cubes[x][y][z] = new Cube();
         cubePositions[x][y][z] = true;
         zLayer[z]=true;
         CubeContainer.bigZLayer[z]=true;

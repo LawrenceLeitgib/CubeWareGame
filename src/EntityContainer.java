@@ -93,7 +93,7 @@ public class EntityContainer {
         }
         for(var i = 0; i< entities.size(); i++){
             entities.get(i).updateData(deltaTime);
-            if(entities.get(i).marketForDeletion){
+            if(entities.get(i).isMarketForDeletion()){
                 entities.remove(i);
             }
         }

@@ -28,13 +28,13 @@ public class Mage extends Entity{
     }
 
     public void createFireBall(){
-        ProjectileContainer.Projectiles.add(new FireBall(xPosition,yPosition,zPosition+ ProjectileContainer.ProjectileHeight,Math.PI+angleWithPlayer,13,20,strength,false));
+        ProjectileContainer.Projectiles.add(new FireBall(getxPosition(),getyPosition(),getzPosition()+ ProjectileContainer.ProjectileHeight,Math.PI+angleWithPlayer,13,.2,strength,false));
     }
 
     public void setNewPositions(double deltaTime){
         if(distanceWithPlayer>shoutDistance){
-        xVelocity=-Math.cos(angleWithPlayer)*speed*runningMultiplier;
-        yVelocity=-Math.sin(angleWithPlayer)*speed*runningMultiplier;
+        xVelocity=-Math.cos(angleWithPlayer)*getSpeed()*getRunningMultiplier();
+        yVelocity=-Math.sin(angleWithPlayer)*getSpeed()*getRunningMultiplier();
         }else{
             xVelocity=0;
             yVelocity=0;

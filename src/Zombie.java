@@ -8,8 +8,6 @@ public class Zombie extends Entity {
     double changeDirectionCount=0;
 
     double angleWalking;
-
-
     Zombie(double x, double y, double z, double strength, double hp, double xp) {
         super(x, y, z, strength, hp, xp);
         angleWalking=Math.random()*Math.PI*2;
@@ -22,8 +20,7 @@ public class Zombie extends Entity {
             aggro=false;
         }
     }
-
-
+    @Override
     public void setNewPositions(double deltaTime){
         setAggro();
         changeDirectionCount=+deltaTime;
@@ -33,18 +30,12 @@ public class Zombie extends Entity {
 
         }
         if(aggro){
-            xVelocity=-Math.cos(angleWithPlayer)*speed*runningMultiplier;
-            yVelocity=-Math.sin(angleWithPlayer)*speed*runningMultiplier;
+            xVelocity=-Math.cos(angleWithPlayer)*getSpeed()*getRunningMultiplier();
+            yVelocity=-Math.sin(angleWithPlayer)*getSpeed()*getRunningMultiplier();
         }else{
-            xVelocity=-Math.cos(angleWalking)*speed;
-            yVelocity=-Math.sin(angleWalking)*speed;
+            xVelocity=-Math.cos(angleWalking)*getSpeed();
+            yVelocity=-Math.sin(angleWalking)*getSpeed();
         }
          super.setNewPositions(deltaTime);
     }
-
-
-
-
-
-
 }

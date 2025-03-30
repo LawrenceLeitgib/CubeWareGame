@@ -17,10 +17,10 @@ public class ProjectileContainer {
         if(HaveBeenUpdated)return;
         projectile3D = new ArrayList[numOfProjectile *2][numOfProjectile *2][200];
         for(var i = 0; i< Projectiles.size(); i++){
-            zLayers[Projectiles.get(i).cubeIn[2]]=true;
-            int x= Projectiles.get(i).cubeIn[0];
-            int y= Projectiles.get(i).cubeIn[1];
-            int z= Projectiles.get(i).cubeIn[2];
+            zLayers[Projectiles.get(i).getCubeIn()[2]]=true;
+            int x= Projectiles.get(i).getCubeIn()[0];
+            int y= Projectiles.get(i).getCubeIn()[1];
+            int z= Projectiles.get(i).getCubeIn()[2];
             //System.out.println(x+100-Player.chunkIn[0]*Chunk.numOfCubeX+", "+(y+100-Player.chunkIn[1]*Chunk.numOfCubeY)+","+);
             if(z<0)continue;
             if(projectile3D[x+ numOfProjectile -Player.cubeIn[0]][y+ numOfProjectile -Player.cubeIn[1]][z]==null)   {
@@ -41,7 +41,7 @@ public class ProjectileContainer {
 
         for(var i = 0; i< Projectiles.size(); i++){
             Projectiles.get(i).updateData(deltaTime);
-            if(Projectiles.get(i).marketForDeletion){
+            if(Projectiles.get(i).isMarketForDeletion()){
                 Projectiles.remove(i);
             }
 
