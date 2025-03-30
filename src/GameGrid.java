@@ -9,13 +9,23 @@ public class GameGrid {
 
     Cube cube2;
 
+    Cube cube3;
+
     int squareLength=40;
+
+    double PFX;
+    double PFY;
+
+
     GameGrid(int GAME_WIDTH,int GAME_HEIGHT){
         this.GAME_WIDTH=GAME_WIDTH;
         this.GAME_HEIGHT=GAME_HEIGHT;
         player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0);
         cube = new Cube(GAME_WIDTH,GAME_HEIGHT,0,0);
-        cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,100,0);
+        //cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,100,0);
+        //cube3=new Cube(GAME_WIDTH,GAME_HEIGHT,200,-15);
+        PFX=GAME_WIDTH/2.0;
+        PFY=GAME_HEIGHT/3.0;
 
     }
 
@@ -30,23 +40,38 @@ public class GameGrid {
     }
     public void draw(Graphics g){
         int[] grillCoord=playerCoordToGrillCoord(player.xPosition, player.yPosition);
-        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
-        //cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
 
-        g.setColor(Color.black);
-
-        /*
-        for(var i=-1;i<1;i+=1){
-            for(var j=-1;j<1;j+=1)
-            g.fillRect(grillCoord[0]+100*i,grillCoord[1]+100*j,50,50);
+        int numOfBlocksXaxis=100;
+        int SizeOfBlocks=100;
+        int xGrillNumToAdd= (int) player.xPosition;
+        //xGrillNumToAdd= 0;
+        int yGrillNumToAdd= (int)- player.yPosition;
+        //System.out.println( grillCoord[0]);
+        while(xGrillNumToAdd>SizeOfBlocks){
+            xGrillNumToAdd-=SizeOfBlocks;
 
         }
-              */
+        while(xGrillNumToAdd<SizeOfBlocks){
+            xGrillNumToAdd+=SizeOfBlocks;
 
-        loadChunks(g,grillCoord);
+        }
 
+
+
+        g.setColor(Color.BLACK);
+
+        for(var i=-numOfBlocksXaxis+1;i<=numOfBlocksXaxis;i++ ){
+
+            g.drawLine(GAME_WIDTH/2+SizeOfBlocks/2+i*SizeOfBlocks-xGrillNumToAdd,GAME_HEIGHT, (int) PFX, (int) PFY);
+        }
+        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
+        //cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
+        //cube3.draw(g,grillCoord,player.xPosition,player.yPosition);
 
         player.draw(g);
+
+        g.setColor(Color.RED);
+        g.fillOval(GAME_WIDTH/2-4,GAME_HEIGHT/3-4,8,8);
 
     }
 
@@ -61,89 +86,13 @@ public class GameGrid {
     }
 
     public void loadChunks(Graphics g,int[] grillCoord ){
-        int chunkSize=200;
-        int numOfChunkAround=3;
-        double xPosChunk = ((player.xPosition+chunkSize/2)/chunkSize);
-        double yPosChunk = ((player.yPosition+chunkSize/2)/chunkSize);
 
 
-        if (xPosChunk<0)xPosChunk-=1;
-        if (yPosChunk<0)yPosChunk-=1;
 
-        int xPosChunkInt=(int)xPosChunk;
-        int yPosChunkInt=(int)yPosChunk;
-
-        /*
-        drawChunk(g,grillCoord,xPosChunkInt,yPosChunkInt,chunkSize);
-
-        for(var i=-numOfChunkAround;i<=numOfChunkAround;i+=1) {
-            for (var j = -numOfChunkAround; j <= numOfChunkAround; j += 1) {
-                drawChunk(g,grillCoord,xPosChunkInt+i,yPosChunkInt+j,chunkSize);
-            }
-        }
-
-         */
-        g.setColor(Color.RED);
-        g.fillOval(GAME_WIDTH/2-4,GAME_HEIGHT/3-4,8,8);
 
 
     }
     public void drawChunk(Graphics g,int[] grillCoord, int xPosChunkInt,int yPosChunkInt,int chunkSize){
-        int numOfDivision=3;
-        int blockSize=chunkSize/numOfDivision;
 
-
-
-        g.setColor(Color.black);
-        /*for(var i=-1+xPosChunkInt*2;i<1+xPosChunkInt*2;i+=1){
-            for(var j=-1+yPosChunkInt*2;j<1+yPosChunkInt*2;j+=1)
-                g.fillRect(grillCoord[0]+chunkSize/2*i,grillCoord[1]+chunkSize/2*j,chunkSize/4,chunkSize/4);
-        }*/
-
-        if ((xPosChunkInt+yPosChunkInt)%2==0){
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2,
-                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2,blockSize,blockSize);
-
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize,
-                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2,blockSize,blockSize);
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize,
-                    grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize,blockSize,blockSize);
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2,
-                   grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize,blockSize,blockSize);
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-blockSize/2,
-                    grillCoord[1]+chunkSize*yPosChunkInt-blockSize/2,blockSize,blockSize);
-
-        }else{
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2+blockSize,
-                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2,blockSize,blockSize);
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt-chunkSize/2,
-                    grillCoord[1]+chunkSize*yPosChunkInt-chunkSize/2+blockSize,blockSize,blockSize);
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize*2,
-                    grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize,blockSize,blockSize);
-            g.fillRect(grillCoord[0]+chunkSize*xPosChunkInt+chunkSize/2-blockSize,
-                    grillCoord[1]+chunkSize*yPosChunkInt+chunkSize/2-blockSize*2,blockSize,blockSize);
-
-        }
-
-
-        g.setColor(Color.red);
-        g.drawLine(grillCoord[0]+xPosChunkInt*chunkSize-chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize-chunkSize/2,
-                grillCoord[0]+xPosChunkInt*chunkSize+chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize-chunkSize/2);
-
-        g.drawLine(grillCoord[0]+xPosChunkInt*chunkSize+chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize-chunkSize/2,
-                grillCoord[0]+xPosChunkInt*chunkSize+chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize+chunkSize/2);
-
-        g.drawLine(grillCoord[0]+xPosChunkInt*chunkSize+chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize+chunkSize/2,
-                grillCoord[0]+xPosChunkInt*chunkSize-chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize+chunkSize/2);
-        g.drawLine(grillCoord[0]+xPosChunkInt*chunkSize-chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize+chunkSize/2,
-                grillCoord[0]+xPosChunkInt*chunkSize-chunkSize/2,
-                grillCoord[1]+yPosChunkInt*chunkSize-chunkSize/2);
     }
 }
