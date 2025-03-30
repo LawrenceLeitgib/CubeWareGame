@@ -53,7 +53,7 @@ public class GameGrid {
 
         cubeContainer.draw(g);
         g.setColor(Color.red);
-        //Player.draw(g);
+        Player.draw(g);
         g.setColor(Color.RED);
         g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
 
@@ -63,32 +63,49 @@ public class GameGrid {
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()){
             case 75:
-                PFY+=10;
-                depthRatio+=0.01;
+                PFY+=50;
+               // PVY+=20;
+                //depthRatio+=0.02;
+                depthRatio=GAME_HEIGHT/(PVY-PFY);
+                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
+               // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
+                //System.out.println(depthRatio+" "+Player.cubeAway);
+               // System.out.println(Player.cubeAway);
                // PFX+=10;
                 break;
             case 79:
-                PFY-=10;
-                depthRatio-=0.01;
+                PFY-=50.0;
+                //PVY-=20;
+                //depthRatio-=0.02;
+                depthRatio=GAME_HEIGHT/(PVY-PFY);
+                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
+               // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
                 //PFX-=10;
                 break;
             case 73:
-                PVY+=10;
-                Player.cubeAway+=0.3;
+                PVY+=20;
+                //Player.cubeAway+=0.5;
+                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
+               // System.out.println(PVY);
                 //PVX+=10;
                 break;
             case 74:
-                PVY-=10;
-                Player.cubeAway-=0.3;
+                PVY-=20;
+                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
+                //Player.cubeAway-=0.5;
                // PVX-=10;
                 break;
             case 85:
-                PFX+=10;
-                PVX+=10;
+                //PFX+=10;
+                //PVX+=10;
+                //Cube.xAddingNumber+=10;
+                Cube.angleForXRotation+=.1;
                 break;
             case 72:
-                PFX-=10;
-                PVX-=10;
+                //PFX-=10;
+                //PVX- =10;
+                //Cube.xAddingNumber-=10;
+                Cube.angleForXRotation-=.1;
                 break;
 
         }

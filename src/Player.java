@@ -46,7 +46,7 @@ public class Player {
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=0;
         Player.yPosition=0;
-        Player.zPosition=20;
+        Player.zPosition=7;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
         chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX);
@@ -185,8 +185,10 @@ public class Player {
 
 
 */
+
         for(var i=0;i<4;i++) {
             g.setColor(Color.BLACK);
+            g.setColor(Color.red);
             if (i < 3) {
                 g.drawLine((int) corners[i][0], (int) corners[i][1], (int) corners[i + 1][0], (int) corners[i + 1][1]);
                 g.drawLine((int) newCorners[i][0], (int) newCorners[i][1], (int) newCorners[i + 1][0], (int) newCorners[i + 1][1]);
@@ -199,6 +201,8 @@ public class Player {
             g.drawLine((int) corners[i][0], (int) corners[i][1], (int) newCorners[i][0], (int) newCorners[i][1]);
 
         }
+        g.setColor(Color.red);
+        //g.fillRect((int) corners[0][0], (int) corners[0][1], (int) newWidth, (int) newHeight);
 
 
 

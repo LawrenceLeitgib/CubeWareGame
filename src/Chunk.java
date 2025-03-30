@@ -119,14 +119,20 @@ public class Chunk {
      */
         for(var i=0;i<numOfCubeX;i++) {
             for (var j = 0; j < numOfCubeX; j++){
-                newCube(i, j, 0);
-                 newCube(i, j, 1);
+               // newCube(i, j, 0);
+                // newCube(i, j, 1);
 
             }
         }
-        newCube(0, 0, 0);
+        //newCube(0, 0, 0);
 
         if(xPosition==0&&yPosition==0){
+
+            newCube(5,5,0);
+            newCube(2,7,0);
+            newCube(8,7,0);
+
+            /*
             newCube(5, 5, 8);
             newCube(5, 5, 9);
             newCube(4, 5, 9);
@@ -134,6 +140,8 @@ public class Chunk {
             newCube(5, 6, 9);
             newCube(5, 4, 9);
             newCube(5, 5, 10);
+
+             */
 
         }
         /*{
@@ -146,7 +154,7 @@ public class Chunk {
             }
 
         }*/
-        drawLabyrinth();
+       // drawLabyrinth();
         /*
         for(var k=0;k<numOfCubeX;k++){
             for(var i=k;i<numOfCubeX-k;i++) {
@@ -189,6 +197,9 @@ public class Chunk {
                             if (cubePositions[k][j][i]) {
                                 cubes[k][j][i].draw(g);
                                 if(Player.chunkIn[0]==xPosition&&Player.chunkIn[1]==yPosition)
+                                /*if((Player.yPosition+1-(1-Player.depth/Cube.defaultSize)/2.0-(cubes[k][j][i].yPosition))>0){
+                                    Player.draw(g);
+                                }*/
                                 if((Player.yPosition+1-(1-Player.depth/Cube.defaultSize)/2.0-(cubes[k][j][i].yPosition))>0){
                                     Player.draw(g);
                                 }

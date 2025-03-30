@@ -27,7 +27,37 @@ public class CubeContainer {
         CubeContainer.depthRatio=depthRatio;
 
     }
-    public void newCube(int x,int y,int z){}
+    public void newCube(int x,int y,int z){
+        int xChunkNum=0;
+        int yChunkNum=0;
+
+        int newX=x;
+        int newY=y;
+        while(newX<0){
+            newX+=Chunk.numOfCubeX;
+            xChunkNum-=1;
+
+        }
+        while(newX>=Chunk.numOfCubeX){
+            newX-=Chunk.numOfCubeX;
+            xChunkNum+=1;
+
+        }
+
+        while(newY<0){
+            newY+=Chunk.numOfCubeY;
+            yChunkNum-=1;
+
+        }
+        while(newY>=Chunk.numOfCubeY){
+            newY-=Chunk.numOfCubeY;
+            yChunkNum+=1;
+
+        }
+        if(!chunksPosition[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]||chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubePositions[newX][newY][z])return;
+        chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubes[newX][newY][z]=new Cube(x,y,z,GameGrid.depthRatio,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]);
+        chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubePositions[newX][newY][z]=true;
+    }
     public void drawDick(int x, int y,int z){
         newCube(x,y,z+6);
         newCube(x,y,z+5);
@@ -91,17 +121,17 @@ public class CubeContainer {
     public void drawMap(int x, int y,int z){
         for(var i=-5;i<5;i++){
             for(var j=0;j<10;j++){
-                newCube(i,j,-1);
+                newCube(i+x,j+y,z);
             }
         }
         for(var j=0;j<10;j++){
-            newCube(-1,j,0);
-            newCube(1,j,0);
+            newCube(-1+x,j+y,z+1);
+            newCube(1+x,j+y,z+1);
         }
         for(var i=0;i<10;i++){
             for(var j=0;j<10;j++){
                 if(j>=i)
-                newCube(4,i,j-i);
+                newCube(4+x,i+y,j-i+z+1);
             }
         }
 
@@ -109,7 +139,48 @@ public class CubeContainer {
 
 
     }
-    public void createCubes(){}
+    public void createCubes(){
+        //newCube(0,0,5);
+        //newCube(1,0,5);
+        /*
+       for(var i=-20;i<20;i++){
+           for(var j=-20;j<20;j++){
+               newCube(i,j,5);
+
+           }
+
+       }
+
+         */
+
+        /*
+        drawMap(0,0,4);
+
+        drawMap(0,-20,4);
+
+        drawMap(0,-40,4);
+
+        for(var k=0;k<100;k++){
+            for(var i=k;i<100-k;i++){
+                for(var j=k;j<100-k;j++){
+                    newCube(i,j,k);
+
+                }
+
+            }
+        }
+
+         */
+
+
+
+
+
+
+
+
+
+    }
 
 
 
@@ -136,6 +207,7 @@ public class CubeContainer {
         countChunkCreation+=deltaTime;
         if(countChunkCreation>=timeChunkCreation){
             CreateNewChunks();
+            createCubes();
             countChunkCreation-=timeChunkCreation;
         }
 
@@ -188,7 +260,7 @@ public class CubeContainer {
         g.setColor(new Color(147, 196, 49));
         g.fillRect(0, (int) GameGrid.PFY,GAME_WIDTH,GAME_HEIGHT);
 
-
+        drawGrillage(g);
         int xNum=0;
         for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<=Player.chunkIn[1]+Player.numOfChunkToDraw;i++){
             for(var j=0;j<=Player.numOfChunkToDraw*2;j++){
