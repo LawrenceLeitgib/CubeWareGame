@@ -321,13 +321,6 @@ public class Player {
        boolean[] collision=new boolean[7];
        Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
 
-
-
-
-
-
-
-
        boolean[][][] cubesPosChunkInside=chunkInside.cubePositions;
        //System.out.println(chunkInside.xPosition+" "+chunkInside.yPosition);
        int xPosUnder=(int)(xPosition+0.5);
@@ -473,6 +466,7 @@ public class Player {
           if(sideOfCube=="left"&&(cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPos][zPosAboveForOther]||cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPos][zPosUnderForOther]))
                yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
            if(xVelocity==0) yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
+           //yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
 
            //isMovingForward=false;
        }
@@ -482,6 +476,7 @@ public class Player {
            if(sideOfCube.equals("left") &&( cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosUnderForOther]||cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosUnderForOther]))
                yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
            if(xVelocity==0)yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
+           //yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
          // isMovingBackward=false;
        }
 
@@ -498,70 +493,6 @@ public class Player {
 
        return collision;
    }
-
-
-
-
-    public boolean[] detectionCollision(int num,int PASTOUCHE){
-        boolean[] collision=new boolean[7];
-
-
-
-        int xPosUnder=(int)(xPosition+0.5);
-        if(xPosition<0)xPosUnder=(int)(xPosition-0.5);
-        int yPosUnder=(int)(yPosition+0.5);
-        if(yPosition<0)yPosUnder=(int)(yPosition-0.5);
-        int zPosUnder=(int)(zPosition);
-        if(zPosition<0)zPosUnder=(int)(zPosition-1);
-        int zPosAbove=(int)(zPosition+height/Cube.defaultSize);
-        if(zPosition<0)zPosAbove=(int)(zPosition+height/Cube.defaultSize-1);
-
-
-        double forOtherSensitivity=0.04;
-
-
-
-
-        int xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2);
-        if(xPosition<0)xLeftPos=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2-1);
-
-        int xRightPos=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2+1);
-        if(xPosition<0)xRightPos=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2);
-
-        int xLeftPosForOther=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2+forOtherSensitivity);
-        if(xPosition<0.5)xLeftPosForOther=(int)(xPosition+(Cube.defaultSize-width)/Cube.defaultSize/2-1+forOtherSensitivity);
-
-        int xRightPosForOther=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2+1-forOtherSensitivity);
-        if(xPosition<-0.5)xRightPosForOther=(int)(xPosition-(Cube.defaultSize-width)/Cube.defaultSize/2-forOtherSensitivity);
-
-        int yFrontPos=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2);
-        if(yPosition<0)yFrontPos=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2-1);
-
-        int yBackPos=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2+1);
-        if(yPosition<0)yBackPos=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2);
-
-        int yFrontPosForOther=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2+forOtherSensitivity);
-        if(yPosition<0.5)yFrontPosForOther=(int)(yPosition+(Cube.defaultSize-depth)/Cube.defaultSize/2-1+forOtherSensitivity);
-
-        int yBackPosForOther=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2+1-forOtherSensitivity);
-        if(yPosition<-0.5)yBackPosForOther=(int)(yPosition-(Cube.defaultSize-depth)/Cube.defaultSize/2-forOtherSensitivity);
-
-        int zPosUnderForOther=(int)(zPosition+forOtherSensitivity);
-        if(zPosition<0)zPosUnderForOther=(int)(zPosition-1+forOtherSensitivity);
-
-        int zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-forOtherSensitivity);
-        if(zPosition<0)zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-1-forOtherSensitivity);
-
-        //System.out.println(zPosUnder);
-
-
-
-        //System.out.println(xLeftPos+" | "+yFrontPos+" | "+zPosAbove);
-        //System.out.println(zPosUnderForOther+" | "+zPosAboveForOther);
-
-
-        return collision;
-    }
     static public double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight){
         double [][] corners=new double[4][2];
         corners[0][1]=newPosY-newHeight;

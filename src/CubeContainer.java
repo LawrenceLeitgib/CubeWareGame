@@ -260,20 +260,85 @@ public class CubeContainer {
 
         g.setColor(new Color(147, 196, 49));
         g.fillRect(0, (int) GameGrid.PFY,GAME_WIDTH,GAME_HEIGHT);
+        double[] newChunkIn=new double[2];
+
+        newChunkIn[0]=(int)((Player.xPosition+0.5)/Chunk.numOfCubeX);
+        newChunkIn[1]=(int)((Player.yPosition+Player.cubeAway+0.5)/Chunk.numOfCubeY);
 
        // drawGrillage(g);
         int xNum=0;
-        for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<=Player.chunkIn[1]+Player.numOfChunkToDraw;i++){
-            for(var j=0;j<=Player.numOfChunkToDraw*2;j++){
-                if(j%2==0)xNum=-Player.numOfChunkToDraw+j/2+Player.chunkIn[0];
-                if(j%2==1)xNum=Player.numOfChunkToDraw-j/2+Player.chunkIn[0];
+        /*
+        for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<=Player.chunkIn[1]+Player.numOfChunkToDraw;i++) {
+            for (var j = 0; j <= Player.numOfChunkToDraw * 2; j++) {
+                if (j % 2 == 0) xNum = -Player.numOfChunkToDraw + j / 2 + Player.chunkIn[0];
+                if (j % 2 == 1) xNum = Player.numOfChunkToDraw - j / 2 + Player.chunkIn[0];
                 {
-                    if(chunksPosition[numOfChunkX+xNum][i+numOfChunkY])
-                        chunks[numOfChunkX+xNum][i+numOfChunkY].draw(g);
+                    if (chunksPosition[numOfChunkX + xNum][i + numOfChunkY])
+                        chunks[numOfChunkX + xNum][i + numOfChunkY].draw(g);
                 }
 
             }
+        }*/
+        for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<Player.chunkIn[1];i++) {
+            for(var j=Player.chunkIn[0]-Player.numOfChunkToDraw;j<Player.chunkIn[0];j++) {
+                if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
+                    chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
+                }
+            }
+            for(var j=Player.chunkIn[0]+Player.numOfChunkToDraw;j>Player.chunkIn[0];j--) {
+                if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
+                    chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
+                }
+            }
         }
+        //System.out.println(Player.chunkIn[1]);
+        for(var i=Player.chunkIn[1]+Player.numOfChunkToDraw;i>Player.chunkIn[1];i--) {
+            for(var j=Player.chunkIn[0]-Player.numOfChunkToDraw;j<Player.chunkIn[0];j++) {
+                if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
+                    chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
+                }
+            }
+            for(var j=Player.chunkIn[0]+Player.numOfChunkToDraw;j>Player.chunkIn[0];j--) {
+                if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
+                    chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
+                }
+            }
+
+        }
+
+        for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<Player.chunkIn[1];i++) {
+            if (chunksPosition[numOfChunkX + Player.chunkIn[0]][numOfChunkY+i]){
+                chunks[numOfChunkX +  Player.chunkIn[0]][numOfChunkY+i].draw(g);
+            }
+
+        }
+
+        for(var i=Player.chunkIn[1]+Player.numOfChunkToDraw;i>Player.chunkIn[1];i--) {
+            if (chunksPosition[numOfChunkX + Player.chunkIn[0]][numOfChunkY+i]){
+                chunks[numOfChunkX +  Player.chunkIn[0]][numOfChunkY+i].draw(g);
+            }
+        }
+
+
+/*
+        for(var i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<Player.chunkIn[0];i++) {
+            if (chunksPosition[numOfChunkX + i][numOfChunkY+Player.chunkIn[1]]){
+                chunks[numOfChunkX +  i][numOfChunkY+Player.chunkIn[1]].draw(g);
+            }
+
+        }
+
+        for(var i=Player.chunkIn[0]+Player.numOfChunkToDraw;i>Player.chunkIn[0];i--) {
+            if (chunksPosition[numOfChunkX +i][numOfChunkY+Player.chunkIn[1]]){
+                chunks[numOfChunkX +  i][numOfChunkY+Player.chunkIn[1]].draw(g);
+            }
+        }
+
+ */
+        if (chunksPosition[numOfChunkX +Player.chunkIn[0]][numOfChunkY+Player.chunkIn[1]]){
+            chunks[numOfChunkX + Player.chunkIn[0]][numOfChunkY+Player.chunkIn[1]].draw(g);
+        }
+
 
         //Player.draw(g);
 

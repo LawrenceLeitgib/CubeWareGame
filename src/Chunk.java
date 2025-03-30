@@ -97,16 +97,16 @@ public class Chunk {
         newCube(3,1,1);
         newCube(4,1,1);
         */
-/*
+
         for(var i=0;i<numOfCubeX;i++){
-            newCube(i,0,0);
-            newCube(i,numOfCubeX-1,0);
-            newCube(0,i,0);
-            newCube(numOfCubeX-1,i,0);
+            newCube(i,0,2);
+            newCube(i,numOfCubeX-1,2);
+            newCube(0,i,2);
+            newCube(numOfCubeX-1,i,2);
 
 
         }
-        */
+
     /*
         for(var i=0;i<numOfCubeX;i++) {
             for (var j = 0; j < numOfCubeX; j++){
@@ -119,8 +119,8 @@ public class Chunk {
      */
         for(var i=0;i<numOfCubeX;i++) {
             for (var j = 0; j < numOfCubeX; j++){
-               newCube(i, j, 0);
-                 newCube(i, j, 1);
+              // newCube(i, j, 0);
+                newCube(i, j, 1);
 
             }
         }
@@ -140,11 +140,13 @@ public class Chunk {
 
 
 
-
+        if(xPosition==0&&yPosition==0){
+            newCube(5,5,5);
+        }
 
         if(xPosition==0&&yPosition==0){
 
-           newCube(5,0,5);
+          // newCube(5,0,5);
 
             //newCube(5,5,0);
             //newCube(6,5,0);
@@ -154,7 +156,7 @@ public class Chunk {
             //newCube(2,7,0);
             //newCube(8,7,0);
 
-            /*
+/*
             newCube(5, 5, 8);
             newCube(5, 5, 9);
             newCube(4, 5, 9);
@@ -163,7 +165,9 @@ public class Chunk {
             newCube(5, 4, 9);
             newCube(5, 5, 10);
 
-             */
+ */
+
+
 
 
 
@@ -186,7 +190,7 @@ public class Chunk {
             }
 
         }*/
-       drawLabyrinth();
+     //  drawLabyrinth();
         /*
         for(var k=0;k<numOfCubeX;k++){
             for(var i=k;i<numOfCubeX-k;i++) {
@@ -225,6 +229,144 @@ public class Chunk {
 
     }
     public void draw(Graphics g){
+     if(xPosition==0&&yPosition==1)return;
+       //if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
+        //if(Player.yPosition-Player.cubeAway>(yPosition+1)*numOfCubeY)System.out.println(yPosition);
+        for (var i= 0; i < numOfCubeZ; i++) {
+            if(Player.yPosition>(yPosition)*numOfCubeY) {
+                if (Player.xPosition > (xPosition + 1) * numOfCubeX) {
+                    for (var j = 0; j < numOfCubeY; j++) {
+                        for (var k = 0; k < numOfCubeX; k++) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+
+                        }
+
+                    }
+
+                }
+                else if (Player.xPosition < (xPosition) * numOfCubeX) {
+                    for (var j = 0; j < numOfCubeY; j++) {
+                        for (var k = numOfCubeX - 1; k >= 0; k--) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+
+                        }
+
+                    }
+
+                }
+                else {
+                    for (var j = 0; j < numOfCubeY; j++) {
+                        for (var k = 0; k < Player.xPosition - (xPosition) * numOfCubeX; k++) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+                        }
+                        for (var k = numOfCubeX-1; k >=Player.xPosition - (xPosition) * numOfCubeX; k--) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+                        }
+                    }
+                }
+            }
+            else if(Player.yPosition<(yPosition)*numOfCubeY){
+                if(Player.xPosition>(xPosition+1)*numOfCubeX){
+                    for(var j=numOfCubeY-1;j>=0;j--){
+                        for(var k=0;k<numOfCubeX;k++){
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+
+                        }
+
+                    }
+
+                }
+                else if(Player.xPosition<(xPosition)*numOfCubeX){
+                    for(var j=numOfCubeY-1;j>=0;j--){
+                        for(var k=numOfCubeX-1;k>=0;k--){
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+
+                        }
+
+                    }
+
+                }
+                else {
+                    for(var j=numOfCubeY-1;j>=0;j--){
+                        for (var k = 0; k < Player.xPosition - (xPosition) * numOfCubeX; k++) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+                        }
+                        for (var k = numOfCubeX-1; k >=Player.xPosition - (xPosition) * numOfCubeX; k--) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                    for (var j = 0; j < Player.yPosition - (yPosition) * numOfCubeY; j++) {
+                        for (var k = 0; k < numOfCubeX; k++) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+
+                        }
+
+
+
+                }
+                    for (var j = numOfCubeY-1; j >=Player.yPosition - (yPosition) * numOfCubeY; j--) {
+                        for (var k = numOfCubeX - 1; k >= 0; k--) {
+                            if (cubePositions[k][j][i]) {
+                                cubes[k][j][i].draw(g);
+                            }
+
+                        }
+
+
+
+                }
+
+
+
+
+            }
+
+        }
+        }
+
+/*
+        for (var i= numOfCubeZ-1; i >-1; i--) {
+            for (var j = 0; j < numOfCubeY; j++) {
+                for (var k = 0; k < numOfCubeX; k++) {
+                    if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
+                        cubes[k][j][i].draw(g);
+                    }
+                }
+            }
+        }
+
+ */
+
+
+
+
+
+    public void draw(Graphics g,int PAsTouche){
+
+
+       // if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
+
         for (var i= 0; i < numOfCubeZ; i++) {
                 for (var j = 0; j < numOfCubeY; j++) {
                         for (var k = 0; k < numOfCubeX; k++) {
@@ -238,6 +380,7 @@ public class Chunk {
                                     Player.draw(g);
                                 }
                             }
+
                             /*
                             if(Player.chunkIn[0]==xPosition&&Player.chunkIn[1]==yPosition) {
                                 if ((Player.yPosition + 1 - (1 - Player.depth / Cube.defaultSize) / 2.0 - (yPosition*numOfCubeY)) > 0) {
@@ -253,18 +396,11 @@ public class Chunk {
         for (var i= numOfCubeZ-1; i >-1; i--) {
              for (var j = 0; j < numOfCubeY; j++) {
                         for (var k = 0; k < numOfCubeX; k++) {
-                            /*if (cubePositions[k][j][i]&&(i-1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition*Cube.defaultSize) {
-                                cubes[k][j][i].draw(g);
-                               //System.out.println("test");
-                            }*/
                             if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
                                 cubes[k][j][i].draw(g);
-
                             }
                         }
                 }
         }
-
     }
-
 }
