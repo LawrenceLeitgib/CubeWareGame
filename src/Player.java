@@ -2,15 +2,15 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Player {
-    double xPosition;
-    double yPosition;
-    double zPosition;
+    static double xPosition;
+    static double yPosition;
+    static double zPosition;
 
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
 
-    int width=20;
-    int height=20;
+    int width=40;
+    int height=40;
 
     double speed=10;
 
@@ -20,9 +20,9 @@ public class Player {
     boolean isSlowing=false;
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double PositionZ){
-        this.xPosition=positionX;
-        this.yPosition=positionY;
-        this.zPosition=PositionZ;
+        Player.xPosition=positionX;
+        Player.yPosition=positionY;
+        Player.zPosition=PositionZ;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
 
@@ -58,7 +58,10 @@ public class Player {
 
     public void draw(Graphics g){
         g.setColor(new Color(3, 40, 252));
-        g.fillRect(GAME_WIDTH/2-width/2,2*GAME_HEIGHT/3-height/2,width,height);
+        //g.fillRect(GAME_WIDTH/2-width/2,2*GAME_HEIGHT/3-height/2,width,height);
+        g.fillOval(GAME_WIDTH/2-width/2, (int) (2*GAME_HEIGHT/3-height*CubeContainer.depthRatio/4),width, (int) (height*CubeContainer.depthRatio/2));
+
+
         g.setColor(Color.black);
         g.setFont(new Font("Arial",Font.PLAIN,16));
         g.setColor(Color.red);

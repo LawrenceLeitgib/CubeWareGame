@@ -3,100 +3,142 @@ import java.awt.*;
 public class Cube {
     int xPosition;
     int yPosition;
-
     int zPosition;
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
-    int width=100;
-    int height=100;
-    int depth=100;
-    double depthRatio=1/3.0;
-    double PFX;
-    double PFY;
-    double PVX;
-    double PVY;
+    static int width=100;
+    static int height=100;
+    static int depth=100;
+    static double depthRatio=1/2.0;
+    static double PFX;
+    static double  PFY;
+    static  double PVX;
+    static double PVY;
+    boolean blockLeftEmpty=true;
+    boolean blockRightEmpty=true;
+    boolean blockFrontEmpty=true;
+    boolean blockBackEmpty=true;
+    double[] deltaXList=new double[4];
+    double[] deltaYList=new double[4];
+    double[] angleList=new double[4];
 
+    double newPosY;
+    double newWidth;
+    double newHeight;
+    double newDepth;
+    double newPosX;
+    double sizeRatio;
     double[][] corners;
+    int[][] xPointsList;
+    int[][] yPointsList;
+    int closestCorner;
+    double[][] newCorners;
 
-    Cube(int GAME_WIDTH,int GAME_HEIGHT,int xPosition,int yPosition,int zPosition ){
+
+
+
+    Cube(int xPosition, int yPosition, int zPosition, double depthRatio){
         this.xPosition=xPosition;
         this.yPosition=yPosition;
         this.zPosition=zPosition;
-        Cube.GAME_WIDTH =GAME_WIDTH;
-        Cube.GAME_HEIGHT =GAME_HEIGHT;
-        PFX=GAME_WIDTH/2.0;
-        PFY=GAME_HEIGHT/3.0;
-        PVX=GAME_WIDTH/2.0;
-        PVY=GAME_HEIGHT;
+        Cube.depthRatio=depthRatio;
+
+
     }
     public static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
+        PFX=GAME_WIDTH/2.0;
+        PVX=GAME_WIDTH/2.0;
     }
 
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
-    }
-
-    public void draw(Graphics g, int[] grillCoord,double playerPosX,double playerPosY){
-        depthRatio=1.0/2.0;
-        PFX=GAME_WIDTH/2.0;
         PFY=GAME_HEIGHT/3.0;
-        PVX=GAME_WIDTH/2.0;
         PVY=GAME_HEIGHT;
-
-
-        int difPosX=(int)(playerPosX-xPosition);
-        int difPosY=(int)((playerPosY-yPosition));
+    }
+    public void updateData(double deltaTime) {
+        int difPosX=(int)(Player.xPosition-xPosition*width);
+        int difPosY=(int)((Player.yPosition-yPosition*depth));
+        int difPosZ=(int)(Player.zPosition-zPosition*height);
         int distance=(int)Math.sqrt(Math.pow(difPosX,2.0)+Math.pow(difPosY,2.0));
-        //if (difPosY<(int)a)difPosY=(int)a;
-        if (difPosY<-GAME_HEIGHT*2/3)difPosY=-GAME_HEIGHT*2/3;
+        if (difPosY<-GAME_HEIGHT*4.0/3)difPosY= (int) (-GAME_HEIGHT*4.0/3);
 
-        //int newPosY= (int) ((1.0*GAME_HEIGHT)*(2*GAME_HEIGHT/3.0)/(difPosY*1.0+GAME_HEIGHT)+GAME_HEIGHT/3.0+0.5);
+         sizeRatio=GAME_HEIGHT/(difPosY*1.0*depthRatio+GAME_HEIGHT);
+         newPosY=(2*GAME_HEIGHT/3.0*sizeRatio+GAME_HEIGHT/3.0-zPosition*depth*sizeRatio);
+         newWidth=  (width*sizeRatio);
+         newHeight=  (height*sizeRatio);
+         newDepth=  (depth*sizeRatio);
+         newPosX=  (GAME_WIDTH/2.0-(Player.xPosition-xPosition*width)*sizeRatio);
 
-
-        //double newPosY= ((1.0*GAME_HEIGHT)*(2*GAME_HEIGHT/3.0)/(difPosY*1.0+GAME_HEIGHT)+GAME_HEIGHT/3.0);
-        //double sizeRatio=(newPosY-GAME_HEIGHT/3.0)*(3/2.0)/GAME_HEIGHT;
-
-        //newPosY-=zPosition*sizeRatio;
-
-        double sizeRatio=GAME_HEIGHT/(difPosY*1.0*depthRatio+GAME_HEIGHT);
-        double newPosY=(2*GAME_HEIGHT/3.0*sizeRatio+GAME_HEIGHT/3.0-zPosition*sizeRatio);
-        //double newPosY=(2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((difPosY*1.0)/depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0);
-
-        double newWidth= (int) (width*sizeRatio+0.5);
-        double newHeight= (int) (height*sizeRatio+0.5);
-        double newDepth= (int) (depth*sizeRatio+0.5);
-        double newPosX= (int) (GAME_WIDTH/2.0-(playerPosX+xPosition)*sizeRatio+0.5);
-
-
-
-        int distancePFToC=(int)Math.sqrt(Math.pow(newPosX-PFX,2.0)+Math.pow(newPosY-PFY,2.0));
-        int distancePVToC=(int)Math.sqrt(Math.pow(newPosX-PVX,2.0)+Math.pow(newPosY-PVY,2.0));
-        int distancePVToPF=(int)Math.sqrt(Math.pow(PFX-PVX,2.0)+Math.pow(PFY-PVY,2.0));
-
-
-        //System.out.println(newPosY-GAME_HEIGHT);
-
-        corners=getCorners(newPosX,(newPosY),newWidth,newHeight);
-        g.setColor(new Color(7, 252, 3));
-        //g.fillRect( newPosX-newWidth/2,newPosY-newHeight/2,newWidth,newHeight);
-        g.fillRect((int) (corners[0][0]+0.5), (int) (corners[0][1]+0.5),(int)(newWidth+0.5),(int)(newHeight+0.5));
-        //g.fill3DRect((int) (corners[0][0]+0.5), (int) (corners[0][1]+0.5), (int)(newWidth+0.5), (int)(newHeight+0.5),false);
-        //g.setColor(Color.RED);
-        //g.fillOval((int) (newPosX-5), (int) (newPosY-5),10,10);
-
-        double[] deltaXList=new double[4];
-        double[] deltaYList=new double[4];
-        double[] angleList=new double[4];
+        corners=getCorners(newPosX,newPosY,newWidth,newHeight);
         for(var i=0;i<4;i++){
             deltaXList[i]=corners[i][0]-PFX;
             deltaYList[i]=corners[i][1]-PFY;
             if (deltaXList[i]>0)
-            angleList[i]=Math.atan(deltaYList[i]/deltaXList[i]);
+                angleList[i]=Math.atan(deltaYList[i]/deltaXList[i]);
             else angleList[i]=Math.PI+Math.atan(deltaYList[i]/deltaXList[i]);
             if (deltaXList[i]==0 && deltaYList[i]>0)angleList[i]=Math.PI/2;
             if (deltaXList[i]==0 && deltaYList[i]<0)angleList[i]=-Math.PI/2;
         }
+        xPointsList = new int[4][4];
+        yPointsList = new int[4][4];
+        closestCorner=closestCorner(corners);
+        newCorners=getCornersB(corners,angleList,closestCorner,depthRatio,difPosY,newWidth,newHeight,newDepth);
+        for(var i=0;i<4;i++){
+            int xNum=1+i;
+            if (xNum==4)xNum=0;
+            xPointsList[i]=listDoubleToInt(new double[] {corners[i][0],newCorners[i][0],
+                    newCorners[xNum][0],corners[xNum][0]});
+            yPointsList[i]=listDoubleToInt(new double[]{corners[i][1],newCorners[i][1],
+                    newCorners[xNum][1],corners[xNum][1]});
+        }
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition-1][CubeContainer.numberOfCubes+yPosition]){
+            blockLeftEmpty=false;
+
+        }
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition+1][CubeContainer.numberOfCubes+yPosition]){
+            blockRightEmpty=false;
+
+        }
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition-1]){
+            blockFrontEmpty=false;
+
+
+        }
+        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition+1]){
+            blockBackEmpty=false;
+
+
+        }
+
+
+
+
+
+    }
+    public void draw(Graphics g){
+
+        /*
+        int difPosX=(int)(playerPosX-xPosition);
+        int difPosY=(int)((playerPosY-yPosition));
+        int distance=(int)Math.sqrt(Math.pow(difPosX,2.0)+Math.pow(difPosY,2.0));
+        if (difPosY<-GAME_HEIGHT*2/3)difPosY=-GAME_HEIGHT*2/3;
+
+
+        double sizeRatio=GAME_HEIGHT/(difPosY*1.0*depthRatio+GAME_HEIGHT);
+        double newPosY=(2*GAME_HEIGHT/3.0*sizeRatio+GAME_HEIGHT/3.0-zPosition*sizeRatio);
+        //double newPosY=(2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((difPosY*1.0)/depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0);
+        double newWidth=  (width*sizeRatio);
+        double newHeight=  (height*sizeRatio);
+        double newDepth=  (depth*sizeRatio);
+        double newPosX=  (GAME_WIDTH/2.0-(playerPosX+xPosition)*sizeRatio);
+        */
+
+        g.setColor(new Color(7, 252, 3));
+        if(blockBackEmpty) g.fillRect((int) (corners[0][0]+0.5), (int) (corners[0][1]+0.5),(int)(newWidth+0.5),(int)(newHeight+0.5));
+
+
+
         /*
         g.setColor(Color.red);
         g.setFont(new Font("Arial",Font.PLAIN,18));
@@ -109,6 +151,7 @@ public class Cube {
         g.drawString(String.valueOf(angleList[3]),15,170);
 
          */
+        /*
         int[][] xPointsList = new int[4][4];
         int[][] yPointsList = new int[4][4];
         int closestCorner=closestCorner(corners);
@@ -121,8 +164,11 @@ public class Cube {
             yPointsList[i]=listDoubleToInt(new double[]{corners[i][1],newCorners[i][1],
                     newCorners[xNum][1],corners[xNum][1]});
         }
+
+         */
+
         g.setColor(new Color(21, 92, 5));
-        if (deltaYList[0]>0 ) {
+        if (deltaYList[0]>0) {
             fillPolygonB(g,xPointsList[0],yPointsList[0],closestCorner);
             g.setColor(Color.RED);
             //g.drawLine((int) corners[0][0], (int) corners[0][1], (int) PFX, (int) PFY);
@@ -135,13 +181,13 @@ public class Cube {
             //g.drawLine((int) corners[2][0], (int) corners[2][1], (int) PFX, (int) PFY);
             //g.drawLine((int) corners[3][0], (int) corners[3][1], (int) PFX, (int) PFY);
         }
-        if (deltaXList[0]>0) {
+        if (deltaXList[0]>0&&blockLeftEmpty) {
             fillPolygonB(g, xPointsList[3], yPointsList[3], closestCorner);
             g.setColor(Color.RED);
             //g.drawLine((int) corners[0][0], (int) corners[0][1], (int) PFX, (int) PFY);
             //g.drawLine((int) corners[3][0], (int) corners[3][1], (int) PFX, (int) PFY);
         }
-        if (deltaXList[1]<0) {
+        if (deltaXList[1]<0&&blockRightEmpty) {
             fillPolygonB(g,xPointsList[1],yPointsList[1],closestCorner);
             g.setColor(Color.RED);
             //g.drawLine((int) corners[1][0], (int) corners[1][1], (int) PFX, (int) PFY);
@@ -179,20 +225,24 @@ public class Cube {
     }
     public double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight){
         double [][] corners=new double[4][2];
-
+/*
         corners[0][0]=newPosX-newWidth;
         corners[1][0]=newPosX;
         corners[2][0]=newPosX;
         corners[3][0]=newPosX-newWidth;
+        */
         corners[0][1]=newPosY-newHeight;
         corners[1][1]=newPosY-newHeight;
         corners[2][1]=newPosY;
         corners[3][1]=newPosY;
 
+
         corners[0][0]=newPosX-newWidth/2.0;
         corners[1][0]=newPosX+newWidth/2.0;
         corners[2][0]=newPosX+newWidth/2.0;
         corners[3][0]=newPosX-newWidth/2.0;
+
+
         /*
         corners[0][1]=newPosY-newHeight/2.0;
         corners[1][1]=newPosY-newHeight/2.0;
@@ -256,23 +306,7 @@ public class Cube {
 
 
 
-        /*
-        int xSign=1;
-        int ySign=1;
-        if(closest==3 || closest==1)xSign=0;
-        if(closest==0 || closest==2)ySign=0;
-        int upSign=1;
-        if(closest==2 || closest==3)upSign=-1;
-        int a1;
-        int a2;
-        int a3;
-        int a4;
-        if (closest==1){a1=1;a2=2;a3=3;a4=0;}
-        else if (closest==2){a1=2;a2=3;a3=0;a4=1;}
-        else if (closest==3){a1=3;a2=0;a3=1;a4=2;}
-        else{a1=0;a2=1;a3=2;a4=3;}
 
-         */
 
         for(var i=0;i<4;i++) {
             int xNum = 1 + i;
@@ -292,27 +326,6 @@ public class Cube {
         }
         return closest;
     }
-    public int topLeftCorner(double[][] corners){
-        int topLeft=0;
-        int top=0;
-        double yDif=corners[0][1];
-        for(var i=1;i<4;i++){
-            if (corners[i][1]<yDif){
-                yDif=corners[i][1];
-                top=i;
-            }
-            else if (corners[i][1]==yDif){
-                if (corners[i][0]<corners[top][0]){
-                    topLeft=i;
-                }
-                else topLeft=top;
-            }
-        }
 
 
-
-
-
-        return topLeft;
-    }
 }

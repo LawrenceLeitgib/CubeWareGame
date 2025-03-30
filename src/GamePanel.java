@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
     public void newGameGrid(){
-        gameGrid = new GameGrid(GAME_WIDTH,GAME_HEIGHT);
+        gameGrid = new GameGrid();
 
     }
 
@@ -47,6 +47,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void draw(Graphics g){
         Rectangle r = getBounds();
+        //r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
+
         GameGrid.setGameHeight(r.height);
         GameGrid.setGameWidth(r.width);
         Stats.setGameHeight(r.height);
@@ -55,6 +57,11 @@ public class GamePanel extends JPanel implements Runnable {
         Player.setGameWidth(r.width);
         Cube.setGameHeight(r.height);
         Cube.setGameWidth(r.width);
+        CubeContainer.setGameHeight(r.height);
+        CubeContainer.setGameWidth(r.width);
+
+
+
 
         gameGrid.draw(g);
         stats.draw(g);
