@@ -8,8 +8,8 @@ public class Enemy {
     double zPosition;
 
     double height=180;
-    double width=50;
-    double depth=50;
+    double width=100;
+    double depth=100;
 
     double newHeight;
     double newWidth;
@@ -52,13 +52,13 @@ public class Enemy {
 
 
 
-       // xPosition-=Math.cos(angleWithPlayer)*speed*deltaTime;
-        //  yPosition-=Math.sin(angleWithPlayer)*speed*deltaTime;
+        xPosition-=Math.cos(angleWithPlayer)*speed*deltaTime;
+         yPosition-=Math.sin(angleWithPlayer)*speed*deltaTime;
 
          for(var i=0;i<GameGrid.fireBallContainer.fireBallsList.length;i++){
              if(GameGrid.fireBallContainer.fireBallsList[i]){
 
-             if(detectionCollisionWithBall(GameGrid.fireBallContainer.fireBalls[i].xPosition,GameGrid.fireBallContainer.fireBalls[i].yPosition,GameGrid.fireBallContainer.fireBalls[i].size)){
+             if(detectionCollisionWithBall(GameGrid.fireBallContainer.fireBalls[i].xPosition,GameGrid.fireBallContainer.fireBalls[i].yPosition,GameGrid.fireBallContainer.fireBalls[i].zPosition,GameGrid.fireBallContainer.fireBalls[i].size)){
                  yPosition+=GameGrid.fireBallContainer.fireBalls[i].yVelocity/2*deltaTime;
                  xPosition+=GameGrid.fireBallContainer.fireBalls[i].xVelocity/2*deltaTime;
                  if(HP<GameGrid.fireBallContainer.fireBalls[i].damage){
@@ -409,16 +409,20 @@ public class Enemy {
         return corners;
     }
 
-    public boolean detectionCollisionWithBall(double ballXPos,double ballYPos,double ballSize){
+    public boolean detectionCollisionWithBall(double ballXPos,double ballYPos,double ballzPos,double ballSize){
         /*
         if(ballXPos<xPosition+0.5&&ballXPos>xPosition-0.5)
             if(ballYPos>yPosition-1&&ballYPos<yPosition){
                 return true;
             }
         */
-        if(ballXPos<xPosition-(width/2-Cube.defaultSize/2.0)/Cube.defaultSize &&ballXPos>xPosition+(width/2-Cube.defaultSize/2.0)/Cube.defaultSize)
+        if(ballXPos<xPosition+(width/2)/Cube.defaultSize &&ballXPos>xPosition-(width/2)/Cube.defaultSize)
             if(ballYPos>yPosition-(depth/2+Cube.defaultSize/2.0)/Cube.defaultSize&&ballYPos<yPosition+(depth/2-Cube.defaultSize/2.0)/Cube.defaultSize){
-                return true;
+                if(ballzPos>zPosition&&ballzPos<zPosition+height/Cube.defaultSize){
+
+                    return true;
+                }
+
             }
        // System.out.println(xPosition+(width/2-Cube.defaultSize/2.0)+","+(xPosition-(width/2-Cube.defaultSize/2.0)));
        // System.out.println(yPosition-(depth/2+Cube.defaultSize/2.0)/Cube.defaultSize+","+((depth/2-Cube.defaultSize/2.0)/Cube.defaultSize));

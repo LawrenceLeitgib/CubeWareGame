@@ -28,6 +28,8 @@ public class FireBall {
     double yVelocity;
     double xVelocity;
 
+    int[] cubeIn=new int[3];
+
 
 
 
@@ -39,7 +41,7 @@ public class FireBall {
         this.speed=speed;
         this.size=size;
         this.damage=damage;
-        zPosition=Player.zPosition;
+        zPosition=Player.zPosition+1.2;
 
 
     }
@@ -53,6 +55,48 @@ public class FireBall {
         double correctionX=0;
         double difPosXA = (xPosition - correctionX - Player.xPosition);
         double difPosYA = (yPosition + correctionY - Player.yPosition);
+        cubeIn[0]=(int)(xPosition+0.5);
+        cubeIn[1]=(int)(yPosition+1);
+        cubeIn[2]=(int)(zPosition);
+        if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
+        if(yPosition<0)cubeIn[1]=(int)(yPosition);
+        System.out.println(cubeIn[0]+", "+cubeIn[1]+", "+cubeIn[2]);
+
+        int newXpos=cubeIn[0];
+        int newYpos=cubeIn[1];
+
+        int xChunkNum=0;
+        int yChunkNum=0;
+        while(newXpos<0){
+            newXpos+=Chunk.numOfCubeX;
+            xChunkNum-=1;
+
+        }
+        while(newXpos>=Chunk.numOfCubeX){
+            newXpos-=Chunk.numOfCubeX;
+            xChunkNum+=1;
+
+        }
+
+        while(newYpos<0){
+            newYpos+=Chunk.numOfCubeY;
+            yChunkNum-=1;
+
+        }
+        while(newYpos>=Chunk.numOfCubeY){
+            newYpos-=Chunk.numOfCubeY;
+            yChunkNum+=1;
+
+        }
+        if(CubeContainer.chunksPosition[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX]&&cubeIn[2]>=0&&cubeIn[2]<200){
+        if(CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubePositions[newXpos][newYpos][cubeIn[2]]){
+            marketForDeletion=true;
+            CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubePositions[newXpos][newYpos][cubeIn[2]]=false;
+            CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubes[newXpos][newYpos][cubeIn[2]]=null;
+
+
+        }
+        }
 
         if(Math.sqrt(Math.pow(difPosYA,2)+Math.pow(difPosXA,2))>50)marketForDeletion=true;
         if(damage<=0)marketForDeletion=true;
@@ -66,10 +110,10 @@ public class FireBall {
         double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.depth);
         double sizeRatio=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
         double sizeRatio2=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio-80*sizeRatio);
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
         newSize=  (size*sizeRatio);
         newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.depth)*sizeRatio-newSize/2);
-        newPosY2=((GameGrid.PVY-GameGrid.PFY)*sizeRatio2+GameGrid.PFY+difPosZ*sizeRatio+(Player.zPosition-2)*sizeRatio*Cube.defaultSize);
+        newPosY2=((GameGrid.PVY-GameGrid.PFY)*sizeRatio2+GameGrid.PFY+(Player.zPosition-2)*sizeRatio*Cube.defaultSize);
         newSize2=  (size*sizeRatio2);
         newPosX2=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.depth)*sizeRatio-newSize2/2);
 

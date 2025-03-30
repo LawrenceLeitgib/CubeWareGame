@@ -74,24 +74,18 @@ public class Stats {
             xp-=xpUntilNextLevel;
             currentLevel+=1;
             xpUntilNextLevel=xpUntilNextLevelBase*Math.pow(1.1 ,currentLevel);
-            System.out.println(xpUntilNextLevel);
+            //System.out.println(xpUntilNextLevel);
             maxMana=20+currentLevel;
             mana=maxMana;
             maxHealth=20+currentLevel;
             health=maxHealth;
             strength=10+currentLevel;
         }
-
-
     }
-
     public void drawRectWithBorder(Graphics g, int x, int y, int width, int height, int borderSize, Color c1, Color c2){
         g.setColor(c2);
         g.fillRect(x-borderSize,y-borderSize,width+2*borderSize,height+2*borderSize);
         g.setColor(c1 );
         g.fillRect(x,y,width,height);
-
-
     }
-
 }

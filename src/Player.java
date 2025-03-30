@@ -51,7 +51,7 @@ public class Player {
     static int[] chunkIn=new int[2];
     static int[] cameraChunkIn=new int[2];
 
-    static int numOfChunkToDraw=3;
+    static int numOfChunkToDraw=2;
 
     static boolean thirdPerspective=true;
 
@@ -60,7 +60,7 @@ public class Player {
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=0;
-        Player.yPosition=-50;
+        Player.yPosition=0;
         Player.zPosition=4;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
@@ -91,6 +91,8 @@ public class Player {
         cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY);
         if(Player.xPosition-10<0)cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX-1);
         if(Player.yPosition-10<0)cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY-1);
+
+
 
         lightningSprintCount2+=deltaTime;
         if(lightningSprint){

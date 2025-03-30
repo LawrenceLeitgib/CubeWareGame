@@ -14,6 +14,9 @@ public class Chunk {
     int chunkToNormNumX;
     int chunkToNormNumY;
 
+    boolean[] zLayer =new boolean[numOfCubeZ];
+
+
 
     Chunk(int GAME_WIDTH, int GAME_HEIGHT, int positionX, int positionY) {
         this.xPosition = positionX;
@@ -49,6 +52,7 @@ public class Chunk {
     public void newCube(int x, int y, int z) {
         cubes[x][y][z] = new Cube(x + xPosition * numOfCubeX, y + yPosition * numOfCubeY, z, GameGrid.depthRatio, this);
         cubePositions[x][y][z] = true;
+        zLayer[z]=true;
     }
 
     public void drawLabyrinth() {
@@ -86,10 +90,8 @@ public class Chunk {
             }
         }
     }
-
     void drawLineY(int[] list, int numY) {
     }
-
     public void createCubes() {
         //drawMap(0,0,0);
         /*
@@ -122,7 +124,7 @@ public class Chunk {
      */
         for (var i = 0; i < numOfCubeX; i++) {
             for (var j = 0; j < numOfCubeX; j++) {
-                newCube(i, j, 0);
+                  newCube(i, j, 0);
                 newCube(i, j, 1);
 
             }
@@ -139,13 +141,22 @@ public class Chunk {
 
 
 */
-
+/*
 
         if (xPosition == 0 && yPosition == 0) {
-           // newCube(5, 4, 3);
+            for(var i=0;i<15;i++){
+                newCube(0, 0, 2+i);
+                newCube(1, 0, 2+i);
+                newCube(1, 1, 2+i);
+                newCube(0, 1, 2+i);
+            }
         }
 
+ */
+
         if (xPosition == 0 && yPosition == 0) {
+
+
 
            // newCube(5,0,5);
 
@@ -180,7 +191,7 @@ public class Chunk {
             }
 
         }*/
-        drawLabyrinth();
+      //  drawLabyrinth();
         /*
         for(var k=0;k<numOfCubeX;k++){
             for(var i=k;i<numOfCubeX-k;i++) {
@@ -202,7 +213,7 @@ public class Chunk {
 
     }
 
-    public void updateData(double deltaTime) {
+   /* public void updateData(double deltaTime) {
         // if (cubePositions[5][5][0]&&cubePositions[6][5][0])
         // System.out.println(cubes[5][5][0].newPosY-cubes[6][5][0].newPosY);
 
@@ -218,8 +229,8 @@ public class Chunk {
         }
 
 
-    }
-    public void drawLayer(Graphics g,int z) {
+    }*/
+    /*public void drawLayer(Graphics g,int z) {
         //if (xPosition == 0 && yPosition == 1) return;
         //if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
         //if(Player.yPosition-Player.cubeAway>(yPosition+1)*numOfCubeY)System.out.println(yPosition);
@@ -378,9 +389,8 @@ public class Chunk {
                     }
                 }
             }
-    }
-
-    public void draw(Graphics g) {
+    }*/
+   /* public void draw(Graphics g) {
         //if (xPosition == 0 && yPosition == 1) return;
         //if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
         //if(Player.yPosition-Player.cubeAway>(yPosition+1)*numOfCubeY)System.out.println(yPosition);
@@ -544,289 +554,5 @@ public class Chunk {
         }
 
 
-    }
-    public void draw(Graphics g,double PasTouche2) {
-        //if (xPosition == 0 && yPosition == 1) return;
-        //if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
-        //if(Player.yPosition-Player.cubeAway>(yPosition+1)*numOfCubeY)System.out.println(yPosition);
-        int[] newChunkIn=new int[2];
-        double[] cameraPos=new double[2];
-
-        newChunkIn[0]=(int)((Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5)/Chunk.numOfCubeX);
-        newChunkIn[1]=(int)((Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5)/Chunk.numOfCubeY);
-        if(Player.xPosition-Player.cubeAway<0)newChunkIn[0]=(int)((Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5)/Chunk.numOfCubeX-1);
-        if(Player.yPosition-Player.cubeAway<0)newChunkIn[1]=(int)((Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5)/Chunk.numOfCubeY-1);
-
-        cameraPos[0]=(Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5);
-        cameraPos[1]=(Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5);
-        if(Player.xPosition-Player.cubeAway<0)cameraPos[0]=(Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5)-1;
-        if(Player.yPosition-Player.cubeAway<0)cameraPos[1]=(Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(Player.cubeAway+0.5)+0.5)-1;
-
-       // cameraPos[0]=(Player.xPosition);
-        //cameraPos[1]=(Player.yPosition);
-
-
-        // newChunkIn[0]=(int)((Player.xPosition+0.5)/Chunk.numOfCubeX);
-          /*
-                           for (var k = (int) (cameraPos[0] - newChunkIn[0] * numOfCubeX); k < numOfCubeX; k++) {
-                               if (cubePositions[k][j][i]) {
-                                   cubes[k][j][i].draw(g);
-                               }
-                           }
-                           for (var k = (int) (cameraPos[0] - newChunkIn[0] * numOfCubeX); k >= 0; k--) {
-                               if (cubePositions[k][j][i]) {
-                                   cubes[k][j][i].draw(g);
-                               }
-                           }
-                           for (var k = 0; k < cameraPos[0] - newChunkIn[0] * numOfCubeX; k++) {
-                               if (cubePositions[k][j][i]) {
-                                   cubes[k][j][i].draw(g);
-                               }
-                           }
-                           for (var k = numOfCubeX - 1; k >= cameraPos[0] - newChunkIn[0] * numOfCubeX; k--) {
-                               if (cubePositions[k][j][i]) {
-                                   cubes[k][j][i].draw(g);
-                               }
-                           }
-                           */
-
-
-        for (var i = 0; i < numOfCubeZ; i++) {
-
-           if(yPosition<newChunkIn[1]){
-               for(var j=0;j<numOfCubeY;j++){
-                   if(xPosition<newChunkIn[0]){
-                       for(var k=0;k<numOfCubeX;k++){
-                           if (cubePositions[k][j][i]) {
-                               cubes[k][j][i].draw(g);
-                           }
-                       }
-                   }
-                   if(xPosition>newChunkIn[0]){
-                       for(var k=numOfCubeX-1;k>=0;k--){
-                           if (cubePositions[k][j][i]) {
-                               cubes[k][j][i].draw(g);
-                           }
-                       }
-                   }
-
-                   if(xPosition==newChunkIn[0]){
-                       if(GameGrid.angleForXRotation<=Math.PI) {
-                           for (var k = numOfCubeX-1; k >=0; k--) {
-                               if (cubePositions[k][j][i]) {
-                                   cubes[k][j][i].draw(g);
-                               }
-                           }
-                       }
-                       else if(GameGrid.angleForXRotation<2*Math.PI) {
-                           for (var k = 0; k < numOfCubeX; k++) {
-                               if (cubePositions[k][j][i]) {
-                                   cubes[k][j][i].draw(g);
-                               }
-                           }
-
-                       }
-                   }
-
-
-
-               }
-           }
-           if(yPosition>newChunkIn[1]){
-                for(var j=numOfCubeY-1;j>=0;j--){
-                    if(xPosition<newChunkIn[0]){
-                        for(var k=0;k<numOfCubeX;k++){
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-                        }
-                    }
-                    if(xPosition>newChunkIn[0]){
-                        for(var k=numOfCubeX-1;k>=0;k--){
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-                        }
-                    }
-                    if(xPosition==newChunkIn[0]){
-                        if(GameGrid.angleForXRotation<=Math.PI) {
-                            for (var k = numOfCubeX-1; k >=0; k--) {
-                                if (cubePositions[k][j][i]) {
-                                    cubes[k][j][i].draw(g);
-                                }
-                            }
-                        }
-                        else if(GameGrid.angleForXRotation<2*Math.PI) {
-                            for (var k = 0; k < numOfCubeX; k++) {
-                                if (cubePositions[k][j][i]) {
-                                    cubes[k][j][i].draw(g);
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
-
-
-           /* if (Player.yPosition + 0.5 > (yPosition) * numOfCubeY) {
-                if (Player.xPosition > (xPosition + 1) * numOfCubeX) {
-                    for (var j = 0; j < numOfCubeY; j++) {
-                        for (var k = 0; k < numOfCubeX; k++) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-
-                        }
-
-                    }
-
-                } else if (Player.xPosition < (xPosition) * numOfCubeX) {
-                    for (var j = 0; j < numOfCubeY; j++) {
-                        for (var k = numOfCubeX - 1; k >= 0; k--) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-
-                        }
-
-                    }
-
-                } else {
-                    for (var j = 0; j < numOfCubeY; j++) {
-                        for (var k = 0; k < Player.xPosition - (xPosition) * numOfCubeX; k++) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-                        }
-                        for (var k = numOfCubeX - 1; k >= Player.xPosition - (xPosition) * numOfCubeX; k--) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-                        }
-                    }
-                }
-            }
-            else if (Player.yPosition + 0.5 < (yPosition) * numOfCubeY) {
-                if (Player.xPosition > (xPosition + 1) * numOfCubeX) {
-                    for (var j = numOfCubeY - 1; j >= 0; j--) {
-                        for (var k = 0; k < numOfCubeX; k++) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-
-                        }
-
-                    }
-
-                } else if (Player.xPosition < (xPosition) * numOfCubeX) {
-                    for (var j = numOfCubeY - 1; j >= 0; j--) {
-                        for (var k = numOfCubeX - 1; k >= 0; k--) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-
-                        }
-
-                    }
-
-                } else {
-                    for (var j = numOfCubeY - 1; j >= 0; j--) {
-                        for (var k = 0; k < Player.xPosition - (xPosition) * numOfCubeX; k++) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-                        }
-                        for (var k = numOfCubeX - 1; k >= Player.xPosition - (xPosition) * numOfCubeX; k--) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                for (var j = 0; j < Player.yPosition + 0.5 - (yPosition) * numOfCubeY; j++) {
-                    for (var k = 0; k < numOfCubeX; k++) {
-                        if (cubePositions[k][j][i]) {
-                            cubes[k][j][i].draw(g);
-                        }
-
-                    }
-
-
-                }
-                for (var j = numOfCubeY - 1; j >= Player.yPosition + 0.5 - (yPosition) * numOfCubeY; j--) {
-                    for (var k = numOfCubeX - 1; k >= 0; k--) {
-                        if (cubePositions[k][j][i]) {
-                            cubes[k][j][i].draw(g);
-                        }
-
-                    }
-
-
-                }
-
-
-            }
-
-             */
-
-        }
-
-/*
-
-        for (var i= numOfCubeZ-1; i >-1; i--) {
-            for (var j = 0; j < numOfCubeY; j++) {
-                for (var k = 0; k < numOfCubeX; k++) {
-                    if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
-                        cubes[k][j][i].draw(g);
-                    }
-                }
-            }
-        }
-
- */
-}
-    public void draw(Graphics g,int PAsTouche){
-
-
-       // if(Player.yPosition-Player.cubeAway<(yPosition)*numOfCubeY)System.out.println(yPosition);
-
-        for (var i= 0; i < numOfCubeZ; i++) {
-                for (var j = 0; j < numOfCubeY; j++) {
-                        for (var k = 0; k < numOfCubeX; k++) {
-                            if (cubePositions[k][j][i]) {
-                                cubes[k][j][i].draw(g);
-                                if(Player.chunkIn[0]==xPosition&&Player.chunkIn[1]==yPosition)
-                                /*if((Player.yPosition+1-(1-Player.depth/Cube.defaultSize)/2.0-(cubes[k][j][i].yPosition))>0){
-                                    Player.draw(g);
-                                }*/
-                                if((Player.yPosition+1-(1-Player.depth/Cube.defaultSize)/2.0-(cubes[k][j][i].yPosition))>0){
-                                    Player.draw(g);
-                                }
-                            }
-
-                            /*
-                            if(Player.chunkIn[0]==xPosition&&Player.chunkIn[1]==yPosition) {
-                                if ((Player.yPosition + 1 - (1 - Player.depth / Cube.defaultSize) / 2.0 - (yPosition*numOfCubeY)) > 0) {
-                                    Player.draw(g);
-                                }
-                            }
-
-                             */
-                        }
-                }
-        }
-
-        for (var i= numOfCubeZ-1; i >-1; i--) {
-             for (var j = 0; j < numOfCubeY; j++) {
-                        for (var k = 0; k < numOfCubeX; k++) {
-                            if (cubePositions[k][j][i]&&cubes[k][j][i].newPosY-cubes[k][j][i].newHeight<GameGrid.PFY) {
-                                cubes[k][j][i].draw(g);
-                            }
-                        }
-                }
-        }
-    }
+    }*/
 }

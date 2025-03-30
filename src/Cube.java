@@ -272,7 +272,12 @@ public class Cube {
             int backPosCheck=yPosition+1-chunk.chunkToNormNumY;
             int topPosCheck=zPosition+1;
             int bottomPosCheck=zPosition-1;
-
+            blockLeftEmpty=true;
+            blockTopEmpty=true;
+            blockBottomEmpty=true;
+            blockRightEmpty=true;
+            blockFrontEmpty=true;
+            blockBackEmpty=true;
             //countForDrawing=0;
             if(leftPosCheck>=0) {
                 if (chunk.cubePositions[leftPosCheck][yPosition - chunk.chunkToNormNumY][zPosition]) {
@@ -390,50 +395,6 @@ public class Cube {
                 corners[6][0],corners[5][0]});
         polygonRight[1]=listDoubleToInt(new double[]{corners[1][1],corners[2][1],
                 corners[6][1],corners[5][1]});
-
-/*
-
-        g.setColor(Color.blue);
-        g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
-        g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
-        g.fillOval((int) (corners[2][0]-5), (int) (corners[2][1]-5),10,10);
-        g.fillOval((int) (corners[3][0]-5), (int) (corners[3][1]-5),10,10);
-
-        g.setColor(Color.black);
-        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
-        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
-        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[3][0], (int) corners[3][1]);
-        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[0][0], (int) corners[0][1]);
-
-
-
-        g.setColor(Color.black);
-        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[4][0], (int) corners[4][1]);
-        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[5][0], (int) corners[5][1]);
-        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[6][0], (int) corners[6][1]);
-        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[7][0], (int) corners[7][1]);
-
-        g.setColor(Color.red);
-        g.fillOval((int) (corners[4][0]-5), (int) (corners[4][1]-5),10,10);
-        g.fillOval((int) (corners[5][0]-5), (int) (corners[5][1]-5),10,10);
-        g.fillOval((int) (corners[6][0]-5), (int) (corners[6][1]-5),10,10);
-        g.fillOval((int) (corners[7][0]-5), (int) (corners[7][1]-5),10,10);
-
-
-        g.setColor(Color.BLACK);
-        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
-        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
-        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
-        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
-*/
-/*
-        fillPolygonB(g,polygonBottom[0],polygonBottom[1] );
-        fillPolygonB(g,polygonBack[0],polygonBack[1] );
-        fillPolygonB(g,polygonLeft[0],polygonLeft[1] );
-        fillPolygonB(g,polygonRight[0],polygonRight[1] );
-        fillPolygonB(g,polygonTop[0],polygonTop[1] );
-*/
-
 
 
 

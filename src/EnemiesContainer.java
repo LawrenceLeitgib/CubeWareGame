@@ -4,8 +4,8 @@ public class EnemiesContainer {
     static Enemy[] enemies=new Enemy[100];
     static boolean[] enemyList =new boolean[100];
     EnemiesContainer(){
-        enemies[0] = new Enemy(0,-50, 2);
-        enemyList[0] = true;
+       // enemies[0] = new Enemy(0,-50, 2);
+        //enemyList[0] = true;
     }
 
     double EnemyCreationTime=3;
@@ -33,7 +33,7 @@ public class EnemiesContainer {
 
 
         if(Math.sqrt(Math.pow(Player.xPosition,2)+Math.pow(Player.yPosition,2))>40) {
-            //EnemyCreationCount += deltaTime;
+            EnemyCreationCount += deltaTime;
             if (EnemyCreationCount >= EnemyCreationTime) {
                 createEnemy();
                 EnemyCreationCount -= EnemyCreationTime;

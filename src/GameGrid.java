@@ -99,14 +99,14 @@ public class GameGrid {
       //  System.out.println(mousePositionX+", "+mousePositionY);
       //  System.out.println(mouseInGame[0]+", "+mouseInGame[1]);
         //System.out.println(mouseAngleInGame);
-        cubeContainer.updateData(deltaTime);
-        fireBallContainer.updateData(deltaTime);
-        enemiesContainer.updateData(deltaTime);
-
         player.updateData(deltaTime);
+        cubeContainer.updateData(deltaTime);
+        enemiesContainer.updateData(deltaTime);
+        fireBallContainer.updateData(deltaTime);
 
     }
     public void draw(Graphics g){
+        /*
         while(angleForXRotation>=Math.PI*2){
             angleForXRotation-=Math.PI*2;
         }
@@ -114,15 +114,15 @@ public class GameGrid {
             angleForXRotation+=Math.PI*2;
         }
 
+         */
+
         cubeContainer.draw(g);
-        g.setColor(Color.red);
-        Player.draw(g);
         fireBallContainer.draw(g);
         enemiesContainer.draw(g);
+        Player.draw(g);
 
         g.setColor(Color.RED);
         g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
-      //  System.out.println(mouseInGame[0]+", " +mouseInGame[1]);
     }
     public double[] mousePosToGamePos(int xPos,int yPos){
         double[] gamePos=new double[2];
@@ -236,7 +236,6 @@ public class GameGrid {
             case 49:
                 if(oneHaveBeenRelesed){
                     oneDown=true;
-
                     oneHaveBeenRelesed=false;
                 }
 
