@@ -153,7 +153,7 @@ public class CubeContainer {
 
          */
 
-        drawMap(0,0,4);
+     //   drawMap(0,0,4);
         /*
         drawMap(0,0,4);
 

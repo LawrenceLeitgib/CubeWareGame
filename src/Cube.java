@@ -59,8 +59,8 @@ public class Cube {
     int[][] polygonBottom=new int[2][4];
     int[][] polygonLeft=new int[2][4];
     int[][] polygonRight=new int[2][4];
-    int[][] polygonFront=new int[2][4];
-    int[][] polygonBack=new int[2][4];
+    int[][] polygonBack =new int[2][4];
+    int[][] polygonFront =new int[2][4];
 
     double xCorrectorForRotation=.5;
     double yCorrectorForRotation=.5;
@@ -100,11 +100,11 @@ public class Cube {
 
     public void updateData(double deltaTime) {
         depthRatio=GameGrid.depthRatio;
-        //angleForXRotation+=0.0002;
+        // angleForXRotation+=0.06;
         //System.out.println(angleForXRotation);
 
       // angleForXRotation=Math.PI/2;
-        while(angleForXRotation>Math.PI*2){
+        while(angleForXRotation>=Math.PI*2){
             angleForXRotation-=Math.PI*2;
         }
         while(angleForXRotation<0){
@@ -283,8 +283,8 @@ public class Cube {
     }
     public void draw(Graphics g) {
 
-       // g.setColor(Color.red);
-       // g.fillOval((int) (newPosX-5), (int) (newPosY-5),10,10);
+       // g.setColor(Color.WHITE);
+       // g.fillOval((int) (newPosX-5+newWidth/2), (int) (newPosY-5),10,10);
         /*
         g.setColor(Color.yellow);
         g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
@@ -315,14 +315,14 @@ public class Cube {
         polygonTop[1]=listDoubleToInt(new double[]{corners[4][1],corners[5][1],
                 corners[6][1],corners[7][1]});
 
-        polygonFront[0]=listDoubleToInt(new double[] {corners[0][0],corners[1][0],
+        polygonBack[0]=listDoubleToInt(new double[] {corners[0][0],corners[1][0],
                 corners[5][0],corners[4][0]});
-        polygonFront[1]=listDoubleToInt(new double[]{corners[0][1],corners[1][1],
+        polygonBack[1]=listDoubleToInt(new double[]{corners[0][1],corners[1][1],
                 corners[5][1],corners[4][1]});
 
-        polygonBack[0]=listDoubleToInt(new double[] {corners[3][0],corners[2][0],
+        polygonFront[0]=listDoubleToInt(new double[] {corners[3][0],corners[2][0],
                 corners[6][0],corners[7][0]});
-        polygonBack[1]=listDoubleToInt(new double[]{corners[3][1],corners[2][1],
+        polygonFront[1]=listDoubleToInt(new double[]{corners[3][1],corners[2][1],
                 corners[6][1],corners[7][1]});
 
         polygonLeft[0]=listDoubleToInt(new double[] {corners[0][0],corners[3][0],
@@ -381,75 +381,57 @@ public class Cube {
 
 
 
-
-
-
-
-
-
-
-
-        /*
-        g.setColor(Color.red);
-        g.setFont(new Font("Arial",Font.PLAIN,18));
-        g.drawString(String.valueOf((int)newPosY),15,(int)newPosY*2-GAME_HEIGHT);
-
-        g.setColor(Color.red);
-        g.drawString(String.valueOf(angleList[0]),15,110);
-        g.drawString(String.valueOf(angleList[1]),15,130);
-        g.drawString(String.valueOf(angleList[2]),15,150);
-        g.drawString(String.valueOf(angleList[3]),15,170);
-
-         */
-        /*
-        int[][] xPointsList = new int[4][4];
-        int[][] yPointsList = new int[4][4];
-        int closestCorner=closestCorner(corners);
-        double[][] newCorners=getCornersB(corners,angleList,closestCorner,depthRatio,difPosY,newWidth,newHeight,newDepth);
-        for(var i=0;i<4;i++){
-            int xNum=1+i;
-            if (xNum==4)xNum=0;
-            xPointsList[i]=listDoubleToInt(new double[] {corners[i][0],newCorners[i][0],
-                    newCorners[xNum][0],corners[xNum][0]});
-            yPointsList[i]=listDoubleToInt(new double[]{corners[i][1],newCorners[i][1],
-                    newCorners[xNum][1],corners[xNum][1]});
-        }
-
-         */
-        /*
-        if (drawCube){
-            if (deltaYList[0] > 0 && blockTopEmpty) {
-                fillPolygonB(g, xPointsList[0], yPointsList[0], closestCorner);
-                g.setColor(Color.RED);
-                //g.drawLine((int) corners[0][0], (int) corners[0][1], (int) PFX, (int) PFY);
-                //g.drawLine((int) corners[1][0], (int) corners[1][1], (int) PFX, (int) PFY);
-
-            }
-            if (deltaYList[2] < 0 && blockBottomEmpty) {
-                fillPolygonB(g, xPointsList[2], yPointsList[2], closestCorner);
-                g.setColor(Color.RED);
-                //g.drawLine((int) corners[2][0], (int) corners[2][1], (int) PFX, (int) PFY);
-                //g.drawLine((int) corners[3][0], (int) corners[3][1], (int) PFX, (int) PFY);
-            }
-            if (deltaXList[0] > 0 && blockLeftEmpty) {
-                fillPolygonB(g, xPointsList[3], yPointsList[3], closestCorner);
-                g.setColor(Color.RED);
-                //g.drawLine((int) corners[0][0], (int) corners[0][1], (int) PFX, (int) PFY);
-                //g.drawLine((int) corners[3][0], (int) corners[3][1], (int) PFX, (int) PFY);
-            }
-            if (deltaXList[1] < 0 && blockRightEmpty) {
-                fillPolygonB(g, xPointsList[1], yPointsList[1], closestCorner);
-                g.setColor(Color.RED);
-                //g.drawLine((int) corners[1][0], (int) corners[1][1], (int) PFX, (int) PFY);
-                //g.drawLine((int) corners[2][0], (int) corners[2][1], (int) PFX, (int) PFY);
-            }*/
-
         g.setColor(new Color(21, 92, 5));
         if (drawCube){
             if (blockBottomEmpty) {
-                fillPolygonB(g,polygonBottom[0],polygonBottom[1] ,Color.MAGENTA );
+                fillPolygonB(g,polygonBottom[0],polygonBottom[1] ,Color.darkGray );
             }
+            if(angleForXRotation<Math.PI/4) {
+                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+            }
+            else if(angleForXRotation<Math.PI/2) {
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+            }
+            else if(angleForXRotation<3*Math.PI/4) {
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
+                if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+            }
+            else if(angleForXRotation<Math.PI) {
+                if (blockRightEmpty)  fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+                if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
 
+            }
+            else if(angleForXRotation<5*Math.PI/4) {
+
+                if (blockLeftEmpty) fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+                if (blockRightEmpty)   fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
+            }
+            else if(angleForXRotation<3*Math.PI/2) {
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
+                if (blockRightEmpty)    fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+
+            }
+            else if(angleForXRotation<7*Math.PI/4) {
+                if (blockFrontEmpty)fillPolygonB(g, polygonFront[0], polygonFront[1],Color.blue );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+            }
+            else if(angleForXRotation<2*Math.PI) {
+                if (blockLeftEmpty)fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
+                if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
+                if (blockBackEmpty)fillPolygonB(g, polygonBack[0], polygonBack[1],Color.CYAN );
+
+
+            }
+            /*
             if(angleForXRotation>Math.PI/2&&angleForXRotation<3*Math.PI/2){
                 if (blockBackEmpty) {
                     fillPolygonB(g,polygonFront[0],polygonFront[1],Color.CYAN );
@@ -458,7 +440,8 @@ public class Cube {
                     fillPolygonB(g,polygonBack[0],polygonBack[1],Color.blue );
 
                 }
-            }else{
+            }
+            else{
                 if (blockFrontEmpty) {
                 fillPolygonB(g,polygonBack[0],polygonBack[1],Color.blue );
             }
@@ -466,7 +449,9 @@ public class Cube {
                 fillPolygonB(g,polygonFront[0],polygonFront[1],Color.CYAN );
             }
             }
+
             if(angleForXRotation>0&&angleForXRotation<Math.PI){
+                //newPosX+newWidth/2<GAME_WIDTH/2
 
                 if (blockRightEmpty) {
                     fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
@@ -474,8 +459,8 @@ public class Cube {
                 if (blockLeftEmpty) {
                     fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
                 }
-            }else{
-
+            }
+            else{
                 if (blockLeftEmpty) {
                     fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
                 }
@@ -483,6 +468,9 @@ public class Cube {
                     fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
                 }
             }
+
+             */
+
 
             if (blockTopEmpty) {
                 fillPolygonB(g,polygonTop[0],polygonTop[1],Color.GREEN  );
@@ -491,24 +479,16 @@ public class Cube {
 
 
     }
+
+        g.setColor(Color.WHITE);
+       // System.out.println(angleForXRotation);
+      //  g.fillOval((int) (newPosX-5+newWidth/2), (int) (newPosY-5),10,10);
+
         /*
-        int[] newCornersListX= new int[4];
-        int[] newCornersListY=new int[4];
-
-        for(int i=0;i<4;i++){
-            newCornersListX[i]= (int) newCorners[i][0];
-            newCornersListY[i]= (int) newCorners[i][1];
-        }
-        g.setColor(Color.YELLOW);
-        g.fillPolygon(newCornersListX,newCornersListY,4);
-        g.fillOval((int) (corners[closestCorner][0]-5), (int) (corners[closestCorner][1]-5),10,10);
-    */
-
-      //  g.setColor(Color.red);
+        //  g.setColor(Color.red);
         //g.fillOval((int) (newPosX-5), (int) (newPosY-5),10,10);
        // g.setColor(Color.yellow);
       //  g.fillOval((int) (corners[closestCorner][0]-5), (int) (corners[closestCorner][1]-5),10,10);
-        /*
         g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
         g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
         g.fillOval((int) (corners[2][0]-5), (int) (corners[2][1]-5),10,10);
@@ -519,7 +499,7 @@ public class Cube {
         g.fillOval((int) (newCorners[3][0]-5), (int) (newCorners[3][1]-5),10,10);
         g.fillOval((int) (newCorners[0][0]-5), (int) (newCorners[0][1]-5),10,10);
         g.fillOval((int) (newCorners[1][0]-5), (int) (newCorners[1][1]-5),10,10);
-        */
+
        // g.setColor(Color.yellow);
 
         //g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
@@ -527,7 +507,7 @@ public class Cube {
      //   g.fillOval((int) (corners[2][0]-5), (int) (corners[2][1]-5),10,10);
       //  g.fillOval((int) (corners[3][0]-5), (int) (corners[3][1]-5),10,10);
 
-
+         */
 
 
 

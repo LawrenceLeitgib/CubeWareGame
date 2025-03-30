@@ -15,7 +15,7 @@ public class Player {
     static double height=1.8*Cube.defaultSize;
 
     static double depth=.8*Cube.defaultSize;
-    double speed=0.2;
+    double speed=0.4;
     double gravityAcceleration=0.05;
     double xVelocity;
     double yVelocity;
@@ -133,19 +133,25 @@ public class Player {
         xPosition+=xVelocity;
         yPosition+=yVelocity;
 
-        if(xVelocity>0){
-            System.out.println(xVelocity);
-            detectionCollision(4);
-        }
-        if(xVelocity<0){
-            detectionCollision(3);
-        }
 
+        boolean sideCollision=false;
         if(yVelocity>0){
             detectionCollision(6);
+
         }
         if(yVelocity<0){
             detectionCollision(5);
+        }
+        if(xVelocity>0){
+            detectionCollision(4);
+            sideCollision=true;
+        }
+        if(xVelocity<0){
+            detectionCollision(3);
+            sideCollision=true;
+        }
+        if(sideCollision){
+
         }
 
         /*
@@ -275,8 +281,8 @@ public class Player {
 
 
         g.setColor(Color.black);
-        g.setFont(new Font("Arial",Font.PLAIN,16));
-        g.setColor(Color.red);
+        g.setFont(new Font("Arial",Font.PLAIN,24));
+        g.setColor(Color.black);
         g.drawString(String.valueOf(yPosition),15,90);
         g.drawString(Double.toString(xPosition),15,70);
         g.drawString(Double.toString(zPosition),15,110);
@@ -369,38 +375,16 @@ public class Player {
        int zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-forOtherSensitivity);
        if(zPosition<0)zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-1-forOtherSensitivity);
 
-       //System.out.println(zPosUnder);
+       String sideOfCube="rien";
+       if(xPosUnder-xPosition>0)sideOfCube="left";
+       if(xPosUnder-xPosition<=0)sideOfCube="right";
 
 
 
-       //System.out.println(xLeftPos+" | "+yFrontPos+" | "+zPosAbove);
-      //System.out.println(zPosUnderForOther+" | "+zPosAboveForOther);
 
-       /*
-       int numCub=CubeContainer.numberOfCubes;
-       int numCubZ=CubeContainer.numberOfCubesZ;
 
-       if(Math.abs(xLeftPosForOther)>numCub-5)xLeftPosForOther=numCub-5;
-       if(Math.abs(xRightPosForOther)>numCub-5)xRightPosForOther=numCub-5;
-       if(Math.abs(yFrontPosForOther)>numCub-5)yFrontPosForOther=numCub-5;
-       if(Math.abs(yBackPosForOther)>numCub-5)yBackPosForOther=numCub-5;
-       if(Math.abs(zPosUnderForOther)>numCubZ-5)zPosUnderForOther=numCub-5;
-       if(Math.abs(zPosAboveForOther)>numCubZ-5)zPosAboveForOther=numCub-5;
-
-       if(Math.abs(xLeftPos)>numCub-5)xLeftPos=numCub-5;
-       if(Math.abs(xRightPos)>numCub-5)xRightPos=numCub-5;
-       if(Math.abs(yFrontPos)>numCub-5)yFrontPos=numCub-5;
-       if(Math.abs(yBackPos)>numCub-5)yBackPos=numCub-5;
-       if(Math.abs(zPosUnder)>numCubZ-5)zPosUnder=numCub-5;
-       if(Math.abs(zPosAbove)>numCubZ-5)zPosAbove=numCub-5;
-
-        //cubesPosChunkInside
-       */
       int numCubX=-Chunk.numOfCubeX*(chunkInside.xPosition-1);
       int numCubY=-Chunk.numOfCubeY*(chunkInside.yPosition-1);
-      //System.out.println(chunkInside.xPosition+" "+chunkInside.yPosition);
-      //System.out.println(numCubX+" "+numCubY);
-       // System.out.println(numCubX);
        cubesPosChunkInside=megaChunkCubePositions;
 
        if(zPosUnder<0)zPosUnder=0;
@@ -461,7 +445,7 @@ public class Player {
       // System.out.println(collision[5]+" "+xRightPosForOther+" "+xPosition);
 
        if(collision[1]&&zPosUnder+1-zPosition<sensitivity&&(isMovingDown||zVelocity<0)){
-           zPosition=zPosUnder+1.00000001;
+           zPosition=zPosUnder+1.000001;
            zVelocity=0;
          // isMovingDown=false;
        }
@@ -473,22 +457,31 @@ public class Player {
        if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity&&xVelocity<0){
 
            xPosition=xLeftPos+1-(1-width/Cube.defaultSize)/2;
+         //ddd  xVelocity=0;
          //   isMovingLeft=false;
 
        }
        if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity&&xVelocity>0){
+          // System.out.println("test" );
 
            xPosition=xRightPos-1+(1-width/Cube.defaultSize)/2;
         //  isMovingRight=false;
        }
        if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity&&yVelocity<0){
-
+           if(sideOfCube=="right"&&(cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPos][zPosAboveForOther]||cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPos][zPosUnderForOther]))
            yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
-         //isMovingForward=false;
-       }
-       if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&yVelocity>0){
+          if(sideOfCube=="left"&&(cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPos][zPosAboveForOther]||cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPos][zPosUnderForOther]))
+               yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
+           if(xVelocity==0) yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
 
-           yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
+           //isMovingForward=false;
+       }
+       if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&yVelocity>0) {
+           if(sideOfCube.equals("right") &&(cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPos][zPosAboveForOther]||cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPos][zPosUnderForOther]))
+               yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
+           if(sideOfCube.equals("left") &&( cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosUnderForOther]||cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosUnderForOther]))
+               yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
+           if(xVelocity==0)yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
          // isMovingBackward=false;
        }
 
@@ -565,111 +558,8 @@ public class Player {
 
         //System.out.println(xLeftPos+" | "+yFrontPos+" | "+zPosAbove);
         //System.out.println(zPosUnderForOther+" | "+zPosAboveForOther);
-      /* int numCub=CubeContainer.numberOfCubes;
-       int numCubZ=CubeContainer.numberOfCubesZ;
 
 
-       if(Math.abs(xLeftPosForOther)>numCub-5)xLeftPosForOther=numCub-5;
-       if(Math.abs(xRightPosForOther)>numCub-5)xRightPosForOther=numCub-5;
-       if(Math.abs(yFrontPosForOther)>numCub-5)yFrontPosForOther=numCub-5;
-       if(Math.abs(yBackPosForOther)>numCub-5)yBackPosForOther=numCub-5;
-       if(Math.abs(zPosUnderForOther)>numCubZ-5)zPosUnderForOther=numCub-5;
-       if(Math.abs(zPosAboveForOther)>numCubZ-5)zPosAboveForOther=numCub-5;
-
-       if(Math.abs(xLeftPos)>numCub-5)xLeftPos=numCub-5;
-       if(Math.abs(xRightPos)>numCub-5)xRightPos=numCub-5;
-       if(Math.abs(yFrontPos)>numCub-5)yFrontPos=numCub-5;
-       if(Math.abs(yBackPos)>numCub-5)yBackPos=numCub-5;
-       if(Math.abs(zPosUnder)>numCubZ-5)zPosUnder=numCub-5;
-       if(Math.abs(zPosAbove)>numCubZ-5)zPosAbove=numCub-5;
-
-       */
-       /*
-    if(num==1 ||num==0)
-       collision[1]= CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPosForOther][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPosForOther][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPosForOther][numCubZ+zPosUnder]||
-               CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPosForOther][numCubZ+zPosUnder];
-
-    if(num==2 ||num==0)
-       collision[2]= CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPosForOther][numCubZ+zPosAbove]||
-               CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPosForOther][numCubZ+zPosAbove]||
-               CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPosForOther][numCubZ+zPosAbove]||
-               CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPosForOther][numCubZ+zPosAbove];
-
-
-       if(num==3 ||num==0)
-       collision[3]= CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPosForOther][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPosForOther][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yFrontPosForOther][numCubZ+zPosAboveForOther]||
-               CubeContainer.cubePosition[numCub+xLeftPos][numCub+yBackPosForOther][numCubZ+zPosAboveForOther];
-       if(num==4 ||num==0)
-
-           collision[4]= CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPosForOther][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPosForOther][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yFrontPosForOther][numCubZ+zPosAboveForOther]||
-               CubeContainer.cubePosition[numCub+xRightPos][numCub+yBackPosForOther][numCubZ+zPosAboveForOther];
-       if(num==5 ||num==0)
-
-           collision[5]= CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPos][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPos][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yFrontPos][numCubZ+zPosAboveForOther]||
-               CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yFrontPos][numCubZ+zPosAboveForOther];
-       if(num==6 ||num==0)
-           collision[6]= CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPos][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPos][numCubZ+zPosUnderForOther]||
-               CubeContainer.cubePosition[numCub+xRightPosForOther][numCub+yBackPos][numCubZ+zPosAboveForOther]||
-               CubeContainer.cubePosition[numCub+xLeftPosForOther][numCub+yBackPos][numCubZ+zPosAboveForOther];
-
-
-       double sensitivity=0.5;
-       //System.out.println( collision[5]);
-      // System.out.println(collision[5]+" "+xRightPosForOther+" "+xPosition);
-
-
-       if(collision[1]&&zPosUnder+1-zPosition<sensitivity&&(isMovingDown||zVelocity<0)){
-           zPosition=zPosUnder+1.00000001;
-           zVelocity=0;
-          // isMovingDown=false;
-       }
-       if(collision[2]&&zPosition-zPosAbove+height/Cube.defaultSize<sensitivity&&(isMovingUp||zVelocity>0)){
-           zPosition=zPosAbove-height/Cube.defaultSize;
-           zVelocity=0;
-          //isMovingUp=false;
-       }
-       if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity&&isMovingLeft){
-
-           xPosition=xLeftPos+1-(1-width/Cube.defaultSize)/2;
-         // isMovingLeft=false;
-
-       }
-       if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity&&isMovingRight){
-
-           xPosition=xRightPos-1+(1-width/Cube.defaultSize)/2;
-        //   isMovingRight=false;
-       }
-       if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity&&isMovingForward){
-
-           yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
-         // isMovingForward=false;
-       }
-       if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&isMovingBackward){
-
-           yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
-        //   isMovingBackward=false;
-       }
-
-
-
-
-       for(var i=1;i<7;i++){
-           if (collision[i]) {
-               collision[0] = true;
-               break;
-           }
-       }
-
-        */
         return collision;
     }
     static public double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight){
