@@ -20,17 +20,17 @@ public class GameGrid {
     GameGrid(int GAME_WIDTH,int GAME_HEIGHT){
         this.GAME_WIDTH=GAME_WIDTH;
         this.GAME_HEIGHT=GAME_HEIGHT;
-        player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0);
-        cube = new Cube(GAME_WIDTH,GAME_HEIGHT,0,0);
-        //cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,0,-120);
-        //cube3=new Cube(GAME_WIDTH,GAME_HEIGHT,0,-240);
+        player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0,0);
+        cube = new Cube(GAME_WIDTH,GAME_HEIGHT,0,0,100);
+        cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,0,-120,0);
+        cube3=new Cube(GAME_WIDTH,GAME_HEIGHT,0,-240,0);
         PFX=GAME_WIDTH/2.0;
         PFY=GAME_HEIGHT/3.0;
 
     }
 
     public void newPlayer(){
-        player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0);
+        player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0,0);
 
     }
     public void updateData(double deltaTime){
@@ -66,10 +66,10 @@ public class GameGrid {
         Cube[] cubes=new Cube[100];
         //cube3.draw(g,grillCoord,player.xPosition,player.yPosition);
         //cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
-        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
+        //cube.draw(g,grillCoord,player.xPosition,player.yPosition);
         for(var i=0;i<10;i++){
             for(var j=0;j<10;j++){
-                cubes[j*10+i]=new Cube(GAME_WIDTH,GAME_HEIGHT,100*i,100*j);
+                cubes[j*10+i]=new Cube(GAME_WIDTH,GAME_HEIGHT,100*i,100*j,0);
                 //System.out.println(j*10+i);
             }
         }

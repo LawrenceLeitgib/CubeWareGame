@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 public class Player {
     double xPosition;
     double yPosition;
+    double zPosition;
 
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
@@ -11,16 +12,17 @@ public class Player {
     int width=20;
     int height=20;
 
-    int speed=10;
+    int speed=6;
 
     int xVelocity;
     int yVelocity;
 
     boolean isSlowing=false;
 
-    Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY){
-        this.xPosition=xPosition;
-        this.yPosition=yPosition;
+    Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double PositionZ){
+        this.xPosition=positionX;
+        this.yPosition=positionY;
+        this.zPosition=PositionZ;
         this.GAME_WIDTH=GAME_WIDTH;
         this.GAME_HEIGHT=GAME_HEIGHT;
 
@@ -29,8 +31,8 @@ public class Player {
     }
     public void updateData(double deltaTime){
         if (isSlowing==true) {
-            this.xPosition += this.xVelocity/10;
-            this.yPosition += this.yVelocity/10;
+            this.xPosition += this.xVelocity/10.0;
+            this.yPosition += this.yVelocity/10.0;
         }else{
             this.xPosition += this.xVelocity;
             this.yPosition += this.yVelocity;
