@@ -124,8 +124,10 @@ public class Chunk {
                                 if((Player.yPosition+1-(1-Player.depth/Cube.defaultSize)/2.0-(cubes[k][j][i].yPosition))>0){
                                     Player.draw(g);
                                 }
-
+                                
                                  */
+
+
 
                             }
                         }

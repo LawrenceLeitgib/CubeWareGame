@@ -36,7 +36,10 @@ public class Player {
 
     static int[] chunkIn=new int[2];
 
-    static int numOfChunkToDraw=2;
+    static int numOfChunkToDraw=3;
+
+    Cube[][][] megaChunkCubes=new Cube[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
+    boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
         Player.xPosition=100;
@@ -63,34 +66,22 @@ public class Player {
 
     }
     public void updateData(double deltaTime){
-
         chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX);
         chunkIn[1]=(int)(yPosition/Chunk.numOfCubeY);
-
+        updateMegaChunk();
         if(xPosition<0){
             chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX-1);
         }
         if(yPosition<0){
             chunkIn[1]=(int)(yPosition/Chunk.numOfCubeY-1);
         }
-       // System.out.println(chunkIn[0]+" "+chunkIn[1]);
-       // boolean[]collision=detectionCollision();
-        //System.out.println(collision[5]);
-       // System.out.println(collisionLeft);
-        //!isFlying&&!collision[1]
         double multiplierOfSpeed=1;
         if(isSlowing)multiplierOfSpeed=slowMultiplier;
-
-
-
-
-        //double zSpeed=;
         if(!isFlying){
            setZVelocity(zVelocity-gravityAcceleration);
-          // System.out.println(zPosition);
+           if(zVelocity<-0.6)zVelocity+=gravityAcceleration;
            zPosition+=zVelocity;
            detectionCollision(1);
-
         }
         else{
             if(isMovingUp) {
@@ -103,7 +94,6 @@ public class Player {
             }
 
         }
-
         if(isMovingRight) {
             xPosition+=speed*multiplierOfSpeed;
             detectionCollision(4);
@@ -121,14 +111,7 @@ public class Player {
            detectionCollision(5);
 
        }
-
-
-      // System.out.println(xPosition);
-
-
-
         detectionCollision(0);
-       // System.out.println(collision[5]);
         xPosition=  (int)((xPosition)*1000)/1000.0;
         yPosition=  (int)((yPosition)*1000)/1000.0;
         zPosition=  (int)((zPosition)*1000)/1000.0;
@@ -234,13 +217,48 @@ public class Player {
         g.drawString(Double.toString(xPosition),15,70);
         g.drawString(Double.toString(zPosition),15,110);
     }
+
+    public void updateMegaChunk(){
+        for(var i=0;i<Chunk.numOfCubeX;i++){
+            for(var j=0;j<Chunk.numOfCubeY;j++){
+                for(var k=0;k<Chunk.numOfCubeZ;k++){
+                    megaChunkCubes[i][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]-1].cubes[i][j][k];
+                    megaChunkCubePositions[i][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]-1].cubePositions[i][j][k];
+                    megaChunkCubes[i+Chunk.numOfCubeX][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]-1].cubes[i][j][k];
+                    megaChunkCubePositions[i+Chunk.numOfCubeX][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]-1].cubePositions[i][j][k];
+                    megaChunkCubes[i+Chunk.numOfCubeX*2][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]-1].cubes[i][j][k];
+                    megaChunkCubePositions[i+Chunk.numOfCubeX*2][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]-1].cubePositions[i][j][k];
+
+                    megaChunkCubes[i][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]].cubes[i][j][k];
+                    megaChunkCubePositions[i][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]].cubePositions[i][j][k];
+                    megaChunkCubes[i+Chunk.numOfCubeX][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]].cubes[i][j][k];
+                    megaChunkCubePositions[i+Chunk.numOfCubeX][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]].cubePositions[i][j][k];
+                    megaChunkCubes[i+Chunk.numOfCubeX*2][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]].cubes[i][j][k];
+                    megaChunkCubePositions[i+Chunk.numOfCubeX*2][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]].cubePositions[i][j][k];
+
+                    megaChunkCubes[i][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]+1].cubes[i][j][k];
+                    megaChunkCubePositions[i][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]+1].cubePositions[i][j][k];
+                    megaChunkCubes[i+Chunk.numOfCubeX][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]+1].cubes[i][j][k];
+                    megaChunkCubePositions[i+Chunk.numOfCubeX][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]+1].cubePositions[i][j][k];
+                    megaChunkCubes[i+Chunk.numOfCubeX*2][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]+1].cubes[i][j][k];
+                    megaChunkCubePositions[i+Chunk.numOfCubeX*2][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]+1].cubePositions[i][j][k];
+                }
+            }
+        }
+
+    }
    public boolean[] detectionCollision(int num){
        boolean[] collision=new boolean[7];
-
        Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
 
-       boolean[][][] cubesPosChunkInside=chunkInside.cubePositions;
 
+
+
+
+
+
+
+       boolean[][][] cubesPosChunkInside=chunkInside.cubePositions;
        //System.out.println(chunkInside.xPosition+" "+chunkInside.yPosition);
        int xPosUnder=(int)(xPosition+0.5);
        if(xPosition<0)xPosUnder=(int)(xPosition-0.5);
@@ -314,10 +332,24 @@ public class Player {
 
         //cubesPosChunkInside
        */
-      int numCubX=-Chunk.numOfCubeX*chunkInside.xPosition;
-      int numCubY=-Chunk.numOfCubeY*chunkInside.yPosition;
+      int numCubX=-Chunk.numOfCubeX*(chunkInside.xPosition-1);
+      int numCubY=-Chunk.numOfCubeY*(chunkInside.yPosition-1);
       //System.out.println(chunkInside.xPosition+" "+chunkInside.yPosition);
       //System.out.println(numCubX+" "+numCubY);
+       // System.out.println(numCubX);
+       cubesPosChunkInside=megaChunkCubePositions;
+
+       if(zPosUnder<0)zPosUnder=0;
+       if(zPosAbove<0)zPosAbove=0;
+       if(zPosUnderForOther<0)zPosUnderForOther=0;
+       if(zPosAboveForOther<0)zPosAboveForOther=0;
+
+       if(zPosUnder>=Chunk.numOfCubeZ)zPosUnder=Chunk.numOfCubeZ-1;
+       if(zPosAbove>=Chunk.numOfCubeZ)zPosAbove=Chunk.numOfCubeZ-1;
+       if(zPosUnderForOther>=Chunk.numOfCubeZ)zPosUnderForOther=Chunk.numOfCubeZ-1;
+       if(zPosAboveForOther>=Chunk.numOfCubeZ)zPosAboveForOther=Chunk.numOfCubeZ-1;
+
+
 
        if(num==1 ||num==0){
            collision[1]= cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPosForOther][zPosUnder]||

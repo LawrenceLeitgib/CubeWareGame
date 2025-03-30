@@ -25,7 +25,6 @@ public class CubeContainer {
 
     CubeContainer(double depthRatio){
         CubeContainer.depthRatio=depthRatio;
-        createChunksStart();
 
     }
     public void newCube(int x,int y,int z){}
@@ -120,27 +119,7 @@ public class CubeContainer {
 
     }
 
-    public void createChunksStart(){
-        /*newChunk( 0, 0);
-        newChunk( 1, 0);
 
-        newChunk( 0, 1);
-        newChunk( 1, 1);
-         if(Math.abs(Player.chunkIn[0]-i)<=Player.numOfChunkToDraw &&Math.abs(Player.chunkIn[1]-j)<=Player.numOfChunkToDraw&&!chunksPosition[numOfChunkX+i][numOfChunkY-j])
-         for(int i=-numOfChunkX;i<numOfChunkX;i++){
-            for(int j=-numOfChunkY;j<numOfChunkY;j++){
-                newChunk(i,j);
-            }
-        }
-         */
-        for(int i=-Player.numOfChunkToDraw;i<=Player.numOfChunkToDraw;i++){
-            for(int j=-Player.numOfChunkToDraw;j<=Player.numOfChunkToDraw;j++){
-                newChunk(i,j);
-            }
-        }
-
-
-    }
     public void CreateNewChunks(){
         //System.out.println("test1");
         for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<=Player.chunkIn[0]+Player.numOfChunkToDraw;i++){
