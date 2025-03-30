@@ -7,9 +7,9 @@ public class Enemy {
 
     double zPosition;
 
-    double height=180;
-    double width=100;
-    double depth=100;
+    double height=2*Cube.defaultSize;
+    double width=.8*Cube.defaultSize;
+    double depth=.8*Cube.defaultSize;
 
     double newHeight;
     double newWidth;
@@ -23,6 +23,8 @@ public class Enemy {
     double MaxHP=100;
     double HP=100;
     double[][] corners;
+    int[] cubeIn=new int[3];
+
 
     double xVelocity=0;
     double yVelocity=0;
@@ -30,6 +32,11 @@ public class Enemy {
     double zVelocity=0;
     double sizeRatio;
     double angleWithPlayer=0;
+
+    static int diSpawnDistance=50;
+
+
+
 
     static int[] chunkIn=new int[2];
 
@@ -49,6 +56,11 @@ public class Enemy {
         Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
         if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
         if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
+        cubeIn[0]=(int)(xPosition+0.5);
+        cubeIn[1]=(int)(yPosition+0.5);
+        cubeIn[2]=(int)(zPosition);
+        if(xPosition<0)cubeIn[0]=(int)(xPosition-0.5);
+        if(yPosition<0)cubeIn[1]=(int)(yPosition-0.5);
 
 
         angleWithPlayer=Math.atan((Player.yPosition-yPosition)/(Player.xPosition-xPosition));
@@ -127,7 +139,7 @@ public class Enemy {
         }
 
 
-        if(Math.sqrt(Math.pow(Player.xPosition-xPosition,2)+Math.pow(Player.yPosition-yPosition,2))>GameGrid.diSpawnZone)  this.marketForDeletion=true;
+        if(Math.sqrt(Math.pow(Player.xPosition-xPosition,2)+Math.pow(Player.yPosition-yPosition,2))>diSpawnDistance)  this.marketForDeletion=true;
         if(HP<=0){
             HP=0;
             Stats.xp+=25;
@@ -137,12 +149,6 @@ public class Enemy {
     }
 
     public void draw(Graphics g){
-       // width-=.4;
-       // depth-=.4;
-       // width=50;
-       // depth=50;
-        //System.out.println(width);
-
 
         double correction=0.5;
         double difPosXA=(xPosition-correction-Player.xPosition);
@@ -187,6 +193,142 @@ public class Enemy {
         g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
         g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
         g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
+
+    }
+
+    public void draw1(Graphics g){
+
+        double correction=0.5;
+        double difPosXA=(xPosition-correction-Player.xPosition);
+        double difPosYA= (yPosition+correction-Player.yPosition);
+        double xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+correction);
+        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-correction);
+        double difPosXR=((Player.xPosition-xPositionA)*Cube.defaultSize);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.defaultSize);
+        double difPosZ=((Player.zPosition-zPosition)*Cube.defaultSize);
+        sizeRatio=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        newWidth=  (width*sizeRatio);
+        newHeight=  (height*sizeRatio);
+        newDepth=  (depth*sizeRatio);
+        newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.defaultSize)*sizeRatio-Cube.defaultSize*sizeRatio/2);
+        corners=getCorners(newPosX,newPosY,newWidth,newHeight,difPosZ,difPosXA,difPosYA);
+
+        if(newPosY+newHeight<0)return;
+        if(newPosY>GameGrid.GAME_HEIGHT*2)return;
+        if(newPosX>GameGrid.GAME_WIDTH*2)return;
+        if(newPosX<-GameGrid.GAME_WIDTH)return;
+
+        for(var i=0;i<16;i++){
+            if(corners[i][1]+newHeight<0)return;
+            if(corners[i][1]>GameGrid.GAME_HEIGHT*2)return;
+            if(corners[i][0]>GameGrid.GAME_WIDTH*2)return;
+            if(corners[i][0]<-GameGrid.GAME_WIDTH)return;
+        }
+        g.setColor(Color.green);
+        //g.drawRect((int) (newPosX), (int)( newPosY-newHeight), (int) newWidth, (int) newHeight);
+        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
+        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
+        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[3][0], (int) corners[3][1]);
+        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[0][0], (int) corners[0][1]);
+        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[8][0], (int) corners[8][1]);
+        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[9][0], (int) corners[9][1]);
+        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[10][0], (int) corners[10][1]);
+        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[11][0], (int) corners[11][1]);
+
+        //g.fillPolygon(new int[]{(int) corners[0][0], (int) corners[1][0], (int) corners[9][0], (int) corners[8][0]},new int[]{(int) corners[0][1], (int) corners[1][1], (int) corners[9][1], (int) corners[8][1]},4);
+
+    }
+    public void draw2(Graphics g){
+
+        double correction=0.5;
+        double difPosXA=(xPosition-correction-Player.xPosition);
+        double difPosYA= (yPosition+correction-Player.yPosition);
+        double xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+correction);
+        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-correction);
+        double difPosXR=((Player.xPosition-xPositionA)*Cube.defaultSize);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.defaultSize);
+        double difPosZ=((Player.zPosition-zPosition)*Cube.defaultSize);
+        sizeRatio=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        newWidth=  (width*sizeRatio);
+        newHeight=  (height*sizeRatio);
+        newDepth=  (depth*sizeRatio);
+        newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.defaultSize)*sizeRatio-Cube.defaultSize*sizeRatio/2);
+        corners=getCorners(newPosX,newPosY,newWidth,newHeight,difPosZ,difPosXA,difPosYA);
+
+        if(newPosY+newHeight<0)return;
+        if(newPosY>GameGrid.GAME_HEIGHT*2)return;
+        if(newPosX>GameGrid.GAME_WIDTH*2)return;
+        if(newPosX<-GameGrid.GAME_WIDTH)return;
+
+        for(var i=0;i<16;i++){
+            if(corners[i][1]+newHeight<0)return;
+            if(corners[i][1]>GameGrid.GAME_HEIGHT*2)return;
+            if(corners[i][0]>GameGrid.GAME_WIDTH*2)return;
+            if(corners[i][0]<-GameGrid.GAME_WIDTH)return;
+        }
+        g.setColor(Color.yellow);
+        //g.drawRect((int) (newPosX), (int)( newPosY-newHeight), (int) newWidth, (int) newHeight);
+
+        g.drawLine((int) corners[12][0], (int) corners[12][1], (int) corners[8][0], (int) corners[8][1]);
+        g.drawLine((int) corners[13][0], (int) corners[13][1], (int) corners[9][0], (int) corners[9][1]);
+        g.drawLine((int) corners[14][0], (int) corners[14][1], (int) corners[10][0], (int) corners[10][1]);
+        g.drawLine((int) corners[15][0], (int) corners[15][1], (int) corners[11][0], (int) corners[11][1]);
+        if((2-zPosition+cubeIn[2])*Cube.defaultSize>height||Math.round((zPosition-cubeIn[2])*100000)/100000.0==0.2)
+        {
+            g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
+            g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
+            g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
+            g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
+
+        }
+
+    }
+    public void draw3(Graphics g){
+        if((2-zPosition+cubeIn[2])*Cube.defaultSize>=height)return;
+        if(Math.round((zPosition-cubeIn[2])*100000)/100000.0==.2)return;
+        double correction=0.5;
+        double difPosXA=(xPosition-correction-Player.xPosition);
+        double difPosYA= (yPosition+correction-Player.yPosition);
+        double xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+correction);
+        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-correction);
+        double difPosXR=((Player.xPosition-xPositionA)*Cube.defaultSize);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.defaultSize);
+        double difPosZ=((Player.zPosition-zPosition)*Cube.defaultSize);
+        sizeRatio=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        newWidth=  (width*sizeRatio);
+        newHeight=  (height*sizeRatio);
+        newDepth=  (depth*sizeRatio);
+        newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.defaultSize)*sizeRatio-Cube.defaultSize*sizeRatio/2);
+        corners=getCorners(newPosX,newPosY,newWidth,newHeight,difPosZ,difPosXA,difPosYA);
+
+        if(newPosY+newHeight<0)return;
+        if(newPosY>GameGrid.GAME_HEIGHT*2)return;
+        if(newPosX>GameGrid.GAME_WIDTH*2)return;
+        if(newPosX<-GameGrid.GAME_WIDTH)return;
+
+        for(var i=0;i<16;i++){
+            if(corners[i][1]+newHeight<0)return;
+            if(corners[i][1]>GameGrid.GAME_HEIGHT*2)return;
+            if(corners[i][0]>GameGrid.GAME_WIDTH*2)return;
+            if(corners[i][0]<-GameGrid.GAME_WIDTH)return;
+        }
+        g.setColor(Color.red);
+        //g.drawRect((int) (newPosX), (int)( newPosY-newHeight), (int) newWidth, (int) newHeight);
+        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
+        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
+        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
+        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
+
+        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[12][0], (int) corners[12][1]);
+        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[13][0], (int) corners[13][1]);
+        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[14][0], (int) corners[14][1]);
+        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[15][0], (int) corners[15][1]);
 
     }
     public boolean[] detectionCollision(int num){
@@ -533,7 +675,7 @@ public class Enemy {
         double newPosYFrontRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFrontRight+GameGrid.PFY+difPosZ*sizeRatioFrontRight);
         double newPosXFrontRight=  (GameGrid.PVX-((Player.xPosition-xPositionAFrontRight)*Cube.defaultSize)*sizeRatioFrontRight-(Cube.defaultSize*sizeRatioFrontRight)/2);
 
-        double [][] corners=new double[8][2];
+        double [][] corners=new double[16][2];
         corners[0][1]=newPosY;
         corners[1][1]=newPosYRight;
         corners[2][1]=newPosYFrontRight;
@@ -611,6 +753,34 @@ public class Enemy {
         corners[5][1]=corners[1][1]-height*sizeRatio2;
         corners[6][1]=corners[2][1]-height*sizeRatio3;
         corners[7][1]=corners[3][1]-height*sizeRatio4;
+
+        corners[8][0]= corners[0][0];
+        corners[9][0]=corners[1][0];
+        corners[10][0]= corners[2][0];
+        corners[11][0]=corners[3][0];
+        corners[8][1]=corners[0][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio1;
+        corners[9][1]=corners[1][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio2;
+        corners[10][1]=corners[2][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio3;
+        corners[11][1]=corners[3][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio4;
+
+        corners[12][0]= corners[0][0];
+        corners[13][0]=corners[1][0];
+        corners[14][0]= corners[2][0];
+        corners[15][0]=corners[3][0];
+
+        if((2-zPosition+cubeIn[2])*Cube.defaultSize>height){
+            corners[12][1]=corners[4][1];
+            corners[13][1]=corners[5][1];
+            corners[14][1]=corners[6][1];
+            corners[15][1]=corners[7][1];
+        }
+        else {
+
+            corners[12][1]=corners[8][1]-Cube.defaultSize*sizeRatio1;
+            corners[13][1]=corners[9][1]-Cube.defaultSize*sizeRatio2;
+            corners[14][1]=corners[10][1]-Cube.defaultSize*sizeRatio3;
+            corners[15][1]=corners[11][1]-Cube.defaultSize*sizeRatio4;}
+
 
 
 

@@ -9,7 +9,7 @@ public class GameGrid {
     Player player;
     static int safeZone=20;
 
-    static int diSpawnZone=50;
+    //static int diSpawnZone=50;
     static int regenZone=6;
 
 
@@ -135,6 +135,7 @@ public class GameGrid {
 
     }
     public void draw(Graphics g){
+       // System.out.println(angleForXRotation);
         /*
         while(angleForXRotation>=Math.PI*2){
             angleForXRotation-=Math.PI*2;
@@ -145,15 +146,17 @@ public class GameGrid {
 
          */
         fireBallContainer.draw(g);
+        enemiesContainer.draw(g);
         cubeContainer.draw(g);
+
         //Player.draw1(g);
         //Player.draw2(g);
         //Player.draw3(g);
-        enemiesContainer.draw(g);
 
 
         g.setColor(Color.RED);
         if(!Player.thirdPerspective)g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
+        g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
     }
     public double[] mousePosToGamePos(int xPos,int yPos){
         double[] gamePos=new double[2];

@@ -6,7 +6,6 @@ public class Player {
     static double xPosition;
     static double yPosition;
     static double zPosition;
-
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
 
@@ -18,7 +17,7 @@ public class Player {
 
     static double depth=.8*Cube.defaultSize;
     static double[][] corners=new double[12][2];
-    double speed=4.2/5;
+    double speed=4.2;
     double xVelocity;
     double yVelocity;
     double zVelocity;
@@ -27,7 +26,7 @@ public class Player {
     boolean isFlying=true;
 
     double slowMultiplier=0.1;
-    double runningMultiplier=1.8*5;
+    double runningMultiplier=1.8;
 
     boolean isMovingUp=false;
     boolean isMovingDown=false;
@@ -525,6 +524,7 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
 
 
 
+
     }
     public static void draw1(Graphics g){
         if(!thirdPerspective)return;
@@ -550,6 +550,10 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
         g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[9][0], (int) corners[9][1]);
         g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[10][0], (int) corners[10][1]);
         g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[11][0], (int) corners[11][1]);
+
+        //g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
+        g.setColor(new Color(0,0,0,100));
+        g.fillOval((int) ((corners[0][0]+corners[1][0])/2+((corners[0][0]-corners[1][0]))/2), (int) ((corners[0][1]+corners[3][1])/2-((corners[0][1]-corners[3][1]))/2), (int) ((-corners[0][0]+corners[1][0])+0.5), (int) ((corners[0][1]-corners[3][1])+0.5));
 
     }
     public static void draw2(Graphics g){
@@ -577,7 +581,6 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
 
 
     }
-
     public static void draw3(Graphics g){
         if(!thirdPerspective)return;
         if((2-zPosition+cubeIn[2])*Cube.defaultSize>=height)return;
@@ -949,7 +952,6 @@ if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
         corners[15][0]=corners[3][0];
 
         if((2-zPosition+cubeIn[2])*Cube.defaultSize>height){
-            System.out.println();
             corners[12][1]=corners[4][1];
             corners[13][1]=corners[5][1];
             corners[14][1]=corners[6][1];

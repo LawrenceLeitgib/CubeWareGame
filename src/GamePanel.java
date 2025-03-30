@@ -53,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
         GameStates.put("Dead",3);
         gameState=GameStates.get("Menu");
         rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
+        rectForDraw[1]=new Rectangle(15,200,100,20);
 
 
 
@@ -127,6 +128,7 @@ public class GamePanel extends JPanel implements Runnable {
             CubeContainer.setGameWidth(r.width);
             Chunk.GAME_WIDTH = r.width;
             Chunk.GAME_HEIGHT = r.height;
+            Cube.defaultSize=r.width/10;
             rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
 
         }
@@ -159,6 +161,12 @@ public class GamePanel extends JPanel implements Runnable {
             centerString(g,rectForDraw[0],"Respawn",new Font("Arial",Font.PLAIN,30));
 
         }
+        if(gameState==GameStates.get("Running")){
+            drawRectWithContext(g,rectForDraw[1],new Color(168, 113, 10),Color.yellow,4);
+            g.setColor(Color.black);
+            centerString(g,rectForDraw[1],"Kill All entities",new Font("Arial",Font.PLAIN,16));
+
+        }
 
     }
     public void updateData(double deltaTime) {
@@ -187,6 +195,14 @@ public class GamePanel extends JPanel implements Runnable {
                 if(GameGrid.mouseLeftClickDown)gameGrid.player.respawn();
             }
             return;
+        }
+        if(gameState==GameStates.get("Running")){
+            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[1])){
+                if(GameGrid.mouseLeftClickDown){
+                    Stats.xp+=EnemiesContainer.enemies.size()*25;
+                    EnemiesContainer.enemies=new ArrayList<Enemy>();
+                }
+            }
         }
         gameGrid.updateData(deltaTime);
         stats.updateData(deltaTime);

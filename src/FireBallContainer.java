@@ -10,7 +10,7 @@ public class FireBallContainer {
     double update3DTime=0.05;
     double update3DCount=0;
 
-    static int numOfFireBall=FireBall.diSpawnDistance+30;
+    static int numOfFireBall=FireBall.diSpawnDistance+20;
     static ArrayList<FireBall>[][][] fireBalls3D = new ArrayList[numOfFireBall*2][numOfFireBall*2][200];
 
     // ArrayList<Integer>[] al = new ArrayList[n];

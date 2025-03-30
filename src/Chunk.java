@@ -125,7 +125,7 @@ public class Chunk {
         for (var i = 0; i < numOfCubeX; i++) {
             for (var j = 0; j < numOfCubeX; j++) {
                 newCube(i, j, 0);
-                newCube(i, j, 1);
+               newCube(i, j, 1);
                 if((xPosition+yPosition)%2==0){
                     //for(var k=0;k<3;k++) newCube(i, j, 7+k);
 
@@ -161,10 +161,10 @@ public class Chunk {
  */
 
         if (xPosition == 0 && yPosition == 0) {
-            cubes[3][3][0]=null;
-            cubes[3][3][1]=null;
-            cubePositions[3][3][0]=false;
-            cubePositions[3][3][1 ]=false;
+           // cubes[3][3][0]=null;
+            //cubes[3][3][1]=null;
+            //cubePositions[3][3][0]=false;
+            //cubePositions[3][3][1 ]=false;
 
 
 

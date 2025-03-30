@@ -74,15 +74,18 @@ public class CubeContainer {
 
         Cube cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]);
         if(type==0)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]);
-        if(type==1)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(119, 119, 119),new Color(119, 119, 119));
-        if(type==2)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(51, 206, 179),new Color(51, 206, 179));
-        if(type==3)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(59, 59, 59),new Color(59, 59, 59));
-        if(type==4)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(255, 211, 13),new Color(255, 211, 13));
+        if(type==1)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(119, 119, 119),new Color(119, 119, 119),type);
+        if(type==2)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(51, 206, 179),new Color(51, 206, 179),type);
+        if(type==3)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(59, 59, 59),new Color(59, 59, 59),type);
+        if(type==4)cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],new Color(255, 211, 13),new Color(255, 211, 13),type);
 
         chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubes[newX][newY][z]=cube;
         chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubePositions[newX][newY][z]=true;
         chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].zLayer[z]=true;
         bigZLayer[z]=true;
+        bigZLayer[z+1]=true;
+        bigZLayer[z+2]=true;
+        bigZLayer[z+3]=true;
     }
     public void drawDick(int x, int y,int z){
         newCube(x,y,z+6);
@@ -354,6 +357,10 @@ public class CubeContainer {
     public void createCubes(){
 
         drawSpawn();
+        drawCircle3(0,0,2,29,1);
+        drawCircle3(0,0,2,30,1);
+        drawCircle3(0,0,3,30,1);
+        drawCircle3(0,0,2,31,1);
 
         for(var i=0;i<20;i++){
             for(var j=i;j<20-i;j++){
@@ -362,8 +369,14 @@ public class CubeContainer {
                 }
 
             }
+            //newCube(0,0,i,2);
+            //newCube(0,0,i*2,2);
+            //newCube(0,0,i*3,2);
+
+
         }
-        drawBasicStructure(0,-40,2,15,15,2);
+
+        drawBasicStructure(0,-70,2,15,15,2);
        // newCube(0,0,3,1);
 
 
@@ -387,6 +400,7 @@ public class CubeContainer {
     public void updateData(double deltaTime){
         countChunkCreation+=deltaTime;
 
+
         if((newChunkIn[0]!=Player.chunkIn[0])||(newChunkIn[1]!=Player.chunkIn[1])){
             CreateNewChunks();
         }
@@ -404,17 +418,21 @@ public class CubeContainer {
                 bigZLayer[k]=false;
 
         }
+
         for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<=Player.chunkIn[0]+Player.numOfChunkToDraw;i++){
             for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw;j<=Player.chunkIn[1]+Player.numOfChunkToDraw;j++){
                 for(var k=0;k<Chunk.numOfCubeZ;k++){
                     if(chunks[i+numOfChunkX][j+numOfChunkY].zLayer[k]){
                         //System.out.println(k);
                         bigZLayer[k]=true;
+                        bigZLayer[k+1]=true;
+                        bigZLayer[k+2]=true;
+                        bigZLayer[k+3]=true;
                     }
                 }
             }
         }
-
+        /*
             int jNum=0;
             for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
                 jNum=j;
@@ -442,6 +460,8 @@ public class CubeContainer {
             }
         }
 
+         */
+
 
 /*
         for(var k=0;k<Chunk.numOfCubeZ;k++){
@@ -453,6 +473,182 @@ public class CubeContainer {
 
  */
 
+
+    }
+
+    public void drawAll(Graphics g,int xNum,int yNum,int kNum,int jNum,int i){
+
+
+
+        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
+            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
+           // if(i>0)if(chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i-1]!=null)chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i-1].drawTop(g);
+
+
+        }
+        /*
+        if(i>0)
+        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i-1]){
+            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i-1].drawTop(g);
+
+        }
+
+         */
+        if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
+            if(Player.cubeIn[2]==i)Player.draw1(g);
+            if(Player.cubeIn[2]+1==i)Player.draw2(g);
+            if(Player.cubeIn[2]+2==i)Player.draw3(g);
+        }
+        int xNumForEnemy=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+EnemiesContainer.numOfEnemies-Player.cubeIn[0];
+        int yNumForEnemy=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+EnemiesContainer.numOfEnemies-Player.cubeIn[1];
+        if(xNumForEnemy>=0 &&xNumForEnemy<EnemiesContainer.numOfEnemies*2&&yNumForEnemy>=0 &&yNumForEnemy<EnemiesContainer.numOfEnemies*2) {
+            if (EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i] != null) {
+                for (var l = 0; l < EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i].size(); l++) {
+                    if( EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i].get(l).cubeIn[2]==i) EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i].get(l).draw1(g);
+                }
+            }
+            if (i>0&&EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1] != null) {
+                for (var l = 0; l < EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1].size(); l++) {
+                    if( EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1].get(l).cubeIn[2]+1==i) EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-1].get(l).draw2(g);
+                }
+            }
+            if (i>1&&EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2] != null) {
+                for (var l = 0; l < EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2].size(); l++) {
+                    if( EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2].get(l).cubeIn[2]+2==i) EnemiesContainer.enemies3D[xNumForEnemy][yNumForEnemy][i-2].get(l).draw3(g);
+                }
+            }
+        }
+
+
+        int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
+        int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
+        if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
+            if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
+                for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
+                    FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
+                }
+            }
+        }
+
+
+    }
+
+    public void drawAll2(Graphics g,int xNum,int yNum,int kNum,int jNum,int i){
+        int xPosForCube=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum;
+        int yPosForCube=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum;
+        double difPosXA=(xPosForCube-0.5-Player.xPosition);
+        double difPosYA= (xPosForCube+0.5-Player.yPosition);
+        double xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+0.5);
+        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-0.5);
+        double difPosXR=((Player.xPosition-xPositionA)*Cube.defaultSize);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.defaultSize);
+        double difPosZ=((Player.zPosition-i)*Cube.defaultSize);
+        double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
+        double sizeRatio=GAME_HEIGHT/(difPosYR*1.0*depthRatio+GAME_HEIGHT);
+        if(difPosYR<sizeRatioValue){
+            sizeRatio=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+        }
+        double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        double newHeight=  (Cube.defaultSize*sizeRatio);
+                        /*
+                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
+                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
+                                drawAll(g, xNum,yNum, kNum, jNum,i);
+
+                            }
+
+                        }
+
+                         */
+        // System.out.println(i);
+        //   if(i==3)System.out.println(newPosY-newHeight<GameGrid.PFY);
+        // if(i==0&&k==0&&j==0)System.out.println("test");
+        if(newPosY-newHeight<GameGrid.PFY){
+
+            drawAll(g, xNum,yNum, kNum, jNum,i);
+            //chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
+
+        }
+
+    }
+
+    public boolean checkToSkip(int i){
+        int xPosForCube=Player.cubeIn[0];
+        double yPosForCube=  (Player.cubeIn[1]-Player.cubeAway);
+
+        double difPosXA=(xPosForCube-0.5-Player.xPosition);
+        double difPosYA= (xPosForCube+0.5-Player.yPosition);
+        double xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+0.5);
+        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-0.5);
+        double difPosXR=((Player.xPosition-xPositionA)*Cube.defaultSize);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.defaultSize);
+        double difPosZ=((Player.zPosition-i)*Cube.defaultSize);
+        double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
+        double sizeRatio=GAME_HEIGHT/(difPosYR*1.0*depthRatio+GAME_HEIGHT);
+        if(difPosYR<sizeRatioValue){
+            sizeRatio=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+        }
+        double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        double newHeight=  (Cube.defaultSize*sizeRatio);
+                        /*
+                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
+                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
+                                drawAll(g, xNum,yNum, kNum, jNum,i);
+
+                            }
+
+                        }
+
+                         */
+        // System.out.println(i);
+        //   if(i==3)System.out.println(newPosY-newHeight<GameGrid.PFY);
+        // if(i==0&&k==0&&j==0)System.out.println("test");
+        if(newPosY-newHeight<GameGrid.PFY){
+           // System.out.println(newPosY);
+
+            return true;
+
+        }
+       // return true;
+
+        return false;
+
+    }
+    public boolean checkToSkip2(int i){
+        int xPosForCube=Player.cubeIn[0];
+        int yPosForCube=Player.cubeIn[1];
+        double difPosXA=(xPosForCube-0.5-Player.xPosition);
+        double difPosYA= (xPosForCube+0.5-Player.yPosition);
+        double xPositionA= (Player.xPosition+difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation)+0.5);
+        double yPositionA=  (Player.yPosition-difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation)-0.5);
+        double difPosXR=((Player.xPosition-xPositionA)*Cube.defaultSize);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.defaultSize);
+        double difPosZ=((Player.zPosition-i)*Cube.defaultSize);
+        double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
+        double sizeRatio=GAME_HEIGHT/(difPosYR*1.0*depthRatio+GAME_HEIGHT);
+        if(difPosYR<sizeRatioValue){
+            sizeRatio=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYR-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+        }
+        double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        double newHeight=  (Cube.defaultSize*sizeRatio);
+                        /*
+                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
+                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
+                                drawAll(g, xNum,yNum, kNum, jNum,i);
+
+                            }
+
+                        }
+
+                         */
+        // System.out.println(i);
+        //   if(i==3)System.out.println(newPosY-newHeight<GameGrid.PFY);
+        // if(i==0&&k==0&&j==0)System.out.println("test");
+        if(newPosY-newHeight>=GameGrid.PFY ){
+            return true;
+        }
+
+        return false;
 
     }
 
@@ -495,12 +691,33 @@ public class CubeContainer {
             yChunkNumPlayer+=1;
 
         }
+        int xNumForFireBall;
+        int yNumForFireBall;
+        int yNumForEnemy;
+        int xNumForEnemy;
+
+        /*
+        int count=0;
+        int count1=0;
+        for(var i=0;i<Chunk.numOfCubeZ;i++){
+            if(bigZLayer[i]) count++;
+            if(bigZLayer[i]||(Player.cubeIn[2]==i)||(Player.cubeIn[2]+1==i)||(Player.cubeIn[2]+2==i))count1++;
+        }
+
+
+        System.out.println(count+", "+count1);
+
+         */
 
         for(var i=0;i<Chunk.numOfCubeZ;i++){
-           // if(i==2) GameGrid.enemiesContainer.draw(g);
-            if(!bigZLayer[i]&&!(Player.cubeIn[2]==i)&&!(Player.cubeIn[2]+1==i)&&!(Player.cubeIn[2]+2==i))continue;
 
-        if(GameGrid.angleForXRotation<Math.PI/4){
+
+            if(!bigZLayer[i]&&!(Player.cubeIn[2]==i)&&!(Player.cubeIn[2]+1==i)&&!(Player.cubeIn[2]+2==i))continue;
+            if(!checkToSkip2(i))continue;
+            //System.out.println(i);
+
+
+            if(GameGrid.angleForXRotation<Math.PI/4){
             for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
                 jNum=j;
                 int yNum=0;
@@ -508,7 +725,8 @@ public class CubeContainer {
                     yNum+=1;
                     jNum-=Chunk.numOfCubeY;
                 }
-                for(var k=Chunk.numOfCubeX*(Player.numOfChunkToDraw*2+1)-1;k>=0;k--){
+
+                    for(var k=Chunk.numOfCubeX*(Player.numOfChunkToDraw*2+1)-1;k>=0;k--){
                     kNum=k;
                     int xNum=0;
                     while(kNum>=Chunk.numOfCubeX){
@@ -516,36 +734,23 @@ public class CubeContainer {
                         kNum-=Chunk.numOfCubeX;
 
                     }
-                    // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
 
-
-
-
-                    if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                        chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-
-                    }
-                    if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                        if(Player.cubeIn[2]==i)Player.draw1(g);
-                        if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                        if(Player.cubeIn[2]+2==i)Player.draw3(g);
-                    }
-                    int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                    int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                    if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                        if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                            for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                            }
-                        }
+/*
+                    if(!chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].zLayer[i]&&kNum==15&&jNum==0){
+                       k-=16;
+                       //if(i==5)System.out.println("test");
                     }
 
+ */
 
+
+
+
+                    drawAll(g, xNum,yNum, kNum, jNum,i);
 
                 }
             }
         }
-
         else if(GameGrid.angleForXRotation<Math.PI/2){
                 for(var k=Chunk.numOfCubeX*(1+Player.numOfChunkToDraw*2);k>=0;k--) {
                     kNum = k;
@@ -563,27 +768,7 @@ public class CubeContainer {
                             jNum -= Chunk.numOfCubeY;
 
                         }
-
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                        if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                            if(Player.cubeIn[2]==i)Player.draw1(g);
-                            if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                            if(Player.cubeIn[2]+2==i)Player.draw3(g);
-
-                        }
-                        int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                        int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                        if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                            if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                                for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                    FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                                }
-                            }
-                        }
-
-
-
+                        drawAll(g, xNum,yNum, kNum, jNum,i);
                     }
                 }
         }
@@ -604,24 +789,8 @@ public class CubeContainer {
                         jNum -= Chunk.numOfCubeY;
 
                     }
+                    drawAll(g, xNum,yNum, kNum, jNum,i);
 
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                    if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                        if(Player.cubeIn[2]==i)Player.draw1(g);
-                        if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                        if(Player.cubeIn[2]+2==i)Player.draw3(g);
-
-                    }
-                    int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                    int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                    if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                        if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                            for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                            }
-                        }
-                    }
 
                 }
             }
@@ -644,23 +813,9 @@ public class CubeContainer {
 
                     }
 
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                    if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                        if(Player.cubeIn[2]==i)Player.draw1(g);
-                        if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                        if(Player.cubeIn[2]+2==i)Player.draw3(g);
 
-                    }
-                    int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                    int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                    if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                        if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                            for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                            }
-                        }
-                    }
+
+                    drawAll(g, xNum,yNum, kNum, jNum,i);
 
                 }
             }
@@ -682,24 +837,8 @@ public class CubeContainer {
                         kNum-=Chunk.numOfCubeX;
 
                     }
+                    drawAll(g, xNum,yNum, kNum, jNum,i);
 
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                    if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                        if(Player.cubeIn[2]==i)Player.draw1(g);
-                        if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                        if(Player.cubeIn[2]+2==i)Player.draw3(g);
-
-                    }
-                    int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                    int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                    if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                        if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                            for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -721,24 +860,7 @@ public class CubeContainer {
 
                     }
 
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                    if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                        if(Player.cubeIn[2]==i)Player.draw1(g);
-                        if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                        if(Player.cubeIn[2]+2==i)Player.draw3(g);
-
-                    }
-                    int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                    int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                    if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                        if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                            for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                            }
-                        }
-                    }
-
+                    drawAll(g, xNum,yNum, kNum, jNum,i);
                 }
             }
         }
@@ -760,23 +882,7 @@ public class CubeContainer {
 
                     }
 
-                        if (chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum - Player.numOfChunkToDraw + numOfChunkX + newChunkIn[0]][yNum - Player.numOfChunkToDraw + numOfChunkY + newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                    if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                        if(Player.cubeIn[2]==i)Player.draw1(g);
-                        if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                        if(Player.cubeIn[2]+2==i)Player.draw3(g);
-
-                    }
-                    int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                    int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                    if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                        if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                            for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                            }
-                        }
-                    }
+                    drawAll(g, xNum,yNum, kNum, jNum,i);
 
 
                 }
@@ -799,32 +905,17 @@ public class CubeContainer {
                         kNum-=Chunk.numOfCubeX;
 
                     }
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i])
-                            chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                    if((xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum==Player.cubeIn[0]&&(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum==Player.cubeIn[1]){
-                        if(Player.cubeIn[2]==i)Player.draw1(g);
-                        if(Player.cubeIn[2]+1==i)Player.draw2(g);
-                        if(Player.cubeIn[2]+2==i)Player.draw3(g);
-
-                    }
-                    int xNumForFireBall=(xNum-Player.numOfChunkToDraw+newChunkIn[0])*Chunk.numOfCubeX+kNum+FireBallContainer.numOfFireBall-Player.cubeIn[0];
-                    int yNumForFireBall=(yNum-Player.numOfChunkToDraw+newChunkIn[1])*Chunk.numOfCubeY+jNum+FireBallContainer.numOfFireBall-Player.cubeIn[1];
-                    if(xNumForFireBall>=0 &&xNumForFireBall<FireBallContainer.numOfFireBall*2&&yNumForFireBall>=0 &&yNumForFireBall<FireBallContainer.numOfFireBall*2) {
-                        if (FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i] != null) {
-                            for (var l = 0; l < FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].size(); l++) {
-                                FireBallContainer.fireBalls3D[xNumForFireBall][yNumForFireBall][i].get(l).draw(g);
-                            }
-                        }
-                    }
-
+                    drawAll(g, xNum,yNum, kNum, jNum,i);
                 }
             }
         }
-
         }
 
         for(var i=Chunk.numOfCubeZ-1;i>=0;i--){
+            if(GameGrid.PFY<-30)continue;
             if(!bigZLayer[i])continue;
+            if(!checkToSkip(i))continue;
+            //System.out.println(i);
             if(GameGrid.angleForXRotation<Math.PI/4){
                 for(var j=0;j<Chunk.numOfCubeY*(1+Player.numOfChunkToDraw*2);j++){
                     jNum=j;
@@ -842,14 +933,8 @@ public class CubeContainer {
                             kNum-=Chunk.numOfCubeX;
 
                         }
-                        // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
 
-                            }
-
-                        }
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
 
 
 
@@ -874,12 +959,8 @@ public class CubeContainer {
 
                         }
                         // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
 
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                            }
-                        }
 
                     }
                 }
@@ -902,12 +983,8 @@ public class CubeContainer {
 
                         }
                         // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
 
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                            }
-                        }
 
                     }
                 }
@@ -931,11 +1008,8 @@ public class CubeContainer {
                         }
                         // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
 
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                            }
-                        }
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
+
                     }
                 }
             }
@@ -957,11 +1031,8 @@ public class CubeContainer {
 
                         }
                         // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                            }
-                        }
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
+
 
                     }
                 }
@@ -984,11 +1055,8 @@ public class CubeContainer {
 
                         }
                         // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                            }
-                        }
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
+
                     }
                 }
             }
@@ -1011,11 +1079,8 @@ public class CubeContainer {
                         }
                         // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
 
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                            }
-                        }
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
+
                     }
                 }
             }
@@ -1037,11 +1102,8 @@ public class CubeContainer {
 
                         }
                         // System.out.println(xNum-Player.numOfChunkToDraw+numOfChunkX+","+(yNum-Player.numOfChunkToDraw+numOfChunkY));
-                        if( chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubePositions[kNum][jNum][i]){
-                            if (chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newPosY-chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].newHeight<GameGrid.PFY){
-                                chunks[xNum-Player.numOfChunkToDraw+numOfChunkX+newChunkIn[0]][yNum-Player.numOfChunkToDraw+numOfChunkY+newChunkIn[1]].cubes[kNum][jNum][i].draw(g);
-                            }
-                        }
+                        drawAll2(g, xNum,yNum, kNum, jNum,i);
+
 
                     }
                 }
