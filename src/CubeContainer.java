@@ -22,6 +22,7 @@ public class CubeContainer {
     }
     public void newCube(int x,int y,int z){
         cubes[numberOfCubes+x][numberOfCubes+y][numberOfCubesZ+z]=new Cube(x,y,z, depthRatio);
+
         cubePosition[numberOfCubes+x][numberOfCubes+y][numberOfCubesZ+z]=true;
         cubePositionX[numberOfCubes+x]=true;
         cubePositionY[numberOfCubes+y]=true;
@@ -228,7 +229,7 @@ public class CubeContainer {
                     if (cubePositionY[j])
                         for (var k = 0; k < 2 * numberOfCubes + 1; k++) {
                             //
-                            if (cubePosition[k][j][i]&&(i-numberOfCubesZ+1)*Cube.height-GameGrid.PFY>Player.zPosition) {
+                            if (cubePosition[k][j][i]&&(i-numberOfCubesZ+1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition) {
                                 cubes[k][j][i].draw(g);
                                 //System.out.println(GameGrid.PFY);
 
@@ -250,7 +251,7 @@ public class CubeContainer {
 
         int numOfBlocksXaxis=1000;
         int numOfBlocksYaxis=1000;
-        int sizeOfBlocks=Cube.width;
+        int sizeOfBlocks=Cube.defaultSize;
         int xGrillNumToAdd= (int) Player.xPosition;
         int yGrillNumToAdd= (int) Player.yPosition;
         double yValue;

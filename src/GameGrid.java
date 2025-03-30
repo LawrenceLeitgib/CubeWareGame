@@ -15,7 +15,7 @@ public class GameGrid {
     static double PVY;
     CubeContainer cubeContainer;
 
-    static double depthRatio=1/1.0;
+    static double depthRatio=1/0.5;
 
 
 

@@ -50,7 +50,10 @@ public class Player {
                     if(CubeContainer.cubePositionY[j])
                         for (var k = 0; k <CubeContainer.cubePositionZ.length ; k++) {
                             if (CubeContainer.cubePosition[i][j][k]) {
-                                detectionCollision(i-CubeContainer.numberOfCubes,j-CubeContainer.numberOfCubes,k-CubeContainer.numberOfCubesZ);
+                                if(detectionCollision(i-CubeContainer.numberOfCubes,j-CubeContainer.numberOfCubes,k-CubeContainer.numberOfCubesZ)){
+
+                                    yPosition += 100;
+                                }
                                 //System.out.println(detectionCollision(i,j,k));
 
 
@@ -84,20 +87,57 @@ public class Player {
     }
 
     public void draw(Graphics g){
-        double sizeRatio=GAME_HEIGHT/(cubeAway*GameGrid.depthRatio+GAME_HEIGHT);
-
-        double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio);
-        //newPosY+=zPosition*depth*sizeRatio;
+        double sizeRatio=GAME_HEIGHT/((cubeAway*width)*GameGrid.depthRatio+GAME_HEIGHT);
+        double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio)+GameGrid.PFY;
         double newWidth=  (width*sizeRatio);
         double newHeight=  (height*sizeRatio);
         double newPosX=  (GAME_WIDTH/2.0);
+        double corners[][]=new double[4][2];
+        double groundAngle;
+        corners[3][0]=newPosX-newWidth/2.0;
+        corners[3][1]=newPosY;
+        corners[2][0]=corners[3][0]+newWidth;
+        corners[2][1]=corners[3][1];
+        double deltaXAngle=corners[3][0]-GameGrid.PFX;
+        double deltaYAngle= corners[3][1]-GameGrid.PFY;
+        groundAngle=Math.atan(deltaYAngle/deltaXAngle);
+        if (deltaXAngle>0&&deltaYAngle<0){
+            groundAngle=Math.PI*2.0+Math.atan(deltaYAngle/deltaXAngle);
+        }
+        else  if(deltaXAngle<0) groundAngle=Math.PI+Math.atan(deltaYAngle/deltaXAngle);
+        double sizeRatioAtPosition=GAME_HEIGHT/((cubeAway*height+height)*GameGrid.depthRatio+GAME_HEIGHT);
+        double DeltaY=(newPosY)-((GameGrid.PVY-GameGrid.PFY)*(sizeRatioAtPosition)+GameGrid.PFY);
+        double groundRatio=DeltaY/Math.sin(groundAngle);
+        corners[0][0] = corners[3][0] -groundRatio  * Math.cos(groundAngle);
+        corners[0][1] = corners[3][1] -groundRatio* Math.sin(groundAngle);
+        corners[1][0] = corners[0][0] +sizeRatioAtPosition*width;
+        corners[1][1] = corners[0][1] ;
+
+
+        int[] xPointsList= new int[]{(int) (corners[0][0]+0.5), (int) (corners[1][0]+0.5),
+                (int) (corners[2][0]+0.5), (int) (corners[3][0]+0.5)};
+        int[] yPointsList=new int[]{(int) (corners[0][1]+0.5), (int) (corners[1][1]+0.5),
+                (int) (corners[2][1]+0.5), (int) (corners[3][1]+0.5)};
+
+
+        /*
+        g.setColor(Color.red);
+        g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
+        g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
+        g.fillOval((int) (corners[2][0]-5), (int) (corners[2][1]-5),10,10);
+        g.fillOval((int) (corners[3][0]-5), (int) (corners[3][1]-5),10,10);
+
+         */
 
 
 
         g.setColor(new Color(3, 40, 252));
+        g.fillPolygon(xPointsList,yPointsList,4);
         //g.fillRect(GAME_WIDTH/2-width/2,2*GAME_HEIGHT/3-height/2,width,height);
         //g.fillOval(GAME_WIDTH/2-width/2, (int) (3*GAME_HEIGHT/4-height*CubeContainer.depthRatio/4),width, (int) (height*CubeContainer.depthRatio/2));
-        g.fillRect((int) (newPosX-newWidth/2.0), (int) (newPosY-newHeight), (int) newWidth, (int) newHeight);
+       // g.fillRect((int) (newPosX-newWidth/2.0), (int) (newPosY-newHeight), (int) newWidth, (int) newHeight);
+
+
 
         g.setColor(Color.black);
         g.setFont(new Font("Arial",Font.PLAIN,16));
@@ -112,10 +152,11 @@ public class Player {
         double playerRight=xPosition+width;
         double playerFront=yPosition;
         double playerBack=yPosition+height;
-        //System.out.println(yPosition>(y)*Cube.depth&&yPosition<(y+1)*Cube.depth);
-        //System.out.println( xPosition+width>(x-0.5)*Cube.width&&xPosition-width<(x+0.5)*Cube.width);
-        if(xPosition+width>(x-0.5)*Cube.width&&xPosition-width<(x+0.5)*Cube.width){
-            if(yPosition>y*Cube.depth&&yPosition<(y+1)*Cube.depth){
+       // System.out.println(yPosition+height>y*Cube.depth&&yPosition<(y+1)*Cube.depth);
+        //System.out.println(xPosition+width>(x)*Cube.width&&xPosition<(x+1)*Cube.width);
+        if(xPosition+width>(x)*Cube.defaultSize&&xPosition<(x+1)*Cube.defaultSize){
+            if(yPosition+height>y*Cube.defaultSize&&yPosition<(y+1)*Cube.defaultSize){
+                System.out.println(true);
                 return true;
             }
 
