@@ -1,6 +1,8 @@
 import java.awt.*;
 
 public class Projectile {
+    private final double size;
+    private final boolean isFriendly;
     private final double xPositionIni;
     private final double yPositionIni;
     private final double zPositionIni;
@@ -9,12 +11,10 @@ public class Projectile {
     private double xPosition;
     private double yPosition;
     private double zPosition;
-    private final double size;
-    private double damage;
     private boolean marketForDeletion=false;
+    private double damage;
     static final int diSpawnDistance=50;
     private static final int range=40;
-    private final boolean isFriendly;
     private int[] cubeIn;
     Projectile(double xPos, double yPos, double zPos, double angle, double speed, double size, double damage,boolean isFriendly ){
         xPosition=xPos;
@@ -34,7 +34,6 @@ public class Projectile {
     public double getxPosition() {
         return xPosition;
     }
-
     public double getyPosition() {
         return yPosition;
     }
@@ -51,7 +50,6 @@ public class Projectile {
     public int[] getCubeIn() {
         return cubeIn;
     }
-
     public boolean isFriendly() {
         return isFriendly;
     }
@@ -102,8 +100,8 @@ public class Projectile {
         int[] yInfo=CubeContainer.YAndXPositionToChunkPos(cubeIn[1]);
         if(CubeContainer.chunksPosition[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX]&&cubeIn[2]>=0&&cubeIn[2]<200){
             if(CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubePositions[xInfo[1]][yInfo[1]][cubeIn[2]]){
-                //CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubes[xInfo[1]][yInfo[1]][cubeIn[2]]=null;
-                //CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubePositions[xInfo[1]][yInfo[1]][cubeIn[2]]=false;
+                CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubes[xInfo[1]][yInfo[1]][cubeIn[2]]=null;
+                CubeContainer.chunks[xInfo[0]+CubeContainer.numOfChunkX][yInfo[0]+CubeContainer.numOfChunkX].cubePositions[xInfo[1]][yInfo[1]][cubeIn[2]]=false;
                 return true;
             }
         }
@@ -119,19 +117,19 @@ public class Projectile {
         double correctionX=0;
         double difPosXA = (xPosition - correctionX - Player.xPosition);
         double difPosYA = (yPosition + correctionY - Player.yPosition);
-        double difPosZ=((Player.zPosition-zPosition)*Cube.defaultSize);
+        double difPosZ=((Player.zPosition-zPosition)* GameGrid.defaultSize);
         double xPositionA = (Player.xPosition + difPosXA * Math.cos(GameGrid.angleForXRotation) + difPosYA * Math.sin(GameGrid.angleForXRotation) + correctionX);
         double yPositionA = (Player.yPosition - difPosXA * Math.sin(GameGrid.angleForXRotation) + difPosYA * Math.cos(GameGrid.angleForXRotation) - correctionY);
-        double difPosXR=((Player.xPosition-xPositionA)*Cube.defaultSize);
-        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.defaultSize);
+        double difPosXR=((Player.xPosition-xPositionA)* GameGrid.defaultSize);
+        double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))* GameGrid.defaultSize);
         double sizeRatio=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
         double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
-        double newSize=  (size*sizeRatio)*Cube.defaultSize;
-        double newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.defaultSize)*sizeRatio-newSize/2);
+        double newSize=  (size*sizeRatio)* GameGrid.defaultSize;
+        double newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)* GameGrid.defaultSize)*sizeRatio-newSize/2);
         double sizeRatio2=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        double newPosY2=((GameGrid.PVY-GameGrid.PFY)*sizeRatio2+GameGrid.PFY+(Player.zPosition-2)*sizeRatio*Cube.defaultSize);
-        double newSize2=  (size*sizeRatio2)*Cube.defaultSize;
-        double newPosX2=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.defaultSize)*sizeRatio-newSize2/2);
+        double newPosY2=((GameGrid.PVY-GameGrid.PFY)*sizeRatio2+GameGrid.PFY+(Player.zPosition-2)*sizeRatio* GameGrid.defaultSize);
+        double newSize2=  (size*sizeRatio2)* GameGrid.defaultSize;
+        double newPosX2=  (GameGrid.PVX-((Player.xPosition-xPositionA)* GameGrid.defaultSize)*sizeRatio-newSize2/2);
 
         double[] PosAndSize= {newPosX,newPosY,newSize,newPosX2,newPosY2,newSize2};
         return PosAndSize;

@@ -19,7 +19,7 @@ public class Entity {
     static int diSpawnDistance=60;
     double MaxHP;
     double HP;
-    double strength=1;
+    double strength;
     double xp;
     Color color;
     Entity(double x, double y, double z,double strength,double hp,double xp){
@@ -39,7 +39,6 @@ public class Entity {
     public double getxPosition() {
         return xPosition;
     }
-
     public double getyPosition() {
         return yPosition;
     }
@@ -51,9 +50,6 @@ public class Entity {
     }
     public double getHeight() {
         return height;
-    }
-    public double getDepth() {
-        return depth;
     }
 
     public double getRunningMultiplier() {
@@ -147,7 +143,7 @@ public class Entity {
     }
     public void draw(Graphics g){
 
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -172,7 +168,7 @@ public class Entity {
 
     }
     public void draw1(Graphics g){
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -197,7 +193,7 @@ public class Entity {
 
     }
     public void draw2(Graphics g){
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -224,7 +220,7 @@ public class Entity {
 
     }
     public void draw3(Graphics g){
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(GameGrid.numOfChunkToDraw)*Chunk.numOfCubeX)return;
         double[][] corners=getCorners();
         for(var i=0;i<16;i++){
             if(corners[i][1]<-GameGrid.GAME_HEIGHT)return;
@@ -264,80 +260,34 @@ public class Entity {
         double[] info1= Cube.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-(1-depth)/2,zPosition,a);
         double[] info2= Cube.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
         double[] info3= Cube.getObjectScreenPos(xPosition+(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
-
-        double sizeRatio0=info0[2];
-        double sizeRatio1=info1[2];
-        double sizeRatio2=info2[2];
-        double sizeRatio3=info3[2];
-
-        corners[0][0]=info0[0];
-        corners[1][0]=info1[0];
-        corners[2][0]=info2[0];
-        corners[3][0]=info3[0];
-
-        corners[0][1]=info0[1];
-        corners[1][1]=info1[1];
-        corners[2][1]=info2[1];
-        corners[3][1]=info3[1];
-
-        corners[4][0]= corners[0][0];
-        corners[5][0]=corners[1][0];
-        corners[6][0]= corners[2][0];
-        corners[7][0]=corners[3][0];
-        corners[4][1]=corners[0][1]-height*sizeRatio0*Cube.defaultSize;
-        corners[5][1]=corners[1][1]-height*sizeRatio1*Cube.defaultSize;
-        corners[6][1]=corners[2][1]-height*sizeRatio2*Cube.defaultSize;
-        corners[7][1]=corners[3][1]-height*sizeRatio3*Cube.defaultSize;
-
-        corners[8][0]= corners[0][0];
-        corners[9][0]=corners[1][0];
-        corners[10][0]= corners[2][0];
-        corners[11][0]=corners[3][0];
-        corners[8][1]=corners[0][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio0;
-        corners[9][1]=corners[1][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio1;
-        corners[10][1]=corners[2][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio2;
-        corners[11][1]=corners[3][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio3;
-
-        corners[12][0]= corners[0][0];
-        corners[13][0]=corners[1][0];
-        corners[14][0]= corners[2][0];
-        corners[15][0]=corners[3][0];
-
-        if((2-zPosition+cubeIn[2])>height){
-            corners[12][1]=corners[4][1];
-            corners[13][1]=corners[5][1];
-            corners[14][1]=corners[6][1];
-            corners[15][1]=corners[7][1];
+        double[][] info= {info0,info1,info2,info3};
+        int n=4;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<n;j++){
+                corners[i+j*4][0]=info[i][0];
+            }
+            corners[i][1]=info[i][1];
+            corners[i+4][1]=info[i][1]-height* GameGrid.defaultSize*info[i][2];
+            corners[i+4*2][1]=info[i][1]-(1-zPosition+cubeIn[2])* GameGrid.defaultSize*info[i][2];
+            if((2-zPosition+cubeIn[2])>height){
+                corners[i+4*3][1]=corners[4+i][1];
+            }
+            else {
+                corners[i+4*3][1]=corners[4*2+i][1]- GameGrid.defaultSize*info[i][2];
+            }
         }
-        else {
-
-            corners[12][1]=corners[8][1]-Cube.defaultSize*sizeRatio0;
-            corners[13][1]=corners[9][1]-Cube.defaultSize*sizeRatio1;
-            corners[14][1]=corners[10][1]-Cube.defaultSize*sizeRatio2;
-            corners[15][1]=corners[11][1]-Cube.defaultSize*sizeRatio3;
-        }
-
-
-
-
         return corners;
     }
     private boolean[] detectionCollisionWithBlocks(int num){
         boolean[] collision=new boolean[11];
-        Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
 
-       // boolean[][][] cubesPosChunkInside=chunkInside.cubePositions;
-        //System.out.println(chunkInside.xPosition+" "+chunkInside.yPosition);
+
         int zPosUnder=(int)(zPosition);
         if(zPosition<0)zPosUnder=(int)(zPosition-1);
         int zPosAbove=(int)(zPosition+height);
         if(zPosition<0)zPosAbove=(int)(zPosition+height-1);
 
-
         double forOtherSensitivity=0.02;
-
-
-
 
         int xLeftPos=(int)(xPosition+(1-width)/2);
         if(xPosition<0)xLeftPos=(int)(xPosition+(1-width)/2-1);
@@ -373,19 +323,11 @@ public class Entity {
         if(zPosition<0)zPosAboveForOther=(int)(zPosition+height-1-forOtherSensitivity);
 
 
-
-
-
-
-
-
         if(zPosUnder<0)zPosUnder=Chunk.numOfCubeZ-1;
         if(zPosAbove<0)zPosAbove=Chunk.numOfCubeZ-1;
-
         if(zPosUnderForOther<0)zPosUnderForOther=Chunk.numOfCubeZ-1;
         if(zPosAboveForOther<0)zPosAboveForOther=Chunk.numOfCubeZ-1;
         if(zPosMiddleForOther<0)zPosMiddleForOther=Chunk.numOfCubeZ-1;
-
         if(zPosUnder>=Chunk.numOfCubeZ)zPosUnder=Chunk.numOfCubeZ-1;
         if(zPosAbove>=Chunk.numOfCubeZ)zPosAbove=Chunk.numOfCubeZ-1;
         if(zPosUnderForOther>=Chunk.numOfCubeZ)zPosUnderForOther=Chunk.numOfCubeZ-1;
@@ -393,101 +335,50 @@ public class Entity {
         if(zPosMiddleForOther>=Chunk.numOfCubeZ)zPosMiddleForOther=Chunk.numOfCubeZ-1;
 
 
+        int[] xLeftPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(xLeftPosForOther);
+        int xLeftPosForOtherChunk=xLeftPosForOtherInfo[0];
+        int newXLeftPosForOther=xLeftPosForOtherInfo[1];
 
 
-
-        int xLeftPosForOtherChunk=0;
-        int newXLeftPosForOther=xLeftPosForOther;
-        while(newXLeftPosForOther>=Chunk.numOfCubeX){
-            xLeftPosForOtherChunk+=1;
-            newXLeftPosForOther-=Chunk.numOfCubeX;
-        }
-        while(newXLeftPosForOther<0){
-            xLeftPosForOtherChunk-=1;
-            newXLeftPosForOther+=Chunk.numOfCubeX;
-        }
-        int xLeftPosChunk=0;
-        int newXLeftPos=xLeftPos;
-        while(newXLeftPos>=Chunk.numOfCubeX){
-            xLeftPosChunk+=1;
-            newXLeftPos-=Chunk.numOfCubeX;
-        }
-        while(newXLeftPos<0){
-            xLeftPosChunk-=1;
-            newXLeftPos+=Chunk.numOfCubeX;
-        }
-
-        int xRightPosForOtherChunk=0;
-        int newXRightPosForOther=xRightPosForOther;
-        while(newXRightPosForOther>=Chunk.numOfCubeX){
-            xRightPosForOtherChunk+=1;
-            newXRightPosForOther-=Chunk.numOfCubeX;
-        }
-        while(newXRightPosForOther<0){
-            xRightPosForOtherChunk-=1;
-            newXRightPosForOther+=Chunk.numOfCubeX;
-        }
-        int xRightPosChunk=0;
-        int newXRightPos=xRightPos;
-        while(newXRightPos>=Chunk.numOfCubeX){
-            xRightPosChunk+=1;
-            newXRightPos-=Chunk.numOfCubeX;
-        }
-        while(newXRightPos<0){
-            xRightPosChunk-=1;
-            newXRightPos+=Chunk.numOfCubeX;
-        }
-
-        int yFrontPosForOtherChunk=0;
-        int newYFrontPosForOther=yFrontPosForOther;
-        while(newYFrontPosForOther>=Chunk.numOfCubeY){
-            yFrontPosForOtherChunk+=1;
-            newYFrontPosForOther-=Chunk.numOfCubeY;
-        }
-        while(newYFrontPosForOther<0){
-            yFrontPosForOtherChunk-=1;
-            newYFrontPosForOther+=Chunk.numOfCubeY;
-        }
-        int yFrontPosChunk=0;
-        int newYFrontPos=yFrontPos;
-        while(newYFrontPos>=Chunk.numOfCubeY){
-            yFrontPosChunk+=1;
-            newYFrontPos-=Chunk.numOfCubeY;
-        }
-        while(newYFrontPos<0){
-            yFrontPosChunk-=1;
-            newYFrontPos+=Chunk.numOfCubeY;
-        }
-        int yBackPosForOtherChunk=0;
-        int newYBackPosForOther=yBackPosForOther;
-        while(newYBackPosForOther>=Chunk.numOfCubeY){
-            yBackPosForOtherChunk+=1;
-            newYBackPosForOther-=Chunk.numOfCubeY;
-        }
-        while(newYBackPosForOther<0){
-            yBackPosForOtherChunk-=1;
-            newYBackPosForOther+=Chunk.numOfCubeY;
-        }
-        int yBackPosChunk=0;
-        int newYBackPos=yBackPos;
-        while(newYBackPos>=Chunk.numOfCubeY){
-            yBackPosChunk+=1;
-            newYBackPos-=Chunk.numOfCubeY;
-        }
-        while(newYBackPos<0){
-            yBackPosChunk-=1;
-            newYBackPos+=Chunk.numOfCubeY;
-        }
+        int[] xLeftPosInfo=CubeContainer.YAndXPositionToChunkPos(xLeftPos);
+        int xLeftPosChunk=xLeftPosInfo[0];
+        int newXLeftPos=xLeftPosInfo[1];
 
 
+        int[] xRightPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(xRightPosForOther);
+        int xRightPosForOtherChunk=xRightPosForOtherInfo[0];
+        int newXRightPosForOther=xRightPosForOtherInfo[1];
 
 
-        if(num==1 ||num==0){
+        int[] xRightPosInfo=CubeContainer.YAndXPositionToChunkPos(xRightPos);
+        int xRightPosChunk=xRightPosInfo[0];
+        int newXRightPos=xRightPosInfo[1];
+
+
+        int[] yFrontPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(yFrontPosForOther);
+        int yFrontPosForOtherChunk=yFrontPosForOtherInfo[0];
+        int newYFrontPosForOther=yFrontPosForOtherInfo[1];
+
+
+        int[] yFrontPosInfo=CubeContainer.YAndXPositionToChunkPos(yFrontPos);
+        int yFrontPosChunk=yFrontPosInfo[0];
+        int newYFrontPos=yFrontPosInfo[1];
+
+        int[] yBackPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(yBackPosForOther);
+        int yBackPosForOtherChunk=yBackPosForOtherInfo[0];
+        int newYBackPosForOther=yBackPosForOtherInfo[1];
+
+        int[] yBackPosInfo=CubeContainer.YAndXPositionToChunkPos(yBackPos);
+        int yBackPosChunk=yBackPosInfo[0];
+        int newYBackPos=yBackPosInfo[1];
+
+
+        if(num==1 ||num==0)
             collision[1]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosUnder]||
                     CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosUnder]||
                     CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosUnder]||
                     CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosUnder];
-        }
+
 
         if(num==2 ||num==0)
            collision[2]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosAbove]||
@@ -638,9 +529,9 @@ public class Entity {
 
                         }
                         xPosition+=Math.cos(angleWithOther)*speed*1*deltaTime;
-                        xVelocity=+Math.cos(angleWithOther)*speed*1*deltaTime;
+                        xVelocity=Math.cos(angleWithOther)*speed*1*deltaTime;
                         yPosition+=Math.sin(angleWithOther)*speed*1*deltaTime;
-                        yVelocity=+Math.sin(angleWithOther)*speed*1*deltaTime;
+                        yVelocity=Math.sin(angleWithOther)*speed*1*deltaTime;
                         detectionCollisionWithBlocks(3);
                         detectionCollisionWithBlocks(4);
                         detectionCollisionWithBlocks(5);

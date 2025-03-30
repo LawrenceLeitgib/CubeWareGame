@@ -3,7 +3,6 @@ import java.awt.event.*;
 
 public class InputHandler {
 
-
     public void keyReleased(KeyEvent e) {
     }
     public void keyPressed(KeyEvent e) {

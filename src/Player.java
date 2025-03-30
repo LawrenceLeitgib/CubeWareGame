@@ -6,15 +6,13 @@ public class Player {
     static double xPosition;
     static double yPosition;
     static double zPosition;
-    static int GAME_WIDTH;
-    static int GAME_HEIGHT;
     static double cubeAway=2;
     static double width=.8;
     static double height=1.8;
     static double depth=.8;
     static double[][] corners=new double[12][2];
-    double speed=4.2;
-    double runningMultiplier=1.8;
+    double speed=4.2*4;
+    double runningMultiplier=1.8*2;
     static double xVelocity;
     static double yVelocity;
     double zVelocity;
@@ -23,16 +21,14 @@ public class Player {
     boolean isJumping=false;
     double slowMultiplier=0.1;
     boolean isRunning;
-    boolean isMovingUp=false;
-    boolean isMovingDown=false;
-    boolean isMovingForward =false;
-    boolean isMovingBackward =false;
-    boolean isMovingLeft=false;
-    boolean isMovingRight=false;
+    private boolean isMovingUp=false;
+    private boolean isMovingDown=false;
+    private boolean isMovingForward =false;
+    private boolean isMovingBackward =false;
+    private boolean isMovingLeft=false;
+    private boolean isMovingRight=false;
     static int[] chunkIn=new int[2];
-    static int numOfChunkToDraw=3;
     static boolean thirdPerspective=true;
-    boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
     static int[] cubeIn=new int[3];
     int yPosCount=0;
     double[] yPosHistoric=new double[10];
@@ -49,8 +45,6 @@ public class Player {
         Player.xPosition=positionX;
         Player.yPosition=positionY;
         Player.zPosition=positionZ+10;
-        Player.GAME_WIDTH =GameGrid.GAME_WIDTH;
-        Player.GAME_HEIGHT =GameGrid.GAME_HEIGHT;
         setCubeAndChunkIn();
         //newChunkAround();
         SMH=new SpecialMoveHandler();
@@ -63,7 +57,6 @@ public class Player {
         projectileCollisionHandler(deltaTime);
         detectionCollisionWithEnemy(deltaTime);
         setCubeAndChunkIn();
-        updateMegaChunk();
         detectionCollision(0);
         flySwitchHandler(deltaTime);
         xPosition=  (int)((xPosition)*1000)/1000.0;
@@ -91,7 +84,7 @@ public class Player {
     public static void draw1(Graphics g){
         if(!thirdPerspective)return;
         corners=getCorners();
-        g.setColor(Color.black);
+        g.setColor(Color.blue);
         g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
         g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
         g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[3][0], (int) corners[3][1]);
@@ -110,7 +103,7 @@ public class Player {
     public static void draw2(Graphics g){
         if(!thirdPerspective)return;
         corners=getCorners();
-        g.setColor(Color.black);
+        g.setColor(Color.yellow);
         g.drawLine((int) corners[12][0], (int) corners[12][1], (int) corners[8][0], (int) corners[8][1]);
         g.drawLine((int) corners[13][0], (int) corners[13][1], (int) corners[9][0], (int) corners[9][1]);
         g.drawLine((int) corners[14][0], (int) corners[14][1], (int) corners[10][0], (int) corners[10][1]);
@@ -123,8 +116,6 @@ public class Player {
             g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
 
         }
-
-
     }
     public static void draw3(Graphics g){
         if(!thirdPerspective)return;
@@ -132,7 +123,7 @@ public class Player {
         if(Math.round((zPosition-cubeIn[2])*100000)/100000.0==.2)return;
         if(GamePanel.gameState==GamePanel.GameStates.get("Menu"))return;
         corners=getCorners();
-        g.setColor(Color.black);
+        g.setColor(Color.red);
         g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
         g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
         g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
@@ -142,9 +133,6 @@ public class Player {
         g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[13][0], (int) corners[13][1]);
         g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[14][0], (int) corners[14][1]);
         g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[15][0], (int) corners[15][1]);
-
-
-
     }
     public  void respawn() {
         Stats.health=Stats.maxHealth;
@@ -376,7 +364,6 @@ public class Player {
         if(beforeCount<0)beforeCount+=10;
         double deltaYPos=yPosHistoric[yPosCount]-yPosHistoric[beforeCount];
         if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
-
             if(xVelocity>0){
                 detectionCollision(4);
             }
@@ -530,151 +517,136 @@ public class Player {
 
     }
     private void setZVelocity(double zVelocity) {
-
         this.zVelocity = zVelocity;
-    }
-    public static void setGameWidth(int gameWidth) {
-        GAME_WIDTH = gameWidth;
-    }
-    public static void setGameHeight(int gameHeight) {
-        GAME_HEIGHT = gameHeight;
-    }
-    public void updateMegaChunk(){
-        for(var i=0;i<Chunk.numOfCubeX;i++){
-            for(var j=0;j<Chunk.numOfCubeY;j++){
-                for(var k=0;k<Chunk.numOfCubeZ;k++){
-                    megaChunkCubePositions[i][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]-1].cubePositions[i][j][k];
-                    megaChunkCubePositions[i+Chunk.numOfCubeX][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]-1].cubePositions[i][j][k];
-                    megaChunkCubePositions[i+Chunk.numOfCubeX*2][j][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]-1].cubePositions[i][j][k];
-
-                    megaChunkCubePositions[i][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]].cubePositions[i][j][k];
-                    megaChunkCubePositions[i+Chunk.numOfCubeX][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]].cubePositions[i][j][k];
-                    megaChunkCubePositions[i+Chunk.numOfCubeX*2][j+Chunk.numOfCubeY][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]].cubePositions[i][j][k];
-
-                    megaChunkCubePositions[i][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]-1][CubeContainer.numOfChunkY+chunkIn[1]+1].cubePositions[i][j][k];
-                    megaChunkCubePositions[i+Chunk.numOfCubeX][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]+1].cubePositions[i][j][k];
-                    megaChunkCubePositions[i+Chunk.numOfCubeX*2][j+Chunk.numOfCubeY*2][k]=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]+1][CubeContainer.numOfChunkY+chunkIn[1]+1].cubePositions[i][j][k];
-                }
-            }
-        }
-
     }
     private boolean[] detectionCollision(int num){
        boolean[] collision=new boolean[7];
-       Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
-       boolean[][][] cubesPosChunkInside;
-       int zPosUnder=(int)(zPosition);
-       if(zPosition<0)zPosUnder=(int)(zPosition-1);
-       int zPosAbove=(int)(zPosition+height);
-       if(zPosition<0)zPosAbove=(int)(zPosition+height-1);
-       double forOtherSensitivity=0.02;
+        int zPosUnder=(int)(zPosition);
+        if(zPosition<0)zPosUnder=(int)(zPosition-1);
+        int zPosAbove=(int)(zPosition+height);
+        if(zPosition<0)zPosAbove=(int)(zPosition+height-1);
 
-       int xLeftPos=(int)(xPosition+(1-width)/2);
-       if(xPosition<0)xLeftPos=(int)(xPosition+(1-width)/2-1);
+        double forOtherSensitivity=0.01;
 
-       int xRightPos=(int)(xPosition-(1-width)/2+1);
-       if(xPosition<0)xRightPos=(int)(xPosition-(1-width)/2);
+        int xLeftPos=(int)(xPosition+(1-width)/2);
+        if(xPosition<0)xLeftPos=(int)(xPosition+(1-width)/2-1);
 
-       int xLeftPosForOther=(int)(xPosition+(1-width)/2+forOtherSensitivity);
-       if(xPosition<0.5)xLeftPosForOther=(int)(xPosition+(1-width)/2-1+forOtherSensitivity);
+        int xRightPos=(int)(xPosition-(1-width)/2+1);
+        if(xPosition<0)xRightPos=(int)(xPosition-(1-width)/2);
 
-       int xRightPosForOther=(int)(xPosition-(1-width)/2+1-forOtherSensitivity);
-       if(xPosition<-0.5)xRightPosForOther=(int)(xPosition-(1-width)/2-forOtherSensitivity);
+        int xLeftPosForOther=(int)(xPosition+(1-width)/2+forOtherSensitivity);
+        if(xPosition<0.5)xLeftPosForOther=(int)(xPosition+(1-width)/2-1+forOtherSensitivity);
 
-       int yFrontPos=(int)(yPosition+(1-depth)/2);
-       if(yPosition<0)yFrontPos=(int)(yPosition+(1-depth)/2-1);
+        int xRightPosForOther=(int)(xPosition-(1-width)/2+1-forOtherSensitivity);
+        if(xPosition<-0.5)xRightPosForOther=(int)(xPosition-(1-width)/2-forOtherSensitivity);
 
-       int yBackPos=(int)(yPosition-(1-depth)/2+1);
-       if(yPosition<0)yBackPos=(int)(yPosition-(1-depth)/2);
+        int yFrontPos=(int)(yPosition+(1-depth)/2);
+        if(yPosition<0)yFrontPos=(int)(yPosition+(1-depth)/2-1);
 
-       int yFrontPosForOther=(int)(yPosition+(1-depth)/2+forOtherSensitivity);
-       if(yPosition<0.5)yFrontPosForOther=(int)(yPosition+(1-depth)/2-1+forOtherSensitivity);
+        int yBackPos=(int)(yPosition-(1-depth)/2+1);
+        if(yPosition<0)yBackPos=(int)(yPosition-(1-depth)/2);
 
-       int yBackPosForOther=(int)(yPosition-(1-depth)/2+1-forOtherSensitivity);
-       if(yPosition<-0.5)yBackPosForOther=(int)(yPosition-(1-depth)/2-forOtherSensitivity);
+        int yFrontPosForOther=(int)(yPosition+(1-depth)/2+forOtherSensitivity);
+        if(yPosition<0.5)yFrontPosForOther=(int)(yPosition+(1-depth)/2-1+forOtherSensitivity);
 
-       int zPosUnderForOther=(int)(zPosition+forOtherSensitivity);
-       if(zPosition<0)zPosUnderForOther=(int)(zPosition-1+forOtherSensitivity);
+        int yBackPosForOther=(int)(yPosition-(1-depth)/2+1-forOtherSensitivity);
+        if(yPosition<-0.5)yBackPosForOther=(int)(yPosition-(1-depth)/2-forOtherSensitivity);
 
-       int zPosMiddleForOther=(int)(zPosition+1+forOtherSensitivity);
-       if(zPosition<0)zPosMiddleForOther=(int)(zPosition+1-1+forOtherSensitivity);
+        int zPosUnderForOther=(int)(zPosition+forOtherSensitivity);
+        if(zPosition<0)zPosUnderForOther=(int)(zPosition-1+forOtherSensitivity);
 
-       int zPosAboveForOther=(int)(zPosition+height-forOtherSensitivity);
-       if(zPosition<0)zPosAboveForOther=(int)(zPosition+height-1-forOtherSensitivity);
+        int zPosMiddleForOther=(int)(zPosition+1+forOtherSensitivity);
+        if(zPosition<0)zPosMiddleForOther=(int)(zPosition+1-1+forOtherSensitivity);
 
+        int zPosAboveForOther=(int)(zPosition+height-forOtherSensitivity);
+        if(zPosition<0)zPosAboveForOther=(int)(zPosition+height-1-forOtherSensitivity);
 
 
-      int numCubX=-Chunk.numOfCubeX*(chunkInside.xPosition-1);
-      int numCubY=-Chunk.numOfCubeY*(chunkInside.yPosition-1);
-       cubesPosChunkInside=megaChunkCubePositions;
-
-       if(zPosUnder<0)zPosUnder=Chunk.numOfCubeZ-1;
-       if(zPosAbove<0)zPosAbove=Chunk.numOfCubeZ-1;
-
-       if(zPosUnderForOther<0)zPosUnderForOther=Chunk.numOfCubeZ-1;
-       if(zPosAboveForOther<0)zPosAboveForOther=Chunk.numOfCubeZ-1;
-       if(zPosMiddleForOther<0)zPosMiddleForOther=Chunk.numOfCubeZ-1;
-
-       if(zPosUnder>=Chunk.numOfCubeZ)zPosUnder=Chunk.numOfCubeZ-1;
-       if(zPosAbove>=Chunk.numOfCubeZ)zPosAbove=Chunk.numOfCubeZ-1;
-       if(zPosUnderForOther>=Chunk.numOfCubeZ)zPosUnderForOther=Chunk.numOfCubeZ-1;
-       if(zPosAboveForOther>=Chunk.numOfCubeZ)zPosAboveForOther=Chunk.numOfCubeZ-1;
-       if(zPosMiddleForOther>=Chunk.numOfCubeZ)zPosMiddleForOther=Chunk.numOfCubeZ-1;
+        if(zPosUnder<0)zPosUnder=Chunk.numOfCubeZ-1;
+        if(zPosAbove<0)zPosAbove=Chunk.numOfCubeZ-1;
+        if(zPosUnderForOther<0)zPosUnderForOther=Chunk.numOfCubeZ-1;
+        if(zPosAboveForOther<0)zPosAboveForOther=Chunk.numOfCubeZ-1;
+        if(zPosMiddleForOther<0)zPosMiddleForOther=Chunk.numOfCubeZ-1;
+        if(zPosUnder>=Chunk.numOfCubeZ)zPosUnder=Chunk.numOfCubeZ-1;
+        if(zPosAbove>=Chunk.numOfCubeZ)zPosAbove=Chunk.numOfCubeZ-1;
+        if(zPosUnderForOther>=Chunk.numOfCubeZ)zPosUnderForOther=Chunk.numOfCubeZ-1;
+        if(zPosAboveForOther>=Chunk.numOfCubeZ)zPosAboveForOther=Chunk.numOfCubeZ-1;
+        if(zPosMiddleForOther>=Chunk.numOfCubeZ)zPosMiddleForOther=Chunk.numOfCubeZ-1;
 
 
+        int[] xLeftPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(xLeftPosForOther);
+        int xLeftPosForOtherChunk=xLeftPosForOtherInfo[0];
+        int newXLeftPosForOther=xLeftPosForOtherInfo[1];
+        int[] xLeftPosInfo=CubeContainer.YAndXPositionToChunkPos(xLeftPos);
+        int xLeftPosChunk=xLeftPosInfo[0];
+        int newXLeftPos=xLeftPosInfo[1];
+        int[] xRightPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(xRightPosForOther);
+        int xRightPosForOtherChunk=xRightPosForOtherInfo[0];
+        int newXRightPosForOther=xRightPosForOtherInfo[1];
+        int[] xRightPosInfo=CubeContainer.YAndXPositionToChunkPos(xRightPos);
+        int xRightPosChunk=xRightPosInfo[0];
+        int newXRightPos=xRightPosInfo[1];
+        int[] yFrontPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(yFrontPosForOther);
+        int yFrontPosForOtherChunk=yFrontPosForOtherInfo[0];
+        int newYFrontPosForOther=yFrontPosForOtherInfo[1];
+        int[] yFrontPosInfo=CubeContainer.YAndXPositionToChunkPos(yFrontPos);
+        int yFrontPosChunk=yFrontPosInfo[0];
+        int newYFrontPos=yFrontPosInfo[1];
+        int[] yBackPosForOtherInfo=CubeContainer.YAndXPositionToChunkPos(yBackPosForOther);
+        int yBackPosForOtherChunk=yBackPosForOtherInfo[0];
+        int newYBackPosForOther=yBackPosForOtherInfo[1];
+        int[] yBackPosInfo=CubeContainer.YAndXPositionToChunkPos(yBackPos);
+        int yBackPosChunk=yBackPosInfo[0];
+        int newYBackPos=yBackPosInfo[1];
 
 
-       if(num==1 ||num==0){
-           collision[1]= cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPosForOther][zPosUnder]||
-                   cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPosForOther][zPosUnder]||
-                   cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPosForOther][zPosUnder]||
-                   cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPosForOther][zPosUnder];
+        if(num==1 ||num==0)
+            collision[1]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosUnder]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosUnder]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosUnder]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosUnder];
 
-       }
 
         if(num==2 ||num==0)
-            collision[2]= cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPosForOther][zPosAbove]||
-               cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPosForOther][zPosAbove]||
-               cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPosForOther][zPosAbove]||
-               cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPosForOther][zPosAbove];
+            collision[2]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPosForOther][newYFrontPosForOther][zPosAbove]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPosForOther][newYBackPosForOther][zPosAbove]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPosForOther][newYFrontPosForOther][zPosAbove]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPosForOther][newYBackPosForOther][zPosAbove];
 
 
         if(num==3 ||num==0)
-        collision[3]= cubesPosChunkInside[numCubX+xLeftPos][numCubY+yFrontPosForOther][zPosUnderForOther]||
-                cubesPosChunkInside[numCubX+xLeftPos][numCubY+yBackPosForOther][zPosUnderForOther]||
-                cubesPosChunkInside[numCubX+xLeftPos][numCubY+yFrontPosForOther][zPosMiddleForOther]||
-                cubesPosChunkInside[numCubX+xLeftPos][numCubY+yBackPosForOther][zPosMiddleForOther]||
-                cubesPosChunkInside[numCubX+xLeftPos][numCubY+yFrontPosForOther][zPosAboveForOther]||
-                cubesPosChunkInside[numCubX+xLeftPos][numCubY+yBackPosForOther][zPosAboveForOther];
+            collision[3]= CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXLeftPos][newYFrontPosForOther][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXLeftPos][newYBackPosForOther][zPosAboveForOther];
 
+        if(num==4 ||num==0)
+            collision[4]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yFrontPosForOtherChunk].cubePositions[newXRightPos][newYFrontPosForOther][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosChunk][CubeContainer.numOfChunkY+yBackPosForOtherChunk].cubePositions[newXRightPos][newYBackPosForOther][zPosAboveForOther];
 
-       if(num==4 ||num==0)
-           collision[4]= cubesPosChunkInside[numCubX+xRightPos][numCubY+yFrontPosForOther][zPosUnderForOther]||
-                   cubesPosChunkInside[numCubX+xRightPos][numCubY+yBackPosForOther][zPosUnderForOther]||
-                   cubesPosChunkInside[numCubX+xRightPos][numCubY+yFrontPosForOther][zPosMiddleForOther]||
-                   cubesPosChunkInside[numCubX+xRightPos][numCubY+yBackPosForOther][zPosMiddleForOther]||
-                   cubesPosChunkInside[numCubX+xRightPos][numCubY+yFrontPosForOther][zPosAboveForOther]||
-                   cubesPosChunkInside[numCubX+xRightPos][numCubY+yBackPosForOther][zPosAboveForOther];
+        if(num==5 ||num==0)
+            collision[5]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXRightPosForOther][newYFrontPos][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yFrontPosChunk].cubePositions[newXLeftPosForOther][newYFrontPos][zPosAboveForOther];
+        if(num==6 ||num==0)
+            collision[6]= CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosUnderForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosMiddleForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xRightPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXRightPosForOther][newYBackPos][zPosAboveForOther]||
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+xLeftPosForOtherChunk][CubeContainer.numOfChunkY+yBackPosChunk].cubePositions[newXLeftPosForOther][newYBackPos][zPosAboveForOther];
 
-
-       if(num==5 ||num==0)
-
-           collision[5]= cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPos][zPosUnderForOther]||
-                   cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPos][zPosUnderForOther]||
-                   cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPos][zPosMiddleForOther]||
-                   cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPos][zPosMiddleForOther]||
-                   cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yFrontPos][zPosAboveForOther]||
-                   cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yFrontPos][zPosAboveForOther];
-       if(num==6 ||num==0)
-           collision[6]= cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosUnderForOther]||
-                   cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPos][zPosUnderForOther]||
-                   cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosMiddleForOther]||
-                   cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPos][zPosMiddleForOther]||
-                   cubesPosChunkInside[numCubX+xRightPosForOther][numCubY+yBackPos][zPosAboveForOther]||
-                   cubesPosChunkInside[numCubX+xLeftPosForOther][numCubY+yBackPos][zPosAboveForOther];
-
-       double sensitivity=1;
-       //double sensitivity=0.5;
+        double sensitivity=1;
+        //double sensitivity=0.5;
       // System.out.println( collision[3]);
       // System.out.println(collision[5]+" "+xRightPosForOther+" "+xPosition);
 
@@ -686,14 +658,12 @@ public class Player {
            zPosition=zPosAbove-height;
            zVelocity=0;
        }
-
        if(collision[3]&&(xLeftPos+1-(1-width)/2)-xPosition<sensitivity&&xVelocity<0){
             double old=xPosition;
               xPosition=xLeftPos+1-(1-width)/2;
               if(getCubeIn()&&Math.abs(old-xPosition)>.2){
                   xPosition=old;
               }
-
        }
        if(collision[4]&&xPosition-(xRightPos-1+(1-width)/2)<sensitivity&&xVelocity>0){
            double old=xPosition;
@@ -720,20 +690,15 @@ public class Player {
            }
        }
 
-
-
-
        for(var i=1;i<7;i++){
            if (collision[i]) {
                collision[0] = true;
                break;
            }
        }
-
-
        return collision;
    }
-    public static double[][]   getCorners(){
+    public static double[][] getCorners(){
         double[][] corners=new double[16][2];
         double a=GameGrid.angleForXRotation;
         a=0;
@@ -741,71 +706,22 @@ public class Player {
         double[] info1= Cube.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-(1-depth)/2,zPosition,a);
         double[] info2= Cube.getObjectScreenPos(xPosition+1-(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
         double[] info3= Cube.getObjectScreenPos(xPosition+(1-width)/2,yPosition-1+(1-depth)/2,zPosition,a);
-
-
         double[][] info= {info0,info1,info2,info3};
-
-        double sizeRatio0=info0[2];
-        double sizeRatio1=info1[2];
-        double sizeRatio2=info2[2];
-        double sizeRatio3=info3[2];
-
-        /*for(int i=0;i<4;i++){
-            corners[i][0]=info[i][0];
+        int n=4;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<n;j++){
+                corners[i+j*4][0]=info[i][0];
+            }
             corners[i][1]=info[i][1];
-
-        }*/
-
-        corners[0][0]=info0[0];
-        corners[1][0]=info1[0];
-        corners[2][0]=info2[0];
-        corners[3][0]=info3[0];
-
-        corners[0][1]=info0[1];
-        corners[1][1]=info1[1];
-        corners[2][1]=info2[1];
-        corners[3][1]=info3[1];
-
-
-
-        corners[4][0]= corners[0][0];
-        corners[5][0]=corners[1][0];
-        corners[6][0]= corners[2][0];
-        corners[7][0]=corners[3][0];
-        corners[4][1]=corners[0][1]-height*sizeRatio0*Cube.defaultSize;
-        corners[5][1]=corners[1][1]-height*sizeRatio1*Cube.defaultSize;
-        corners[6][1]=corners[2][1]-height*sizeRatio2*Cube.defaultSize;
-        corners[7][1]=corners[3][1]-height*sizeRatio3*Cube.defaultSize;
-
-        corners[8][0]= corners[0][0];
-        corners[9][0]=corners[1][0];
-        corners[10][0]= corners[2][0];
-        corners[11][0]=corners[3][0];
-        corners[8][1]=corners[0][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio0;
-        corners[9][1]=corners[1][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio1;
-        corners[10][1]=corners[2][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio2;
-        corners[11][1]=corners[3][1]-(1-zPosition+cubeIn[2])*Cube.defaultSize*sizeRatio3;
-
-        corners[12][0]= corners[0][0];
-        corners[13][0]=corners[1][0];
-        corners[14][0]= corners[2][0];
-        corners[15][0]=corners[3][0];
-
-        if((2-zPosition+cubeIn[2])>height){
-            corners[12][1]=corners[4][1];
-            corners[13][1]=corners[5][1];
-            corners[14][1]=corners[6][1];
-            corners[15][1]=corners[7][1];
+            corners[i+4][1]=info[i][1]-height* GameGrid.defaultSize*info[i][2];
+            corners[i+4*2][1]=info[i][1]-(1-zPosition+cubeIn[2])* GameGrid.defaultSize*info[i][2];
+            if((2-zPosition+cubeIn[2])>height){
+                corners[i+4*3][1]=corners[4+i][1];
+            }
+            else {
+                corners[i+4*3][1]=corners[4*2+i][1]- GameGrid.defaultSize*info[i][2];
+            }
         }
-        else {
-            corners[12][1]=corners[8][1]-Cube.defaultSize*sizeRatio0;
-            corners[13][1]=corners[9][1]-Cube.defaultSize*sizeRatio1;
-            corners[14][1]=corners[10][1]-Cube.defaultSize*sizeRatio2;
-            corners[15][1]=corners[11][1]-Cube.defaultSize*sizeRatio3;
-        }
-
-
-
     return corners;
     }
     public void keyPressed(KeyEvent e) {
@@ -929,18 +845,18 @@ public class Player {
         if(GamePanel.gameState==GamePanel.GameStates.get("Running")){
             if(thirdPerspective){
                 thirdPerspective=false;
-                GameGrid.PFY=GAME_HEIGHT/2.0;
+                GameGrid.PFY= GameGrid.GAME_HEIGHT/2.0;
                 //GameGrid.PVY=GAME_HEIGHT*.8;
-                GameGrid.PVY=GameGrid.PFY+height*Cube.defaultSize;
-                GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
+                GameGrid.PVY=GameGrid.PFY+height* GameGrid.defaultSize;
+                GameGrid.depthRatio= GameGrid.GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
                 GameGrid.isRotatingLeft=false;
                 GameGrid.isRotatingRight=false;
                 cubeAway=-5;
 
             }else{
-                GameGrid.PFY=GAME_HEIGHT/3.0;
-                GameGrid.PVY=GAME_HEIGHT;
-                GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
+                GameGrid.PFY= GameGrid.GAME_HEIGHT/3.0;
+                GameGrid.PVY= GameGrid.GAME_HEIGHT;
+                GameGrid.depthRatio= GameGrid.GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
                 thirdPerspective=true;
                 isMovingLeft=false;
                 isMovingRight=false;

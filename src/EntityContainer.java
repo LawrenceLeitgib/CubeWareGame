@@ -1,14 +1,14 @@
 import java.awt.*;
 import java.util.ArrayList;
 public class EntityContainer {
-    static ArrayList<Entity> entities = new ArrayList<Entity>();
+    static ArrayList<Entity> entities = new ArrayList<>();
     static int numOfEntities = Entity.diSpawnDistance+10;
     static ArrayList<Entity>[][][] entities3D = new ArrayList[numOfEntities *2][numOfEntities *2][200];
     boolean HaveBeenUpdated;
     static boolean[] zLayers=new boolean[Chunk.numOfCubeZ];
     EntityContainer(){
         //enemies[0] = new Enemy(0,-5, 2);
-       //enemyList[0] = true;
+        //enemyList[0] = true;
     }
     double zombieCreationSpawnTime =3;
     double zombieCreationCount =3;
@@ -32,7 +32,6 @@ public class EntityContainer {
             if(type.equals("zombie"))addZombie(Math.cos(a) * r + Player.xPosition, Math.sin(a) * r + Player.yPosition, 2,1,100,25);
             if(type.equals("mage"))addMage(Math.cos(a) * r + Player.xPosition, Math.sin(a) * r + Player.yPosition, 2,9,200,200);
         }
-
     }
     public void updateEnemies3D(){
         if(entities.size()>0){
@@ -56,7 +55,7 @@ public class EntityContainer {
 
             if (z < 0) continue;
             if (entities3D[x + numOfEntities - Player.cubeIn[0]][y + numOfEntities - Player.cubeIn[1]][z] == null) {
-                ArrayList<Entity> enemiesSub = new ArrayList<Entity>();
+                ArrayList<Entity> enemiesSub = new ArrayList<>();
                 enemiesSub.add(entity);
                 entities3D[x + numOfEntities - Player.cubeIn[0]][y + numOfEntities - Player.cubeIn[1]][z] = enemiesSub;
             } else {

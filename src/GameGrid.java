@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 public class GameGrid {
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
-    Player player;
     static int safeZone=20;
     static int regenZone=6;
     static double gravityAcceleration=60;
@@ -14,8 +13,10 @@ public class GameGrid {
     static double  PFY;
     static  double PVX;
     static double PVY;
+    static int numOfChunkToDraw=3;
+    static int defaultSize=100;
     CubeContainer cubeContainer;
-    static double depthRatio=1.0;
+    static double depthRatio=1;
     static double angleForXRotation=0.0;
     static boolean isRotatingLeft=false;
     static boolean isRotatingRight=false;
@@ -25,16 +26,20 @@ public class GameGrid {
     static double[] mouseInGame;
     static ProjectileContainer fireBallContainer;
     static EntityContainer entityContainer;
+    Player player;
     static boolean mouseLeftClickDown =false;
     static boolean mouseRightClickDown=false;
     static double[] cameraPos =new double[2];
     static boolean F3Down=true;
-    GameGrid(){
-        player = new Player(0,0,0);
-        cubeContainer=new CubeContainer(depthRatio);
-        fireBallContainer=new ProjectileContainer();
-        entityContainer =new EntityContainer();
+    GameGrid(int GAME_WIDTH,int GAME_HEIGHT) {
+        setGameWidth(GAME_WIDTH);
+        setGameHeight(GAME_HEIGHT);
+        player = new Player(0, 0, 0);
+        cubeContainer = new CubeContainer();
+        fireBallContainer = new ProjectileContainer();
+        entityContainer = new EntityContainer();
     }
+
     public static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
         PFX=GAME_WIDTH/2.0;
@@ -96,6 +101,7 @@ public class GameGrid {
         entityContainer.draw(g);
         cubeContainer.draw(g);
         g.setColor(Color.RED);
+        g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
         if(!Player.thirdPerspective)g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
     }
     public double[] mousePosToGamePos(int xPos,int yPos){
@@ -104,11 +110,11 @@ public class GameGrid {
            yPos= (int) (PFY+1);
 
         }
-        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY- ProjectileContainer.ProjectileHeight *Cube.defaultSize);
+        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY- ProjectileContainer.ProjectileHeight * defaultSize);
         double difPosYRForMouse=((GAME_HEIGHT/sizeRatioForMouse-GAME_HEIGHT)/depthRatio);
-        double yPositionAForMouse=-(difPosYRForMouse/Cube.defaultSize-Player.yPosition-Player.cubeAway);
-        double mouseNewWidth=  Cube.defaultSize*sizeRatioForMouse;
-        double xPositionAForMouse=(xPos+mouseNewWidth/2-GameGrid.PVX)/sizeRatioForMouse/Cube.defaultSize+Player.xPosition;
+        double yPositionAForMouse=-(difPosYRForMouse/ defaultSize-Player.yPosition-Player.cubeAway);
+        double mouseNewWidth=  defaultSize*sizeRatioForMouse;
+        double xPositionAForMouse=(xPos+mouseNewWidth/2-GameGrid.PVX)/sizeRatioForMouse/ defaultSize+Player.xPosition;
         double correctorXY=0.5;
         double A=xPositionAForMouse-Player.xPosition-correctorXY;
         double B=yPositionAForMouse-Player.yPosition+correctorXY;
@@ -158,9 +164,7 @@ public class GameGrid {
             case 72:
                // isRotatingLeft=false;
                 break;
-
         }
-
     }
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
@@ -178,11 +182,15 @@ public class GameGrid {
             case 74:
                 PVY-=20;
                 break;
+            case 90:
+                Player.cubeAway+=.5;
+                break;
+            case 71:
+                Player.cubeAway-=.5;
+                break;
             case 114:
                 toggleF3();
             break;
-
-
         }
     }
     public void mousePressed(MouseEvent e) {

@@ -35,7 +35,8 @@ public class GamePanel extends JPanel implements Runnable {
         yPos=this.getLocationOnScreen().getY() ;
         xPos=this.getLocationOnScreen().getX();} catch (Exception ignored) {
         }
-        stats=new Stats(GAME_WIDTH,GAME_HEIGHT);
+        newGameGrid();
+        stats=new Stats();
         gameThread=new Thread(this);
         gameThread.start();
         GameStates.put("Menu",0);
@@ -48,7 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
         rectForDraw[1]=new Rectangle(15,200,100,20);
     }
     public void newGameGrid(){
-        gameGrid = new GameGrid();
+        gameGrid = new GameGrid(GAME_WIDTH,GAME_HEIGHT);
     }
     public void paint(Graphics g){
         image=createImage(getWidth(),getHeight());
@@ -57,10 +58,8 @@ public class GamePanel extends JPanel implements Runnable {
         g.drawImage(image,0,0,this);
 
     }
-    static public boolean isInisdeRect(int xPos,int yPos,Rectangle rect){
-
-        if(xPos>rect.getX()&&xPos< rect.getX()+ rect.getWidth()&&yPos>rect.getY()&&yPos<rect.getY()+rect.getHeight())return true;
-        return false;
+    static public boolean isInsideRect(int xPos, int yPos, Rectangle rect){
+        return xPos > rect.getX() && xPos < rect.getX() + rect.getWidth() && yPos > rect.getY() && yPos < rect.getY() + rect.getHeight();
     }
     static public void drawRect(Graphics g, Rectangle rect,Color color){
         g.setColor(color);
@@ -79,7 +78,7 @@ public class GamePanel extends JPanel implements Runnable {
         g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
     }
     static public void drawRectWithContext(Graphics g, Rectangle rect,Color color1,Color color2,int size){
-        if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
+        if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
             drawRectWithBorder(g,rect,color1,color2,size);
         }else{
             drawRect(g,rect,color1);
@@ -87,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
     static public void drawRectWithContext2(Graphics g, Rectangle rect,Color color1,Color color2,int size){
-        if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
+        if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
             drawRectWithBorder(g,rect,color1,color2,size);
         }
 
@@ -111,40 +110,13 @@ public class GamePanel extends JPanel implements Runnable {
     public void draw(Graphics g){
         Rectangle r = getBounds();
         //r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
-
         if(GameGrid.GAME_HEIGHT!=r.height||GameGrid.GAME_WIDTH!=r.width) {
-
             GameGrid.setGameHeight(r.height);
             GameGrid.setGameWidth(r.width);
             Stats.setGameHeight(r.height);
             Stats.setGameWidth(r.width);
-            Player.setGameHeight(r.height);
-            Player.setGameWidth(r.width);
-            Cube.setGameHeight(r.height);
-            Cube.setGameWidth(r.width);
-            CubeContainer.setGameHeight(r.height);
-            CubeContainer.setGameWidth(r.width);
-            Cube.defaultSize=r.width/10;
-            /*
-            Cube.defaultSize=r.width/10;
-            Cube.width= Cube.defaultSize;
-            Cube.height= Cube.defaultSize;
-            Cube.depth= Cube.defaultSize;
-            Player.width=.8 *Cube.defaultSize;
-            Player.depth=.8 *Cube.defaultSize;
-            Player.height=1.8* Cube.defaultSize;
-            for(Enemy enemy :EntityContainer.enemies){
-                enemy.height=2* Cube.defaultSize;
-                enemy.width=.8* Cube.defaultSize;
-                enemy.depth=.8* Cube.defaultSize;
-
-            }
-            System.out.println("test");
-
-             */
+            GameGrid.defaultSize=r.width/10;
             rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
-
-
         }
         gameGrid.draw(g);
         stats.draw(g);
@@ -155,7 +127,6 @@ public class GamePanel extends JPanel implements Runnable {
             drawRectWithContext(g,rectForDraw[0],new Color(168, 113, 10),Color.yellow,4);
             g.setColor(Color.black);
             centerString(g,rectForDraw[0],"Start",new Font("Arial",Font.PLAIN,30));
-
         }
         if(gameState==GameStates.get("Paused")){
             g.setColor(new Color(84, 84, 84,200));
@@ -189,19 +160,19 @@ public class GamePanel extends JPanel implements Runnable {
 
 
         if(gameState==GameStates.get("Menu")){
-            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
+            if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
                 if(GameGrid.mouseLeftClickDown)gameState=GameStates.get("Running");
             }
             return;
         }
         if(gameState==GameStates.get("Paused")){
-            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
+            if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
                 if(GameGrid.mouseLeftClickDown)gameState=GameStates.get("Running");
             }
             return;
         }
         if(gameState==GameStates.get("Dead")){
-            if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
+            if(isInsideRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[0])){
                 if(GameGrid.mouseLeftClickDown)gameGrid.player.respawn();
             }
             return;
@@ -225,36 +196,29 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         double amountOfTicks=120;
         double ns=1000000000/amountOfTicks;
-        double delta= 0;
-        newGameGrid();
+        double delta;
         double accumulator=0;
-        while(true){
-            long now =System.nanoTime();
-            delta=(now-lastTime)/ns;
-            lastTime=System.nanoTime();
-            accumulator+=delta;
+        while (true) {
+            long now = System.nanoTime();
+            delta = (now - lastTime) / ns;
+            lastTime = System.nanoTime();
+            accumulator += delta;
             //System.out.println(accumulator);
-            while (accumulator>=0){
+            while (accumulator >= 0) {
                 //System.out.println("test");
-                updateData(1/amountOfTicks);
+                updateData(1 / amountOfTicks);
                 accumulator--;
                 // count++;
             }
-            paintImmediately(0,0,GameGrid.GAME_WIDTH,GameGrid.GAME_HEIGHT);
-            FPS=amountOfTicks/((System.nanoTime()-(now))/ns);
-
-
+            paintImmediately(0, 0, GameGrid.GAME_WIDTH, GameGrid.GAME_HEIGHT);
+            FPS = amountOfTicks / ((System.nanoTime() - (now)) / ns);
             /*
                 if(count>=3&&delta>=2){
                     repaint();
                     //removeAll();
                     count=0;
-
             }
-
              */
-
-
         }
     }
     protected void togglePause() {
@@ -275,7 +239,6 @@ public class GamePanel extends JPanel implements Runnable {
             gameState=GameStates.get("Running");
         }
     }
-
     public class AL extends KeyAdapter{
         public void keyPressed(KeyEvent e){
             //System.out.println(e.getKeyCode()+" = "+e.getKeyChar());
