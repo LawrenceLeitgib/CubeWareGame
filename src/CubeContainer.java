@@ -260,7 +260,7 @@ public class CubeContainer {
         g.setColor(new Color(147, 196, 49));
         g.fillRect(0, (int) GameGrid.PFY,GAME_WIDTH,GAME_HEIGHT);
 
-        drawGrillage(g);
+       // drawGrillage(g);
         int xNum=0;
         for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<=Player.chunkIn[1]+Player.numOfChunkToDraw;i++){
             for(var j=0;j<=Player.numOfChunkToDraw*2;j++){

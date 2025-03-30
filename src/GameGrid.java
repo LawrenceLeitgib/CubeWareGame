@@ -99,13 +99,13 @@ public class GameGrid {
                 //PFX+=10;
                 //PVX+=10;
                 //Cube.xAddingNumber+=10;
-                Cube.angleForXRotation+=.1;
+                Cube.angleForXRotation+=Math.PI/16;
                 break;
             case 72:
                 //PFX-=10;
                 //PVX- =10;
                 //Cube.xAddingNumber-=10;
-                Cube.angleForXRotation-=.1;
+                Cube.angleForXRotation-=Math.PI/16;
                 break;
 
         }

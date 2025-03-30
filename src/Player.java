@@ -36,17 +36,21 @@ public class Player {
 
     boolean isJumping=false;
 
+    static double newPosY;
+    static double newPosX;
+
+
     static int[] chunkIn=new int[2];
 
-    static int numOfChunkToDraw=3;
+    static int numOfChunkToDraw=2;
 
     Cube[][][] megaChunkCubes=new Cube[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
     boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
-        Player.xPosition=0;
+        Player.xPosition=5;
         Player.yPosition=0;
-        Player.zPosition=7;
+        Player.zPosition=6;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
         chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX);
@@ -102,19 +106,23 @@ public class Player {
 
         }
         if(isMovingRight) {
-            xPosition+=speed*multiplierOfSpeed;
+            yPosition+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+            xPosition+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
             detectionCollision(4);
         }
        if(isMovingLeft){
-           xPosition-=speed*multiplierOfSpeed;
+           yPosition-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+           xPosition-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
            detectionCollision(3);
        }
        if(isMovingBackward){
-           yPosition+=speed*multiplierOfSpeed;
+           yPosition+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+           xPosition-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
            detectionCollision(6);
        }
        if(isMovingForward) {
-           yPosition-=speed*multiplierOfSpeed;
+           yPosition-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+           xPosition+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
            detectionCollision(5);
 
        }
@@ -143,10 +151,10 @@ public class Player {
 
 
         double sizeRatio=GAME_HEIGHT/((cubeAway*Cube.defaultSize+(Cube.defaultSize-depth)/2.0)*GameGrid.depthRatio+GAME_HEIGHT);
-        double newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio)+GameGrid.PFY;
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio)+GameGrid.PFY;
         double newWidth=  (width*sizeRatio);
         double newHeight=  (height*sizeRatio);
-        double newPosX=  (GAME_WIDTH/2.0);
+        newPosX=  (GAME_WIDTH/2.0);
         //double corners[][]=new double[4][2];
          /*
         corners[3][0]=newPosX-newWidth/2.0;

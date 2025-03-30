@@ -124,15 +124,37 @@ public class Chunk {
 
             }
         }
-        //newCube(0, 0, 0);
+/*
+        newCube(0, 0, 3);
+        newCube(1, 0, 3);
+        newCube(0, 1, 3);
+        newCube(1, 1, 3);
+        newCube(0, 0, 4);
+        newCube(1, 0, 4);
+        newCube(0, 1, 4);
+        newCube(1, 1, 4);
+
+
+*/
+
+
+
+
+
 
         if(xPosition==0&&yPosition==0){
 
-            newCube(5,5,0);
-            newCube(2,7,0);
-            newCube(8,7,0);
+           newCube(5,0,5);
 
-            /*
+            //newCube(5,5,0);
+            //newCube(6,5,0);
+           // newCube(7,5,0);
+            //newCube(8,5,0);
+
+            //newCube(2,7,0);
+            //newCube(8,7,0);
+
+/*
             newCube(5, 5, 8);
             newCube(5, 5, 9);
             newCube(4, 5, 9);
@@ -141,7 +163,11 @@ public class Chunk {
             newCube(5, 4, 9);
             newCube(5, 5, 10);
 
-             */
+ */
+
+
+
+
 
         }
         /*{
@@ -154,7 +180,7 @@ public class Chunk {
             }
 
         }*/
-       // drawLabyrinth();
+       //drawLabyrinth();
         /*
         for(var k=0;k<numOfCubeX;k++){
             for(var i=k;i<numOfCubeX-k;i++) {
@@ -176,6 +202,8 @@ public class Chunk {
 
     }
     public void updateData(double deltaTime){
+       // if (cubePositions[5][5][0]&&cubePositions[6][5][0])
+       // System.out.println(cubes[5][5][0].newPosY-cubes[6][5][0].newPosY);
 
         for(var i=0;i<numOfCubeX;i++){
                 for (var j = 0; j < numOfCubeY; j++) {
