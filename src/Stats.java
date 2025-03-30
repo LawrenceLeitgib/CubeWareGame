@@ -12,7 +12,7 @@ public class Stats {
     static double mana;
 
     static double xp=0;
-    static double xpUntilNextLevelBase=25;
+    static double xpUntilNextLevelBase=100;
     static double xpUntilNextLevel=xpUntilNextLevelBase;
     static int currentLevel=0;
 
@@ -52,10 +52,6 @@ public class Stats {
         }
         mean/=numOfPFS;
 
-
-
-
-
         drawRectWithBorder(g,10,10,200,15,2,Color.RED,Color.black);
         g.setColor(Color.green);
         g.fillRect(10,10, (int) (200*health/maxHealth),15);
@@ -72,9 +68,9 @@ public class Stats {
         g.drawString("y: "+Player.yPosition,15,90);
         g.drawString("z: "+Player.zPosition,15,110);
         g.drawString("FPS: "+(int)(mean+.5),15,130);
-        g.drawString("entities: "+EnemiesContainer.enemies.size(),15,150);
+        g.drawString("entities: "+ EntityContainer.enemies.size(),15,150);
         g.drawString("level: "+Stats.currentLevel,15,170);
-        g.drawString("ball: "+FireBallContainer.fireBalls.size(),15,190);
+        g.drawString("ball: "+ ProjectileContainer.Projectiles.size(),15,190);
 
 
 
@@ -98,9 +94,6 @@ public class Stats {
 
 
     }
-
-
-
     public void updateData(double deltaTime){
         mana+=deltaTime*1000;
         if(Player.distanceFromMiddle<GameGrid.regenZone){

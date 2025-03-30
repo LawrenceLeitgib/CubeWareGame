@@ -39,30 +39,20 @@ public class GameGrid {
 
     static double[] mouseInGame;
 
-    static FireBallContainer fireBallContainer;
-   static  EnemiesContainer enemiesContainer;
+    static ProjectileContainer fireBallContainer;
+   static EntityContainer entityContainer;
 
    static boolean mouseLeftClickDown =false;
    static boolean mouseRightClickDown=false;
 
-   static boolean oneDown=false;
 
-   static boolean oneHaveBeenRelesed=true;
-
-    //Enemy enemy
-
-
-
-
-
+   static double[] cameraPos =new double[2];
 
     GameGrid(){
-        player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0,0);
-
+        player = new Player(0,0,0);
         cubeContainer=new CubeContainer(depthRatio);
-        fireBallContainer=new FireBallContainer();
-        enemiesContainer=new EnemiesContainer();
-
+        fireBallContainer=new ProjectileContainer();
+        entityContainer =new EntityContainer();
     }
 
     public static void setGameWidth(int gameWidth) {
@@ -81,7 +71,7 @@ public class GameGrid {
         PVY=3*GAME_HEIGHT/3;
     }
     public void newPlayer(){
-        player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0,0);
+        player = new Player(0,0,0);
 
     }public double[] moveMouse(int x,int y) throws AWTException {
         double[] delta=new double[2];
@@ -90,14 +80,10 @@ public class GameGrid {
         delta[1]=y-mousePositionY;
         robot.mouseMove((int) (GamePanel.xPos+x), (int) (GamePanel.yPos+y));
         return delta;
-
     }
     public void updateData(double deltaTime){
-        //System.out.println( mousePositionX);
-
-        //if(mouseClicked) fireBallContainer.createFireBall();
-       // System.out.println(mouseLeftClickDown+", "+mouseRightClickDown);
-
+        cameraPos[0]=Player.xPosition-Math.sin(angleForXRotation)*(Player.cubeAway+.5);
+        cameraPos[1]=Player.yPosition+Math.cos(angleForXRotation)*(Player.cubeAway+.5);
         if(!Player.thirdPerspective){
             try {
                 moveMouse((int) PFX, (int) PFY);
@@ -105,10 +91,8 @@ public class GameGrid {
                 throw new RuntimeException(e);
             }
         }
-
         double rotationMultiplier=1;
         if(player.isSlowing)rotationMultiplier=player.slowMultiplier*3;
-
         if(isRotatingLeft){
             angleForXRotation-=Math.PI/32*deltaTime*30*rotationMultiplier;
 
@@ -124,39 +108,17 @@ public class GameGrid {
         }
         mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
         mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
-      //  System.out.println(mousePositionX+", "+mousePositionY);
-      //  System.out.println(mouseInGame[0]+", "+mouseInGame[1]);
-        //System.out.println(mouseAngleInGame);
         player.updateData(deltaTime);
-        cubeContainer.updateData(deltaTime);
-        enemiesContainer.updateData(deltaTime);
+        entityContainer.updateData(deltaTime);
         fireBallContainer.updateData(deltaTime);
-
-
+        cubeContainer.updateData(deltaTime);
     }
     public void draw(Graphics g){
-       // System.out.println(angleForXRotation);
-        /*
-        while(angleForXRotation>=Math.PI*2){
-            angleForXRotation-=Math.PI*2;
-        }
-        while(angleForXRotation<0){
-            angleForXRotation+=Math.PI*2;
-        }
-
-         */
         fireBallContainer.draw(g);
-        enemiesContainer.draw(g);
+        entityContainer.draw(g);
         cubeContainer.draw(g);
-
-        //Player.draw1(g);
-        //Player.draw2(g);
-        //Player.draw3(g);
-
-
         g.setColor(Color.RED);
         if(!Player.thirdPerspective)g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
-        g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
     }
     public double[] mousePosToGamePos(int xPos,int yPos){
         double[] gamePos=new double[2];
@@ -164,33 +126,18 @@ public class GameGrid {
            yPos= (int) (PFY+1);
 
         }
-
-        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY- FireBallContainer.fireBallHeight *Cube.defaultSize);
-        //double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY);
+        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY- ProjectileContainer.ProjectileHeight *Cube.defaultSize);
         double difPosYRForMouse=((GAME_HEIGHT/sizeRatioForMouse-GAME_HEIGHT)/depthRatio);
-
-           //difPosYR*1.0=(GAME_HEIGHT/sizeRatio-GAME_HEIGHT/depthRatio;
-        // double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*depth);
         double yPositionAForMouse=-(difPosYRForMouse/Cube.depth-Player.yPosition-Player.cubeAway);
-        //        double difPosXR=((Player.xPosition-xPositionA)*width);
         double mouseNewWidth=  Cube.width*sizeRatioForMouse;
         double xPositionAForMouse=(xPos+mouseNewWidth/2-GameGrid.PVX)/sizeRatioForMouse/Cube.width+Player.xPosition;
-        //(newPosX+newWidth/2-GameGrid.PVX)/sizeRatio/width= -((Player.xPosition-xPositionA));
-
         double correteurXY=0.5;
-        //xPositionA-Player.xPosition-xCorrectorForRotation= difPosXA*Math.cos(GameGrid.angleForXRotation)+difPosYA*Math.sin(GameGrid.angleForXRotation));
-        //yPositionA-Player.yPosition+yCorrectorForRotation= -difPosXA*Math.sin(GameGrid.angleForXRotation)+difPosYA*Math.cos(GameGrid.angleForXRotation));
         double A=xPositionAForMouse-Player.xPosition-correteurXY;
         double B=yPositionAForMouse-Player.yPosition+correteurXY;
         double difPosYAForMouse=(B*(Math.cos(angleForXRotation)/Math.sin(angleForXRotation))+A)/(Math.sin(angleForXRotation)+Math.cos(angleForXRotation)*Math.cos(angleForXRotation)/Math.sin(angleForXRotation));
         double difPosXAForMouse=(A*(Math.cos(angleForXRotation)/Math.sin(angleForXRotation))-B)/(Math.sin(angleForXRotation)+Math.cos(angleForXRotation)*Math.cos(angleForXRotation)/Math.sin(angleForXRotation));
         gamePos[1]=difPosYAForMouse+Player.yPosition;
         gamePos[0]=difPosXAForMouse+Player.xPosition;
-
-
-
-
-
 
         if(angleForXRotation==0){
             gamePos[0]=A+Player.xPosition;
@@ -209,8 +156,6 @@ public class GameGrid {
             gamePos[0]=B+Player.xPosition;
             gamePos[1]=-A+Player.yPosition;
         }
-
-
         return gamePos;
     }
 
@@ -239,8 +184,6 @@ public class GameGrid {
 
         return angle;
     }
-
-
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()){
             case 85:
@@ -250,9 +193,6 @@ public class GameGrid {
             case 72:
                // isRotatingLeft=false;
                 break;
-            case 49:
-                oneDown=false;
-                oneHaveBeenRelesed=true;
         }
 
     }
@@ -273,11 +213,7 @@ public class GameGrid {
             case 74:
                 PVY-=20;
                 break;
-            case 49:
-                if(oneHaveBeenRelesed){
-                    oneDown=true;
-                    oneHaveBeenRelesed=false;
-                }
+
 
         }
     }

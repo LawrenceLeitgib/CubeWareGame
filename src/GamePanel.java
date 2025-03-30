@@ -126,14 +126,27 @@ public class GamePanel extends JPanel implements Runnable {
             Cube.setGameWidth(r.width);
             CubeContainer.setGameHeight(r.height);
             CubeContainer.setGameWidth(r.width);
-            Chunk.GAME_WIDTH = r.width;
-            Chunk.GAME_HEIGHT = r.height;
+            /*
             Cube.defaultSize=r.width/10;
+            Cube.width= Cube.defaultSize;
+            Cube.height= Cube.defaultSize;
+            Cube.depth= Cube.defaultSize;
+            Player.width=.8 *Cube.defaultSize;
+            Player.depth=.8 *Cube.defaultSize;
+            Player.height=1.8* Cube.defaultSize;
+            for(Enemy enemy :EntityContainer.enemies){
+                enemy.height=2* Cube.defaultSize;
+                enemy.width=.8* Cube.defaultSize;
+                enemy.depth=.8* Cube.defaultSize;
+
+            }
+            System.out.println("test");
+
+             */
             rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
 
+
         }
-
-
         gameGrid.draw(g);
         stats.draw(g);
         if(gameState==GameStates.get("Menu")){
@@ -199,8 +212,8 @@ public class GamePanel extends JPanel implements Runnable {
         if(gameState==GameStates.get("Running")){
             if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[1])){
                 if(GameGrid.mouseLeftClickDown){
-                    Stats.xp+=EnemiesContainer.enemies.size()*25;
-                    EnemiesContainer.enemies=new ArrayList<Enemy>();
+                    Stats.xp+= EntityContainer.enemies.size()*25;
+                    EntityContainer.enemies=new ArrayList<Enemy>();
                 }
             }
         }
@@ -253,6 +266,7 @@ public class GamePanel extends JPanel implements Runnable {
         public void keyPressed(KeyEvent e){
             //System.out.println(e.getKeyCode()+" = "+e.getKeyChar());
             gameGrid.player.keyPressed(e);
+            gameGrid.player.SMH.keyPressed(e);
             gameGrid.keyPressed(e);
             if(e.getKeyCode()==27){
                 togglePause();
@@ -262,6 +276,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         public void keyReleased(KeyEvent e){
             gameGrid.player.keyReleased(e);
+            gameGrid.player.SMH.keyReleased(e);
             gameGrid.keyReleased(e);
 
         }

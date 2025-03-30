@@ -10,42 +10,37 @@ public class Player {
     static int GAME_HEIGHT;
 
     static double cubeAway=2;
-    static double initialCubeAway=2;
-
     static double width=.8*Cube.defaultSize;
     static double height=1.8*Cube.defaultSize;
-
     static double depth=.8*Cube.defaultSize;
     static double[][] corners=new double[12][2];
-    double speed=4.2;
-    double xVelocity;
-    double yVelocity;
+    double speed=4.2*20;
+    static double xVelocity;
+    static double yVelocity;
     double zVelocity;
 
     boolean isSlowing=false;
     boolean isFlying=true;
+    boolean isJumping=false;
+
 
     double slowMultiplier=0.1;
     double runningMultiplier=1.8;
+    boolean isRunning;
+
 
     boolean isMovingUp=false;
     boolean isMovingDown=false;
     boolean isMovingForward =false;
     boolean isMovingBackward =false;
-    static boolean isMovingLeft=false;
-    static boolean isMovingRight=false;
+    boolean isMovingLeft=false;
+    boolean isMovingRight=false;
 
-    boolean isJumping=false;
 
     static double newPosY;
     static double newPosX;
 
-    boolean lightningSprint=false;
-    int lightningSprintCount=0;
 
-    double lightningSprintTime =1;
-
-    double lightningSprintCount2= lightningSprintTime;
 
 
     static int[] chunkIn=new int[2];
@@ -58,7 +53,6 @@ public class Player {
 
     int yPosCount=0;
     double[] yPosHistoric=new double[10];
-    boolean isSprinting;
     boolean spaceHasBeenClick;
 
     double flyingCount=0;
@@ -70,36 +64,119 @@ public class Player {
 
 
     double pushCount=0;
-    double pushTime=.05;
-
-
-    Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
-        Player.xPosition=0;
-        Player.yPosition=0;
-        Player.zPosition=5;
-        Player.GAME_WIDTH =GAME_WIDTH;
-        Player.GAME_HEIGHT =GAME_HEIGHT;
-        chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX);
-        chunkIn[1]=(int)(yPosition/Chunk.numOfCubeY);
-        if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
-        if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
-        distanceFromMiddle =Math.sqrt(Math.pow(Player.xPosition,2)+Math.pow(Player.yPosition,2));
+    double pushTime=.1;
+    SpecialMoveHandler SMH;
+    Player(double positionX, double positionY, double positionZ){
+        Player.xPosition=positionX;
+        Player.yPosition=positionY;
+        Player.zPosition=positionZ+5;
+        Player.GAME_WIDTH =GameGrid.GAME_WIDTH;
+        Player.GAME_HEIGHT =GameGrid.GAME_HEIGHT;
+        setCubeAndChunkIn();
         newChunkAround();
+        SMH=new SpecialMoveHandler();
+    }
+    public void updateData(double deltaTime) {
+        SMH.updateData(deltaTime);
+        setNewPositions(deltaTime);
+        detectionCollisionWithContext();
+        detectionCollisionWithEnemy(deltaTime);
+        setCubeAndChunkIn();
+        updateMegaChunk();
+        flySwitchHandler(deltaTime);
+        detectionCollision(0);
+        xPosition=  (int)((xPosition)*1000)/1000.0;
+        yPosition=  (int)((yPosition)*1000)/1000.0;
+        zPosition=  (int)((zPosition)*1000)/1000.0;
+    }
+    public static void draw(Graphics g){
+        if(!thirdPerspective)return;
         double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-
         newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
-        double newWidth=  (width*sizeRatio);
-        double newHeight=  (height*sizeRatio);
-        double newDepth=  (depth*sizeRatio);
         newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
-        corners=getCorners(newPosX,newPosY,newWidth,newHeight,0,0,0);
+        corners=getCorners(newPosX,newPosY, 0,0);
+
+        g.setColor(Color.BLACK);
+        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
+        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
+        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[3][0], (int) corners[3][1]);
+        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[0][0], (int) corners[0][1]);
+        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[4][0], (int) corners[4][1]);
+        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[5][0], (int) corners[5][1]);
+        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[6][0], (int) corners[6][1]);
+        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[7][0], (int) corners[7][1]);
+        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
+        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
+        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
+        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
+    }
+    public static void draw1(Graphics g){
+        if(!thirdPerspective)return;
+        double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
+        newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
+        corners=getCorners(newPosX,newPosY, 0,0);
+        g.setColor(Color.black);
+        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
+        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
+        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[3][0], (int) corners[3][1]);
+        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[0][0], (int) corners[0][1]);
+
+        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[8][0], (int) corners[8][1]);
+        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[9][0], (int) corners[9][1]);
+        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[10][0], (int) corners[10][1]);
+        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[11][0], (int) corners[11][1]);
+
+        //g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
+        g.setColor(new Color(0,0,0,100));
+        g.fillOval((int) ((corners[0][0]+corners[1][0])/2+((corners[0][0]-corners[1][0]))/2), (int) ((corners[0][1]+corners[3][1])/2-((corners[0][1]-corners[3][1]))/2), (int) ((-corners[0][0]+corners[1][0])+0.5), (int) ((corners[0][1]-corners[3][1])+0.5));
+
+    }
+    public static void draw2(Graphics g){
+        if(!thirdPerspective)return;
+        double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
+        newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
+        corners=getCorners(newPosX,newPosY, 0,0);
+        g.setColor(Color.black);
+        g.drawLine((int) corners[12][0], (int) corners[12][1], (int) corners[8][0], (int) corners[8][1]);
+        g.drawLine((int) corners[13][0], (int) corners[13][1], (int) corners[9][0], (int) corners[9][1]);
+        g.drawLine((int) corners[14][0], (int) corners[14][1], (int) corners[10][0], (int) corners[10][1]);
+        g.drawLine((int) corners[15][0], (int) corners[15][1], (int) corners[11][0], (int) corners[11][1]);
+        if((2-zPosition+cubeIn[2])*Cube.defaultSize>height||Math.round((zPosition-cubeIn[2])*100000)/100000.0==0.2)
+        {
+            g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
+            g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
+            g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
+            g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
+
+        }
 
 
+    }
+    public static void draw3(Graphics g){
+        if(!thirdPerspective)return;
+        if((2-zPosition+cubeIn[2])*Cube.defaultSize>=height)return;
+        if(Math.round((zPosition-cubeIn[2])*100000)/100000.0==.2)return;
+        if(GamePanel.gameState==GamePanel.GameStates.get("Menu"))return;
+        double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
+        newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
+        corners=getCorners(newPosX,newPosY, 0,0);
+        g.setColor(Color.black);
+        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
+        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
+        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
+        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
+
+        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[12][0], (int) corners[12][1]);
+        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[13][0], (int) corners[13][1]);
+        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[14][0], (int) corners[14][1]);
+        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[15][0], (int) corners[15][1]);
 
 
 
     }
-
     public  void respawn() {
         Stats.health=Stats.maxHealth;
         Player.xPosition=0;
@@ -113,33 +190,33 @@ public class Player {
         Stats.xp=0;
         GamePanel.gameState=GamePanel.GameStates.get("Running");
         newChunkAround();
-        EnemiesContainer.enemies = new ArrayList<Enemy>();
-        FireBallContainer.fireBalls=new ArrayList<FireBall>();
+        EntityContainer.enemies = new ArrayList<Enemy>();
+        ProjectileContainer.Projectiles =new ArrayList<Projectile>();
 
 
 
 
     }
-
     public void newChunkAround(){
-
+        CubeContainer.CreateNewChunks();
+/*
         for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<=Player.chunkIn[0]+Player.numOfChunkToDraw;i++){
             for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw;j<=Player.chunkIn[1]+Player.numOfChunkToDraw;j++){
                 if(!CubeContainer.chunksPosition[CubeContainer.numOfChunkX+i][CubeContainer.numOfChunkY+j]){
-                    CubeContainer.chunks[CubeContainer.numOfChunkX+i][CubeContainer.numOfChunkY+j]=new Chunk(GAME_WIDTH,GAME_HEIGHT,i,j);
-                     CubeContainer.chunksPosition[CubeContainer.numOfChunkX+i][CubeContainer.numOfChunkY+j]=true;
+                    CubeContainer.chunks[CubeContainer.numOfChunkX+i][CubeContainer.numOfChunkY+j]=new Chunk(i,j);
+                    CubeContainer.chunksPosition[CubeContainer.numOfChunkX+i][CubeContainer.numOfChunkY+j]=true;
                 }
             }
         }
 
+ */
+
     }
-    public void updateData(double deltaTime)
-    {
+    public void setCubeAndChunkIn(){
         Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX);
         Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
         if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
         if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
-
         cubeIn[0]=(int)(xPosition+0.5);
         cubeIn[1]=(int)(yPosition+0.5);
         cubeIn[2]=(int)(zPosition);
@@ -147,71 +224,22 @@ public class Player {
         if(yPosition<0)cubeIn[1]=(int)(yPosition-0.5);
         distanceFromMiddle =Math.sqrt(Math.pow(Player.xPosition,2)+Math.pow(Player.yPosition,2));
 
-        if(flyingCount>0){
-            flyingCount+=deltaTime;
-            if(spaceHasBeenClick){
-                toggleFly();
-                spaceHasBeenClick=false;
-            }
-        }
-        if(spaceHasBeenClick){
-            flyingCount+=deltaTime;
-            spaceHasBeenClick=false;
-        }
-
-        if(flyingCount>flyingTime){
-            flyingCount=0;
-        }
-
-
-        lightningSprintCount2+=deltaTime;
-        if(lightningSprint){
-            if(lightningSprintCount2>= lightningSprintTime){
-                lightningSprintCount2=0;
-                Stats.mana-=4;
-                lightningSprintCount=30;
-                if(Stats.mana<0){
-                    Stats.mana+=4;
-                    lightningSprintCount=0;
-                }
-            }
-        }
-
-
-
-//System.out.println(GameGrid.PVY-GameGrid.PFY);
-
-
-
-
-        //System.out.println(Player.chunkIn[0]+" "+Player.chunkIn[1]);
-        updateMegaChunk();
-
-
+    }
+    public void setNewPositions(double deltaTime){
         double multiplierOfSpeed=1;
-        if(isSprinting){
+        if(isRunning){
             multiplierOfSpeed=runningMultiplier;
             GameGrid.depthRatio=1.2;
         }else{
             GameGrid.depthRatio=1;
 
         }
-        if(!thirdPerspective){
-            cubeAway=-5;
-            //cubeAway=-3.5;
-
-        }else{
-            cubeAway=2;
-
-
-        }
         if(!isFlying){
             if(isSlowing)multiplierOfSpeed=slowMultiplier;
-
             setZVelocity(zVelocity-GameGrid.gravityAcceleration*deltaTime);
-           if(zVelocity<-90)zVelocity+=GameGrid.gravityAcceleration*deltaTime;
-           zPosition+=zVelocity*deltaTime;
-           if(zVelocity>0) detectionCollision(2);
+            if(zVelocity<-90)zVelocity+=GameGrid.gravityAcceleration*deltaTime;
+            zPosition+=zVelocity*deltaTime;
+            if(zVelocity>0) detectionCollision(2);
             if(zVelocity<0){
                 if(detectionCollision(1)[1]){
                     if(isJumping){
@@ -229,13 +257,14 @@ public class Player {
             if(isMovingDown){
                 zPosition-=speed*multiplierOfSpeed*deltaTime;
                 if(detectionCollision(1)[1]){
-                   // isFlying=false;
+                    // isFlying=false;
                 };
             }
-
         }
+
         yVelocity=0;
         xVelocity=0;
+        SMH.lightningSprintHandler(deltaTime);
         if(isMovingRight) {
             yVelocity+=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
             xVelocity+=speed*multiplierOfSpeed*Math.cos(GameGrid.angleForXRotation);
@@ -244,7 +273,6 @@ public class Player {
             yVelocity-=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
             xVelocity-=speed*multiplierOfSpeed*Math.cos(GameGrid.angleForXRotation);
         }
-
         if(isMovingBackward){
             yVelocity+=speed*multiplierOfSpeed*Math.cos(GameGrid.angleForXRotation);
             xVelocity-=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
@@ -254,34 +282,38 @@ public class Player {
             xVelocity+=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
 
         }
-        if(lightningSprintCount>0){
-
-            yVelocity=0;
-            yVelocity-=200.2*Math.cos(GameGrid.angleForXRotation)*deltaTime*20;
-            xVelocity+=200.2*Math.sin(GameGrid.angleForXRotation)*deltaTime*20;
-            lightningSprintCount--;
-        }
-
 
         xPosition+=xVelocity*deltaTime;
         yPosition+=yVelocity*deltaTime;
 
+    }
+    public void flySwitchHandler(double deltaTime){
+        if(flyingCount>0){
+            flyingCount+=deltaTime;
+            if(spaceHasBeenClick){
+                toggleFly();
+                spaceHasBeenClick=false;
+            }
+        }
+        if(spaceHasBeenClick){
+            flyingCount+=deltaTime;
+            spaceHasBeenClick=false;
+        }
+        if(flyingCount>flyingTime){
+            flyingCount=0;
+        }
+    }
+    public void detectionCollisionWithContext(){
 
-
-
-        //double forOtherSensitivity=0.02;
         int newXpos=cubeIn[0];
         int newYposFront=cubeIn[1]-1;
         int newYposBack=cubeIn[1] +1;
-
-       int  xChunkNum=0;
+        int xChunkNum=0;
         int yChunkNumFront=0;
         int yChunkNumBack=0;
-
         int newYpos=cubeIn[1];
         int newXposLeft=cubeIn[0]-1;
         int newXposRight=cubeIn[0]+1;
-
         int  YChunkNum=0;
         int XChunkNumLeft=0;
         int XChunkNumRight=0;
@@ -314,8 +346,6 @@ public class Player {
             newYposBack-=Chunk.numOfCubeY;
             yChunkNumBack+=1;
         }
-
-
         while(newYpos<0){
             newYpos+=Chunk.numOfCubeY;
             YChunkNum-=1;
@@ -361,27 +391,24 @@ public class Player {
                 xVelocity<0&&(CubeContainer.chunks[XChunkNumLeft+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposLeft][newYpos][cubeIn[2]+1])||
                 xVelocity<0&&(CubeContainer.chunks[XChunkNumLeft+CubeContainer.numOfChunkX][YChunkNum+CubeContainer.numOfChunkY].cubePositions[newXposLeft][newYpos][(int)(cubeIn[2]+height/Cube.defaultSize+.5)]);
 
-
-        //System.out.println( yPosHistoric[yPosCount]);
         int beforeCount=yPosCount-3;
         if(beforeCount<0)beforeCount+=10;
         double deltaYPos=yPosHistoric[yPosCount]-yPosHistoric[beforeCount];
-        //System.out.println(deltaYPos);
         if(cubeBack&&cubeLeft&&cubeFront&&cubeRight) {
 
-    if(xVelocity>0){
-        detectionCollision(4);
-    }
-    if(xVelocity<0){
-        detectionCollision(3);
-    }
-    if(yVelocity>0){
-        detectionCollision(6);
-    }
-    if(yVelocity<0){
-        detectionCollision(5);
-    }
-}
+            if(xVelocity>0){
+                detectionCollision(4);
+            }
+            if(xVelocity<0){
+                detectionCollision(3);
+            }
+            if(yVelocity>0){
+                detectionCollision(6);
+            }
+            if(yVelocity<0){
+                detectionCollision(5);
+            }
+        }
         else if((xVelocity>0&&cubeRight&&yVelocity<0&&cubeFront)||(xVelocity<0&&cubeLeft&&yVelocity<0&&cubeFront)){
             if(deltaYPos>0){
                 if(xVelocity>0)detectionCollision(4);
@@ -457,38 +484,34 @@ public class Player {
                 detectionCollision(5);
             }
         }
+        yPosHistoric[yPosCount]=yPosition;
+        yPosCount++;
+        if(yPosCount>=10){
+            yPosCount=0;
+        }
+
+    }
+    public void detectionCollisionWithEnemy(double deltaTime){
         pushCount+=deltaTime;
         if(pushCount>=pushTime){
-                for(int i=0;i<EnemiesContainer.enemies.size();i++){
-                    if(zPosition<EnemiesContainer.enemies.get(i).zPosition+EnemiesContainer.enemies.get(i).height/Cube.defaultSize&&zPosition+height/Cube.defaultSize>EnemiesContainer.enemies.get(i).zPosition)
-                        if(Math.sqrt(Math.pow(EnemiesContainer.enemies.get(i).xPosition-xPosition,2)+Math.pow(EnemiesContainer.enemies.get(i).yPosition-yPosition,2))<(EnemiesContainer.enemies.get(i).width/2+width/2)/Cube.defaultSize){
-                            xPosition-=Math.cos(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                            xVelocity=-Math.cos(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                            yPosition-=Math.sin(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                            yVelocity=-Math.sin(EnemiesContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
-                            detectionCollision(3);
-                            detectionCollision(4);
-                            detectionCollision(5);
-                            detectionCollision(6);
-                            Stats.health-=EnemiesContainer.enemies.get(i).damage;
-                            pushCount = 0;
-                        }
-                }
+            for(int i = 0; i< EntityContainer.enemies.size(); i++){
+                if(zPosition< EntityContainer.enemies.get(i).zPosition+ EntityContainer.enemies.get(i).height/Cube.defaultSize&&zPosition+height/Cube.defaultSize> EntityContainer.enemies.get(i).zPosition)
+                    if(Math.sqrt(Math.pow(EntityContainer.enemies.get(i).xPosition-xPosition,2)+Math.pow(EntityContainer.enemies.get(i).yPosition-yPosition,2))<(EntityContainer.enemies.get(i).width/2+width/2)/Cube.defaultSize){
+                        xPosition-=Math.cos(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                        xVelocity=-Math.cos(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                        yPosition-=Math.sin(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                        yVelocity=-Math.sin(EntityContainer.enemies.get(i).angleWithPlayer)*speed*20*deltaTime;
+                        detectionCollision(3);
+                        detectionCollision(4);
+                        detectionCollision(5);
+                        detectionCollision(6);
+                        Stats.health-= EntityContainer.enemies.get(i).damage;
+                        pushCount = 0;
+                    }
             }
-        yPosHistoric[yPosCount]=yPosition;
-            yPosCount++;
-            if(yPosCount>=10){
-                yPosCount=0;
         }
 
-        detectionCollision(0);
-        xPosition=  (int)((xPosition)*1000)/1000.0;
-        yPosition=  (int)((yPosition)*1000)/1000.0;
-        zPosition=  (int)((zPosition)*1000)/1000.0;
-        }
-
-
-
+    }
     public void setZVelocity(double zVelocity) {
 
         this.zVelocity = zVelocity;
@@ -498,120 +521,6 @@ public class Player {
     }
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
-    }
-    public static void draw(Graphics g){
-
-
-        if(!thirdPerspective)return;
-        double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
-        double newWidth=  (width*sizeRatio);
-        double newHeight=  (height*sizeRatio);
-        double newDepth=  (depth*sizeRatio);
-        newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
-        corners=getCorners(newPosX,newPosY,newWidth,newHeight,0,0,0);
-
-        g.setColor(Color.BLACK);
-        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
-        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
-        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[3][0], (int) corners[3][1]);
-        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[0][0], (int) corners[0][1]);
-        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[4][0], (int) corners[4][1]);
-        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[5][0], (int) corners[5][1]);
-        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[6][0], (int) corners[6][1]);
-        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[7][0], (int) corners[7][1]);
-        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
-        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
-        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
-        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
-
-
-
-
-
-
-    }
-    public static void draw1(Graphics g){
-        if(!thirdPerspective)return;
-       // if(true)return;
-
-
-        double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
-        double newWidth=  (width*sizeRatio);
-        double newHeight=  (height*sizeRatio);
-        double newDepth=  (depth*sizeRatio);
-        newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
-        corners=getCorners(newPosX,newPosY,newWidth,newHeight,0,0,0);
-
-
-        g.setColor(Color.black);
-        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
-        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[2][0], (int) corners[2][1]);
-        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[3][0], (int) corners[3][1]);
-        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[0][0], (int) corners[0][1]);
-
-        g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[8][0], (int) corners[8][1]);
-        g.drawLine((int) corners[1][0], (int) corners[1][1], (int) corners[9][0], (int) corners[9][1]);
-        g.drawLine((int) corners[2][0], (int) corners[2][1], (int) corners[10][0], (int) corners[10][1]);
-        g.drawLine((int) corners[3][0], (int) corners[3][1], (int) corners[11][0], (int) corners[11][1]);
-
-        //g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
-        g.setColor(new Color(0,0,0,100));
-        g.fillOval((int) ((corners[0][0]+corners[1][0])/2+((corners[0][0]-corners[1][0]))/2), (int) ((corners[0][1]+corners[3][1])/2-((corners[0][1]-corners[3][1]))/2), (int) ((-corners[0][0]+corners[1][0])+0.5), (int) ((corners[0][1]-corners[3][1])+0.5));
-
-    }
-    public static void draw2(Graphics g){
-        if(!thirdPerspective)return;
-        double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
-        double newWidth=  (width*sizeRatio);
-        double newHeight=  (height*sizeRatio);
-        double newDepth=  (depth*sizeRatio);
-        newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
-        corners=getCorners(newPosX,newPosY,newWidth,newHeight,0,0,0);
-        g.setColor(Color.black);
-        g.drawLine((int) corners[12][0], (int) corners[12][1], (int) corners[8][0], (int) corners[8][1]);
-        g.drawLine((int) corners[13][0], (int) corners[13][1], (int) corners[9][0], (int) corners[9][1]);
-        g.drawLine((int) corners[14][0], (int) corners[14][1], (int) corners[10][0], (int) corners[10][1]);
-        g.drawLine((int) corners[15][0], (int) corners[15][1], (int) corners[11][0], (int) corners[11][1]);
-        if((2-zPosition+cubeIn[2])*Cube.defaultSize>height||Math.round((zPosition-cubeIn[2])*100000)/100000.0==0.2)
-{
-            g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
-            g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
-            g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
-            g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
-
-        }
-
-
-    }
-    public static void draw3(Graphics g){
-        if(!thirdPerspective)return;
-        if((2-zPosition+cubeIn[2])*Cube.defaultSize>=height)return;
-        //System.out.println(Math.round((zPosition-cubeIn[2])*100000)/100000.0);
-        if(Math.round((zPosition-cubeIn[2])*100000)/100000.0==.2)return;
-        if(GamePanel.gameState==GamePanel.GameStates.get("Menu"))return;
-        double sizeRatio=GameGrid.GAME_HEIGHT/((cubeAway*Cube.defaultSize)*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY);
-        double newWidth=  (width*sizeRatio);
-        double newHeight=  (height*sizeRatio);
-        double newDepth=  (depth*sizeRatio);
-        newPosX=  (GameGrid.PVX-Cube.defaultSize*sizeRatio/2);
-        corners=getCorners(newPosX,newPosY,newWidth,newHeight,0,0,0);
-        g.setColor(Color.black);
-        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[5][0], (int) corners[5][1]);
-        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[6][0], (int) corners[6][1]);
-        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[7][0], (int) corners[7][1]);
-        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[4][0], (int) corners[4][1]);
-
-        g.drawLine((int) corners[4][0], (int) corners[4][1], (int) corners[12][0], (int) corners[12][1]);
-        g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[13][0], (int) corners[13][1]);
-        g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[14][0], (int) corners[14][1]);
-        g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[15][0], (int) corners[15][1]);
-
-
-
     }
     public void updateMegaChunk(){
         for(var i=0;i<Chunk.numOfCubeX;i++){
@@ -633,22 +542,14 @@ public class Player {
         }
 
     }
-   public boolean[] detectionCollision(int num){
+    public boolean[] detectionCollision(int num){
        boolean[] collision=new boolean[7];
        Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
-
-       boolean[][][] cubesPosChunkInside=chunkInside.cubePositions;
-       //System.out.println(chunkInside.xPosition+" "+chunkInside.yPosition);
-       int xPosUnder=(int)(xPosition+0.5);
-       if(xPosition<0)xPosUnder=(int)(xPosition-0.5);
-       int yPosUnder=(int)(yPosition+0.5);
-       if(yPosition<0)yPosUnder=(int)(yPosition-0.5);
+       boolean[][][] cubesPosChunkInside;
        int zPosUnder=(int)(zPosition);
        if(zPosition<0)zPosUnder=(int)(zPosition-1);
        int zPosAbove=(int)(zPosition+height/Cube.defaultSize);
        if(zPosition<0)zPosAbove=(int)(zPosition+height/Cube.defaultSize-1);
-
-
        double forOtherSensitivity=0.02;
 
 
@@ -686,12 +587,6 @@ public class Player {
 
        int zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-forOtherSensitivity);
        if(zPosition<0)zPosAboveForOther=(int)(zPosition+height/Cube.defaultSize-1-forOtherSensitivity);
-
-       String sideOfCube="rien";
-       if(xPosUnder-xPosition>0)sideOfCube="left";
-       if(xPosUnder-xPosition<=0)sideOfCube="right";
-
-
 
 
 
@@ -769,6 +664,7 @@ public class Player {
       // System.out.println( collision[3]);
       // System.out.println(collision[5]+" "+xRightPosForOther+" "+xPosition);
 
+
        if(collision[1]&&zPosUnder+1-zPosition<sensitivity&&(isMovingDown||zVelocity<0)){
            zPosition=zPosUnder+1;
            zVelocity=0;
@@ -792,7 +688,6 @@ public class Player {
 
 
 
-
        for(var i=1;i<7;i++){
            if (collision[i]) {
                collision[0] = true;
@@ -803,7 +698,7 @@ public class Player {
 
        return collision;
    }
-    public static double[][]  getCorners(double newPosX,double newPosY,double newWidth,double newHeight,double difPosZ,double difPosXA,double difPosYA){
+    public static double[][]  getCorners(double newPosX, double newPosY, double difPosZ, double difPosXA){
         double sizeRatioValue=(GameGrid.depthRatio-GameGrid.GAME_HEIGHT)/GameGrid.depthRatio;
 
         double difPosXARight=(xPosition+Cube.defaultSize/Cube.defaultSize-Player.xPosition);
@@ -843,32 +738,16 @@ public class Player {
             sizeRatioFrontRight=(-GameGrid.GAME_HEIGHT*GameGrid.depthRatio)/(Math.pow(sizeRatioValue*GameGrid.depthRatio+GameGrid.GAME_HEIGHT,2))*(difPosYRFrontRight-sizeRatioValue)+GameGrid.GAME_HEIGHT/GameGrid.depthRatio;
 
         }
-
-
         double newPosYFrontRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFrontRight+GameGrid.PFY+difPosZ*sizeRatioFrontRight);
         double newPosXFrontRight=  (GameGrid.PVX-((Player.xPosition-xPositionAFrontRight)*Cube.defaultSize)*sizeRatioFrontRight-(Cube.defaultSize*sizeRatioFrontRight)/2);
 
-
-
-
-
-
-
         //if(xPosition==5)System.out.println(deltaYRight);
-
-
-
-
-
 
         double [][] corners=new double[16][2];
         corners[0][1]=newPosY;
         corners[1][1]=newPosYRight;
         corners[2][1]=newPosYFrontRight;
         corners[3][1]=newPosYFront;
-
-
-
 
         corners[0][0]=newPosX;
         corners[1][0]=newPosXRight;
@@ -969,20 +848,8 @@ public class Player {
         corners[14][1]=corners[10][1]-Cube.defaultSize*sizeRatio3;
         corners[15][1]=corners[11][1]-Cube.defaultSize*sizeRatio4;}
 
-        /*
-        corners[12][1]=corners[4][1]+(zPosition-cubeIn[2])*Cube.defaultSize*sizeRatio1;
-        corners[13][1]=corners[5][1]+(zPosition-cubeIn[2])*Cube.defaultSize*sizeRatio2;
-        corners[14][1]=corners[6][1]+(zPosition-cubeIn[2])*Cube.defaultSize*sizeRatio3;
-        corners[15][1]=corners[7][1]+(zPosition-cubeIn[2])*Cube.defaultSize*sizeRatio4;
-
-         */
-
-
-
         return corners;
     }
-
-
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
             case 65:
@@ -1039,19 +906,14 @@ public class Player {
             case 72:
                 isMovingLeft=true;
                 break;
-            case 81:
-                lightningSprint=true;
-                break;
             case 82:
-                if(isMovingForward)
-                    isSprinting=true;
+                isRunning =true;
                 break;
 
 
         }
 
     }
-
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()){
             case 65:
@@ -1073,7 +935,7 @@ public class Player {
 
             case 87:
                 isMovingForward=false;
-                isSprinting=false;
+                isRunning=false;
                 break;
             case 89:
                 break;
@@ -1098,38 +960,35 @@ public class Player {
             case 72:
                 isMovingLeft=false;
                 break;
-            case 81:
-                lightningSprint=false;
-                break;
             case 82:
-                //isSprinting=false;
+                if(!isMovingForward)isRunning=false;
                 break;
 
 
         }
     }
-    static public void togglePerspective(){
-if(GamePanel.gameState==GamePanel.GameStates.get("Running")){
-        if(thirdPerspective){
-            thirdPerspective=false;
-            GameGrid.PFY=GAME_HEIGHT/2.0;
-            //GameGrid.PVY=GAME_HEIGHT*.8;
-            GameGrid.PVY=GameGrid.PFY+height;
-            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
-            GameGrid.isRotatingLeft=false;
-            GameGrid.isRotatingRight=false;
+    public void togglePerspective(){
+        if(GamePanel.gameState==GamePanel.GameStates.get("Running")){
+            if(thirdPerspective){
+                thirdPerspective=false;
+                GameGrid.PFY=GAME_HEIGHT/2.0;
+                //GameGrid.PVY=GAME_HEIGHT*.8;
+                GameGrid.PVY=GameGrid.PFY+height;
+                GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
+                GameGrid.isRotatingLeft=false;
+                GameGrid.isRotatingRight=false;
+                cubeAway=-5;
 
-
-        }else{
-            GameGrid.PFY=GAME_HEIGHT/3.0;
-            GameGrid.PVY=GAME_HEIGHT;
-            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
-            thirdPerspective=true;
-            isMovingLeft=false;
-            isMovingRight=false;
-
-        }}
-
+            }else{
+                GameGrid.PFY=GAME_HEIGHT/3.0;
+                GameGrid.PVY=GAME_HEIGHT;
+                GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
+                thirdPerspective=true;
+                isMovingLeft=false;
+                isMovingRight=false;
+                cubeAway=2;
+            }
+        }
     }
     private void toggleFly() {
         if(isFlying){
