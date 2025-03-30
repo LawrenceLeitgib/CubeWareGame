@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.util.Optional;
 
 public class Cube {
     int xPosition;
@@ -42,18 +41,21 @@ public class Cube {
 
     Color color;
 
+    Chunk chunk;
 
-    Cube(int xPosition, int yPosition, int zPosition, double depthRatio,Color color,int height){
+
+    Cube(int xPosition, int yPosition, int zPosition, double depthRatio,Chunk chunk,Color color,int height){
         this.xPosition=xPosition;
         this.yPosition=yPosition;
         this.zPosition=zPosition;
         Cube.depthRatio=depthRatio;
         this.color=color;
         this.height=height;
+        this.chunk=chunk;
 
     }
-    Cube(int xPosition, int yPosition, int zPosition, double depthRatio){
-        this(xPosition,  yPosition, zPosition, depthRatio, new Color(7, 252, 3),defaultSize);
+    Cube(int xPosition, int yPosition, int zPosition, double depthRatio, Chunk chunk){
+        this(xPosition,  yPosition, zPosition, depthRatio, chunk,new Color(7, 252, 3),defaultSize);
     }
 
     public static void setGameWidth(int gameWidth) {
@@ -103,33 +105,76 @@ public class Cube {
             yPointsList[i]=listDoubleToInt(new double[]{corners[i][1],newCorners[i][1],
                     newCorners[xNum][1],corners[xNum][1]});
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition-1][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition]){
-            blockLeftEmpty=false;
+        int leftPosCheck=xPosition-1-chunk.chunkToNormNumX;
+        int rightPosCheck=xPosition+1-chunk.chunkToNormNumX;
+        int frontPosCheck=yPosition-1-chunk.chunkToNormNumY;
+        int backPosCheck=yPosition+1-chunk.chunkToNormNumY;
+        int topPosCheck=zPosition+1;
+        int bottomPosCheck=zPosition-1;
+        if(leftPosCheck>=0) {
+            if (chunk.cubePositions[leftPosCheck][yPosition - chunk.chunkToNormNumY][zPosition]) {
+                blockLeftEmpty = false;
+
+            }
+        }
+        else {
+            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition - 1][CubeContainer.numOfChunkY + chunk.yPosition]) {
+                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition - 1][CubeContainer.numOfChunkY + chunk.yPosition].cubePositions[leftPosCheck + Chunk.numOfCubeX][yPosition - chunk.chunkToNormNumY][zPosition]) {
+                    blockLeftEmpty = false;
+                }
+            }
+        }
+
+        if(rightPosCheck<Chunk.numOfCubeX) {
+            if(chunk.cubePositions[rightPosCheck][yPosition-chunk.chunkToNormNumY][zPosition]){
+                blockRightEmpty=false;
+            }
+        }
+        else {
+            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition +1][CubeContainer.numOfChunkY + chunk.yPosition]) {
+                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition +1][CubeContainer.numOfChunkY + chunk.yPosition].cubePositions[rightPosCheck - Chunk.numOfCubeX][yPosition - chunk.chunkToNormNumY][zPosition]) {
+                    blockRightEmpty = false;
+                }
+            }
+        }
+
+        if(frontPosCheck>=0) {
+            if (chunk.cubePositions[xPosition - chunk.chunkToNormNumX][frontPosCheck][zPosition]) {
+                blockFrontEmpty = false;
+            }
+        }
+        else{
+            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition-1]) {
+                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition-1].cubePositions[xPosition - chunk.chunkToNormNumX][frontPosCheck+Chunk.numOfCubeY][zPosition]) {
+                    blockFrontEmpty = false;
+                }
+            }
 
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition+1][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition]){
-            blockRightEmpty=false;
+        if(backPosCheck<Chunk.numOfCubeY){
+            if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][backPosCheck][zPosition]) {
+                blockBackEmpty = false;
+            }
+        }
+        else{
+            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition+1]) {
+                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition+1].cubePositions[xPosition - chunk.chunkToNormNumX][backPosCheck-Chunk.numOfCubeY][zPosition]) {
+                    blockBackEmpty = false;
+                }
+            }
 
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition-1][CubeContainer.numberOfCubesZ+zPosition]){
-            blockFrontEmpty=false;
 
-
+        if(topPosCheck<Chunk.numOfCubeZ){
+            if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][yPosition-chunk.chunkToNormNumY][topPosCheck]){
+                blockTopEmpty=false;
+            }
         }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition+1][CubeContainer.numberOfCubesZ+zPosition]){
-            blockBackEmpty=false;
 
-
-        }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition+1]){
-            blockTopEmpty=false;
-
-
-        }
-        if(CubeContainer.cubePosition[CubeContainer.numberOfCubes+xPosition][CubeContainer.numberOfCubes+yPosition][CubeContainer.numberOfCubesZ+zPosition-1]){
-            blockBottomEmpty=false;
-
-
+        if(bottomPosCheck>=0){
+            if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][yPosition-chunk.chunkToNormNumY][bottomPosCheck]){
+                blockBottomEmpty=false;
+            }
         }
     }
     public void draw(Graphics g) {

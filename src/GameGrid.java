@@ -43,8 +43,9 @@ public class GameGrid {
 
     }
     public void updateData(double deltaTime){
-        player.updateData(deltaTime);
         cubeContainer.updateData(deltaTime);
+        player.updateData(deltaTime);
+
     }
     public void draw(Graphics g){
 

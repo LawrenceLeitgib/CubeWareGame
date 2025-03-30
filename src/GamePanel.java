@@ -59,6 +59,8 @@ public class GamePanel extends JPanel implements Runnable {
         Cube.setGameWidth(r.width);
         CubeContainer.setGameHeight(r.height);
         CubeContainer.setGameWidth(r.width);
+        Chunk.GAME_WIDTH =r.width;
+        Chunk.GAME_HEIGHT =r.height;
 
 
 
