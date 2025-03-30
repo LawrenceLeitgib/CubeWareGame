@@ -17,7 +17,7 @@ public class Player {
     static double height=1.8*Cube.defaultSize;
 
     static double depth=.8*Cube.defaultSize;
-    double speed=0.4;
+    double speed=0.2;
     double gravityAcceleration=0.05;
     double xVelocity;
     double yVelocity;
@@ -53,9 +53,9 @@ public class Player {
     boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
 
     Player(int GAME_WIDTH,int GAME_HEIGHT,double positionX,double positionY,double positionZ){
-        Player.xPosition=5;
+        Player.xPosition=0;
         Player.yPosition=0;
-        Player.zPosition=6;
+        Player.zPosition=3;
         Player.GAME_WIDTH =GAME_WIDTH;
         Player.GAME_HEIGHT =GAME_HEIGHT;
         chunkIn[0]=(int)(xPosition/Chunk.numOfCubeX);
@@ -81,19 +81,16 @@ public class Player {
         Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
         if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
         if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
-        cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX);
-        cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY);
-        if(Player.xPosition-10<0)cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX-1);
-        if(Player.yPosition-10<0)cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY-1);
+        cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX);
+        cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY);
+        if(Player.xPosition-10<0)cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX-1);
+        if(Player.yPosition-10<0)cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(GameGrid.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY-1);
 
 
 //System.out.println(GameGrid.PVY-GameGrid.PFY);
         if(!thirdPerspective){
             cubeAway=-6.5;
-            GameGrid.PFY=GAME_HEIGHT/2.0;
-            //GameGrid.PVY=GAME_HEIGHT*.8;
-            GameGrid.PVY=GameGrid.PFY+height;
-            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
+
 
             cameraChunkIn[0]=(int)((Player.xPosition)/Chunk.numOfCubeX);
             cameraChunkIn[1]=(int)((Player.yPosition-1)/Chunk.numOfCubeY);
@@ -105,13 +102,9 @@ public class Player {
 
         }else{
             cubeAway=2;
-            GameGrid.PFY=0;
-            GameGrid.PVY=GAME_HEIGHT;
-            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
 
         }
-        Player.chunkIn[0]= cameraChunkIn[0];
-        Player.chunkIn[1] =cameraChunkIn[1];
+
 
 
         //System.out.println(Player.chunkIn[0]+" "+Player.chunkIn[1]);
@@ -147,21 +140,21 @@ public class Player {
         yVelocity=0;
         xVelocity=0;
         if(isMovingRight) {
-            yVelocity+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
-            xVelocity+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+            yVelocity+=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
+            xVelocity+=speed*multiplierOfSpeed*Math.cos(GameGrid.angleForXRotation);
         }
         if(isMovingLeft){
-            yVelocity-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
-            xVelocity-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+            yVelocity-=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
+            xVelocity-=speed*multiplierOfSpeed*Math.cos(GameGrid.angleForXRotation);
         }
 
         if(isMovingBackward){
-            yVelocity+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
-            xVelocity-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+            yVelocity+=speed*multiplierOfSpeed*Math.cos(GameGrid.angleForXRotation);
+            xVelocity-=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
         }
         if(isMovingForward) {
-            yVelocity-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
-            xVelocity+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+            yVelocity-=speed*multiplierOfSpeed*Math.cos(GameGrid.angleForXRotation);
+            xVelocity+=speed*multiplierOfSpeed*Math.sin(GameGrid.angleForXRotation);
 
         }
 
@@ -569,11 +562,13 @@ public class Player {
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyCode()){
             case 65:
-                isMovingLeft=true;
+               // isMovingLeft=true;
+                GameGrid.isRotatingLeft=true;
                 break;
 
             case 68:
-                isMovingRight = true;
+               // isMovingRight = true;
+                GameGrid.isRotatingRight=true;
                 break;
             case 83:
                 isMovingBackward=true;
@@ -591,6 +586,7 @@ public class Player {
                 break;
             case 70:
                 flySwitch();
+                FireBall.speed=.1;
                 break;
             case 32:
                 if(!isFlying)isJumping=true;
@@ -611,11 +607,13 @@ public class Player {
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()){
             case 65:
-                isMovingLeft=false;
+                //isMovingLeft=false;
+                GameGrid.isRotatingLeft=false;
                 break;
 
             case 68:
-                isMovingRight=false;
+                //isMovingRight=false;
+                GameGrid.isRotatingRight=false;
                 break;
             case 83:
                 isMovingBackward=false;
@@ -643,8 +641,17 @@ public class Player {
 
         if(thirdPerspective){
             thirdPerspective=false;
+            GameGrid.PFY=GAME_HEIGHT/2.0;
+            //GameGrid.PVY=GAME_HEIGHT*.8;
+            GameGrid.PVY=GameGrid.PFY+height;
+            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
+
         }else{
+            GameGrid.PFY=0;
+            GameGrid.PVY=GAME_HEIGHT;
+            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
             thirdPerspective=true;
+
         }
 
     }

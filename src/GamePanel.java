@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 
 
@@ -20,9 +19,10 @@ public class GamePanel extends JPanel implements Runnable {
     GamePanel(){
         this.setFocusable(true); //read key strock
         this.addKeyListener(new AL());
+        this.addMouseListener(new ML());
+        this.addMouseMotionListener(new ML());
         this.setPreferredSize(SCREEN_SIZE);
         stats=new Stats(GAME_WIDTH,GAME_HEIGHT);
-
 
         gameThread=new Thread(this);
         gameThread.start();
@@ -71,6 +71,10 @@ public class GamePanel extends JPanel implements Runnable {
         stats.draw(g);
 
     }
+
+
+
+
     public class AL extends KeyAdapter{
         public void keyPressed(KeyEvent e){
             //System.out.println(e.getKeyCode()+" = "+e.getKeyChar());
@@ -85,6 +89,53 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
     }
+    public class ML implements MouseListener,MouseMotionListener {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+           // System.out.println(e.getX());
+           // System.out.println("test");
+
+            GameGrid.mouseClicked =true;
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            GameGrid.mouseClicked =false;
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            GameGrid.mousePositionX =e.getX();
+            GameGrid.mousePositionY =e.getY();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            GameGrid.mousePositionX =e.getX();
+            GameGrid.mousePositionY =e.getY();
+
+
+        }
+    }
+
     @Override
     public void run() {
         long lastTime = System.nanoTime();
@@ -100,6 +151,7 @@ public class GamePanel extends JPanel implements Runnable {
                 updateData(2/amountOfTicks);
                 removeAll();
                 repaint();
+                removeAll();
                 delta--;
 
             }
