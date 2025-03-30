@@ -1,9 +1,9 @@
 import java.awt.*;
 
 public class Mage extends Entity{
-    double shoutCount=0;
-    double shoutTime=1.5;
-    double shoutDistance=10;
+    private double shoutCount=0;
+    private static final double shoutTime=1.5;
+    private static final double  shoutDistance=10;
 
     Mage(double x, double y, double z, double strength, double hp, double xp) {
         super(x, y, z, strength, hp, xp);

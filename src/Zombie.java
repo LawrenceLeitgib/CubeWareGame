@@ -21,7 +21,7 @@ public class Zombie extends Entity {
     @Override
     public void setNewPositions(double deltaTime){
         setAggro();
-        changeDirectionCount=+deltaTime;
+        changeDirectionCount+=deltaTime;
         if(changeDirectionCount>changeDirectionTime){
             changeDirectionCount-=changeDirectionTime;
             angleWalking=Math.random()*Math.PI*2;

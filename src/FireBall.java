@@ -1,6 +1,7 @@
 import java.awt.*;
 
 public class FireBall extends Projectile {
+
     FireBall(double xPos, double yPos, double zPos, double angle, double speed, double size, double damage, boolean isFriendly) {
         super(xPos, yPos, zPos, angle, speed, size, damage, isFriendly);
     }

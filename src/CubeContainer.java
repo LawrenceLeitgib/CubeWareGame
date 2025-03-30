@@ -4,7 +4,7 @@ public class CubeContainer {
     static final int numOfChunkY=1000;
     Chunk[][] chunks=new Chunk[numOfChunkX*2][numOfChunkY*2];
     boolean[][]chunksPosition=new boolean[numOfChunkX*2][numOfChunkY*2];
-    boolean[][]chunksGenerate=new boolean[numOfChunkX*2][numOfChunkY*2];
+    boolean[][] chunksGenerateStructur =new boolean[numOfChunkX*2][numOfChunkY*2];
     boolean[][]chunksGenerateGround=new boolean[numOfChunkX*2][numOfChunkY*2];
     private final int[]  newChunkIn={0,0};
     public static Color[][] colorsList=new  Color[7][2];
@@ -14,6 +14,7 @@ public class CubeContainer {
         //CreateNewGround();
         //CreateNewStructure();
         drawSpawn();
+        //drawtor(0 ,0 ,30,10, 50);
         newChunkIn[0] = GameGrid.player.chunkIn[0];
         newChunkIn[1] = GameGrid.player.chunkIn[1];
     }
@@ -214,52 +215,8 @@ public class CubeContainer {
 
     }
     public void createCubes(){
-       //drawBasicStructure(-10,-10,0,20,20,5);
-       // drawtor(0,0,30,10,30);
-/*
-        int type=2;
-        int temp=GameGrid.numOfChunkToDraw;
-        GameGrid.numOfChunkToDraw=2;
-        double angle=-GameGrid.angleForHorizontalRotation/8;
-        for(int y=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y<GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y++){
-            for(int x=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x<GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x++){
-                removeCube(x+GameGrid.player.cubeIn[0],y+GameGrid.player.cubeIn[1],3);
-            }
-        }
-        GameGrid.numOfChunkToDraw=1;
-        for(int y=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y<GameGrid.numOfChunkToDraw*Chunk.numOfCubeY;y++){
-            if(y==GameGrid.numOfChunkToDraw*Chunk.numOfCubeY-1)type=6;
-            else if(y==-GameGrid.numOfChunkToDraw*Chunk.numOfCubeY)type=1;
-            else type=4;
-            for(int x=-GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x<GameGrid.numOfChunkToDraw*Chunk.numOfCubeX;x++){
-                //newCube(x,y,3,type);
-               // newCube((int) (Math.cos(angle)*x+.5)+(int)(Math.sin(angle)*y+.5)+GameGrid.player.cubeIn[0], (int) (-Math.sin(angle)*x+.5)+(int)(Math.cos(angle)*y+.5)+GameGrid.player.cubeIn[1],3,type);
-
-               newCube((int) (Math.cos(angle)*x+Math.sin(angle)*y+.5)+GameGrid.player.cubeIn[0], (int) (-Math.sin(angle)*x+Math.cos(angle)*y+.5)+GameGrid.player.cubeIn[1],3,type);
-            }
-            type++;
-            if(type>=5)type=2;
-        }
-        GameGrid.numOfChunkToDraw=temp;
-
- */
-
-
-
-        /*
-        int distance = (int)16;
-
-        double angle=Math.PI/16;
-        for(int i=distance;i>0;i--){
-            for(int j=distance;j>0;j--){
-                newCube((int) (i*Math.cos(angle*j)), (int) (i*Math.sin(angle*j)),3,type);
-            }
-            type++;
-            if(type>=6)type=0;
-        }
-
-         */
-
+        //drawBasicStructure(-10,-10,0,20,20,5);
+        // drawtor(0,0,30,10,30);
     }
     public void newChunk(int x,int y){
         if((!chunksPosition[numOfChunkX+x][numOfChunkY+y])){
@@ -288,9 +245,9 @@ public class CubeContainer {
     public void CreateNewStructure(){
         for(int i = GameGrid.player.chunkIn[0]- GameGrid.numOfChunkToDraw; i<=GameGrid.player.chunkIn[0]+ GameGrid.numOfChunkToDraw; i++){
             for(int j = GameGrid.player.chunkIn[1]- GameGrid.numOfChunkToDraw; j<=GameGrid.player.chunkIn[1]+ GameGrid.numOfChunkToDraw; j++){
-                if(!chunksGenerate[numOfChunkX+i][numOfChunkY+j]){
-                    generateChunk(i,j);
-                    chunksGenerate[numOfChunkX+i][numOfChunkY+j]=true;
+                if(!chunksGenerateStructur[numOfChunkX+i][numOfChunkY+j]){
+                    generateStructur(i,j);
+                    chunksGenerateStructur[numOfChunkX+i][numOfChunkY+j]=true;
                 }
             }
         }
@@ -304,7 +261,7 @@ public class CubeContainer {
         if(Math.sqrt(Math.pow(x*Chunk.numOfCubeX+numX,2)+Math.pow(y*Chunk.numOfCubeY+numY,2))> GameGrid.safeZone*3)
             drawMountain(x*Chunk.numOfCubeX+numX,y*Chunk.numOfCubeY+numY,2,rNum,stepNum);
     }
-    private void generateChunk(int x, int y) {
+    private void generateStructur(int x, int y) {
         int numX= (int) (Math.random()*16);
         int numY= (int) (Math.random()*16);
         int heightNum=(int) (Math.random()*3);
@@ -328,9 +285,6 @@ public class CubeContainer {
         else {
             if (pos % Chunk.numOfCubeX == 0) return new int[]{pos / Chunk.numOfCubeX - 2, 0};
             else return new int[]{pos / Chunk.numOfCubeX - 1, Chunk.numOfCubeX + pos % Chunk.numOfCubeX};
-
         }
-
-
     }
 }
