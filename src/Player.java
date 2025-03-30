@@ -45,7 +45,7 @@ public class Player {
     static int[] chunkIn=new int[2];
     static int[] cameraChunkIn=new int[2];
 
-    static int numOfChunkToDraw=2;
+    static int numOfChunkToDraw=3;
 
     static boolean thirdPerspective=true;
 
@@ -230,7 +230,7 @@ public class Player {
     public static void draw(Graphics g){
         g.setColor(Color.black);
         g.setFont(new Font("Arial",Font.PLAIN,24));
-        g.setColor(Color.black);
+        g.setColor(Color.red);
         g.drawString(String.valueOf(yPosition),15,90);
         g.drawString(Double.toString(xPosition),15,70);
         g.drawString(Double.toString(zPosition),15,110);
@@ -567,7 +567,7 @@ public class Player {
                 break;
 
             case 68:
-               // isMovingRight = true;
+                //isMovingRight = true;
                 GameGrid.isRotatingRight=true;
                 break;
             case 83:
@@ -586,7 +586,7 @@ public class Player {
                 break;
             case 70:
                 flySwitch();
-                FireBall.speed=.1;
+                //FireBall.speed=.1;
                 break;
             case 32:
                 if(!isFlying)isJumping=true;
@@ -597,6 +597,15 @@ public class Player {
                 break;
             case 80:
               togglePerspective();
+                break;
+            case 85:
+
+                isMovingRight=true;
+                break;
+            case 72:
+
+
+                isMovingLeft=true;
                 break;
 
 
@@ -635,6 +644,16 @@ public class Player {
             case 16:
                 isSlowing=false;
                 break;
+            case 85:
+
+                isMovingRight=false;
+                break;
+            case 72:
+
+
+                isMovingLeft=false;
+                break;
+
         }
     }
     static public void togglePerspective(){

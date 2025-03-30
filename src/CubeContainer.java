@@ -306,8 +306,8 @@ public class CubeContainer {
         }
 
         int xNum=0;
-        for(var i=Player.cameraChunkIn[1]-Player.numOfChunkToDraw-1;i<=Player.cameraChunkIn[1]+Player.numOfChunkToDraw+1;i++){
-            for(var j=0;j<=Player.numOfChunkToDraw*2+2;j++){
+        for(var i=Player.cameraChunkIn[1]-Player.numOfChunkToDraw;i<=Player.cameraChunkIn[1]+Player.numOfChunkToDraw;i++){
+            for(var j=0;j<=Player.numOfChunkToDraw*2;j++){
                 if(j%2==0)xNum=-Player.numOfChunkToDraw+j/2+Player.cameraChunkIn[0];
                 if(j%2==1)xNum=Player.numOfChunkToDraw-j/2+Player.cameraChunkIn[0];
                 {

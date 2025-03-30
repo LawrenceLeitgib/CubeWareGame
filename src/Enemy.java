@@ -1,39 +1,73 @@
 import java.awt.*;
 
 public class Enemy {
+    boolean marketForDeletion;
     double xPosition;
     double yPosition;
 
     double zPosition;
 
     double height=200;
-    double width=80;
-    double depth=80;
+    double width=100;
+    double depth=100;
 
     double newHeight;
     double newWidth;
     double newDepth;
 
+    double speed=0.00;
 
 
     double newPosX;
     double newPosY;
-    double speed;
-    double MaxHP;
-    double HP;
+    double MaxHP=100;
+    double HP=100;
     double[][] corners;
 
-    double xVelocity=1;
-    double yVelocity=1;
+    double xVelocity=0;
+    double yVelocity=0;
 
-    Enemy(int x,int y,int z){
+    Enemy(double x,double y,double z){
         xPosition=x;
         yPosition=y;
         zPosition=z;
     }
     public void updateData(double deltaTime) {
-        xPosition+=xVelocity/100;
-        yPosition+=yVelocity/100;
+
+
+
+        double angleWithPlayer=0;
+        angleWithPlayer=Math.atan((Player.yPosition-yPosition)/(Player.xPosition-xPosition));
+
+        if(Player.xPosition-xPosition>0){
+            angleWithPlayer=Math.PI+angleWithPlayer;
+        }else  if(Player.xPosition-xPosition<0&&Player.yPosition-yPosition>0){
+            angleWithPlayer=2*Math.PI+angleWithPlayer;
+        }
+        if(Player.xPosition-xPosition==0){
+            if(Player.yPosition-yPosition<=0)angleWithPlayer=Math.PI/2;
+            if(Player.yPosition-yPosition>0)angleWithPlayer=3*Math.PI/2;
+
+        }
+
+
+
+        xPosition-=Math.cos(angleWithPlayer)*speed;
+          yPosition-=Math.sin(angleWithPlayer)*speed;
+
+         for(var i=0;i<GameGrid.fireBallContainer.fireBallsList.length;i++){
+             if(GameGrid.fireBallContainer.fireBallsList[i]){
+
+             if(detectionCollisionWithBall(GameGrid.fireBallContainer.fireBalls[i].xPosition,GameGrid.fireBallContainer.fireBalls[i].yPosition,GameGrid.fireBallContainer.fireBalls[i].size)){
+                 HP-=GameGrid.fireBallContainer.fireBalls[i].damage;
+                 yPosition+=GameGrid.fireBallContainer.fireBalls[i].yVelocity/2;
+                 xPosition+=GameGrid.fireBallContainer.fireBalls[i].xVelocity/2;
+                 GameGrid.fireBallContainer.fireBalls[i]=null;
+                 GameGrid.fireBallContainer.fireBallsList[i]=false;
+             }
+             }
+         }
+
         double correction=0.5;
         while(GameGrid.angleForXRotation>=Math.PI*2){
             GameGrid.angleForXRotation-=Math.PI*2;
@@ -57,10 +91,29 @@ public class Enemy {
         newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*width)*sizeRatio-newWidth/2);
         corners=getCorners(newPosX,newPosY,newWidth,newHeight,difPosZ,difPosXA,difPosYA);
 
+
+        if(Math.sqrt(Math.pow(Player.xPosition-xPosition,2)+Math.pow(Player.yPosition-yPosition,2))>40)  this.marketForDeletion=true;
+        if(HP<=0){
+            HP=0;
+            this.marketForDeletion=true;
+        }
+
     }
 
     public void draw(Graphics g){
-        System.out.println(newPosX);
+
+        if(newPosY+newHeight<0)return;
+        if(newPosY>GameGrid.GAME_HEIGHT*2)return;
+        if(newPosX>GameGrid.GAME_WIDTH*2)return;
+        if(newPosX<-GameGrid.GAME_WIDTH)return;
+
+        for(var i=0;i<8;i++){
+            if(corners[i][1]+newHeight<0)return;
+            if(corners[i][1]>GameGrid.GAME_HEIGHT*2)return;
+            if(corners[i][0]>GameGrid.GAME_WIDTH*2)return;
+            if(corners[i][0]<-GameGrid.GAME_WIDTH)return;
+
+        }
         g.setColor(Color.blue);
         //g.drawRect((int) (newPosX), (int)( newPosY-newHeight), (int) newWidth, (int) newHeight);
         g.drawLine((int) corners[0][0], (int) corners[0][1], (int) corners[1][0], (int) corners[1][1]);
@@ -164,5 +217,14 @@ public class Enemy {
         return corners;
     }
 
+    public boolean detectionCollisionWithBall(double ballXPos,double ballYPos,double ballSize){
+        if(ballXPos<xPosition+0.5&&ballXPos>xPosition-0.5)
+            if(ballYPos>yPosition-1&&ballYPos<yPosition){
+                return true;
+            }
+
+
+        return false;
+    }
 
 }

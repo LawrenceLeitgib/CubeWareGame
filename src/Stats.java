@@ -8,8 +8,8 @@ public class Stats {
     int speed;
     int maxHealth;
     int health;
-    int maxMana;
-    int mana;
+    static double maxMana;
+    static double mana;
     Stats(int GAME_WIDTH, int GAME_HEIGHT){
 
         this.GAME_WIDTH=GAME_WIDTH;
@@ -39,7 +39,7 @@ public class Stats {
         g.fillRect(10,10,200*health/maxHealth,15);
         drawRectWithBorder(g,10,30,200,15,2,new Color(131, 201, 201),Color.black);
         g.setColor(new Color(0,0,255));
-        g.fillRect(10,30,200*mana/maxMana,15);
+        g.fillRect(10,30, (int) (200*mana/maxMana),15);
         //g.setColor(Color.black);
         //g.setFont(new Font("Arial",Font.PLAIN,18));
         //g.drawString("Health",15,22);
@@ -49,21 +49,7 @@ public class Stats {
 
     }
 
-    public int getHealth() {
-        return health;
-    }
 
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
-    public int getMana() {
-        return mana;
-    }
-
-    public void setMana(int mana) {
-        this.mana = mana;
-    }
 
     public void updateData(double deltaTime){
 

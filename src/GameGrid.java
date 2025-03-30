@@ -31,11 +31,13 @@ public class GameGrid {
 
     static double[] mouseInGame;
 
-    FireBallContainer fireBallContainer;
+    static FireBallContainer fireBallContainer;
+   static  EnemiesContainer enemiesContainer;
 
    static boolean mouseClicked =false;
 
-Enemy enemy;
+    //Enemy enemy;
+
 
 
 
@@ -47,7 +49,9 @@ Enemy enemy;
 
         cubeContainer=new CubeContainer(depthRatio);
         fireBallContainer=new FireBallContainer();
-        enemy=new Enemy(2,4,2);
+        enemiesContainer=new EnemiesContainer();
+
+
 
 
 
@@ -80,12 +84,13 @@ Enemy enemy;
             angleForXRotation+=Math.PI/64;
         }
         mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
-        mouseAngleInGame=mouseAngleInGame(mouseInGame[0],mouseInGame[1]);
+        mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
       //  System.out.println(mousePositionX+", "+mousePositionY);
-        //System.out.println(mouseInGame[0]+", "+mouseInGame[1]);
+      //  System.out.println(mouseInGame[0]+", "+mouseInGame[1]);
+        //System.out.println(mouseAngleInGame);
         cubeContainer.updateData(deltaTime);
         fireBallContainer.updateData(deltaTime);
-        enemy.updateData(deltaTime);
+        enemiesContainer.updateData(deltaTime);
 
         player.updateData(deltaTime);
 
@@ -96,17 +101,22 @@ Enemy enemy;
         cubeContainer.draw(g);
         g.setColor(Color.red);
         Player.draw(g);
-        enemy.draw(g);
         fireBallContainer.draw(g);
+        enemiesContainer.draw(g);
 
         g.setColor(Color.RED);
         g.fillOval((int) (PFX-4), (int) (PFY-4),8,8);
-
+      //  System.out.println(mouseInGame[0]+", " +mouseInGame[1]);
     }
     public double[] mousePosToGamePos(int xPos,int yPos){
         double[] gamePos=new double[2];
+        if(yPos<PFY){
+           yPos= (int) (PFY+1);
 
-        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY);
+        }
+
+        double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY-80);
+        //double sizeRatioForMouse=(yPos-PFY)/(PVY-PFY);
         double difPosYRForMouse=((GAME_HEIGHT/sizeRatioForMouse-GAME_HEIGHT)/depthRatio);
 
            //difPosYR*1.0=(GAME_HEIGHT/sizeRatio-GAME_HEIGHT/depthRatio;
@@ -124,39 +134,50 @@ Enemy enemy;
         double B=yPositionAForMouse-Player.yPosition+correteurXY;
         double difPosYAForMouse=(B*(Math.cos(angleForXRotation)/Math.sin(angleForXRotation))+A)/(Math.sin(angleForXRotation)+Math.cos(angleForXRotation)*Math.cos(angleForXRotation)/Math.sin(angleForXRotation));
         double difPosXAForMouse=(A*(Math.cos(angleForXRotation)/Math.sin(angleForXRotation))-B)/(Math.sin(angleForXRotation)+Math.cos(angleForXRotation)*Math.cos(angleForXRotation)/Math.sin(angleForXRotation));
-        gamePos[1]=difPosYAForMouse-correteurXY+Player.yPosition;
-        gamePos[0]=difPosXAForMouse+correteurXY+Player.xPosition;
+        gamePos[1]=difPosYAForMouse+Player.yPosition;
+        gamePos[0]=difPosXAForMouse+Player.xPosition;
+
+
+
+
+
 
         if(angleForXRotation==0){
-            gamePos[0]=A;
-            gamePos[1]=B;
+            gamePos[0]=A+Player.xPosition;
+            gamePos[1]=B+Player.yPosition;
         }
         if(angleForXRotation==Math.PI/2){
-            gamePos[0]=-B;
-            gamePos[1]=A;
+            gamePos[0]=-B+Player.xPosition;
+            gamePos[1]=A+Player.yPosition;
         }
         if(angleForXRotation==Math.PI){
-            gamePos[0]=-A;
-            gamePos[1]=-B;
+            gamePos[0]=-A+Player.xPosition;
+            gamePos[1]=-B+Player.yPosition;
         }
 
         if(angleForXRotation==3*Math.PI/2){
-            gamePos[0]=B;
-            gamePos[1]=-A;
+            gamePos[0]=B+Player.xPosition;
+            gamePos[1]=-A+Player.yPosition;
         }
 
 
         return gamePos;
     }
 
-    public double mouseAngleInGame(double xPos,double yPos){
+    public double getMouseAngleInGame(double xPos,double yPos){
         double angle=0;
         angle=Math.atan((Player.yPosition-yPos)/(Player.xPosition-xPos));
+
 
         if(Player.xPosition-xPos>0){
             angle=Math.PI+angle;
         }else  if(Player.xPosition-xPos<0&&Player.yPosition-yPos>0){
             angle=2*Math.PI+angle;
+        }
+        if(Player.xPosition-xPos==0){
+            if(Player.yPosition-yPos<=0)angle=Math.PI/2;
+            if(Player.yPosition-yPos>0)angle=3*Math.PI/2;
+
         }
 
 

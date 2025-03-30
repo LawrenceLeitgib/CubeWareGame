@@ -4,7 +4,7 @@ public class FireBallContainer {
     FireBall[] fireBalls =new FireBall[1000];
     boolean[] fireBallsList =new boolean[1000];
 
-    double shoutTime=0.0;
+    double shoutTime=0.3;
     double shoutCount=0;
 
     FireBallContainer(){
@@ -13,8 +13,9 @@ public class FireBallContainer {
     public void createFireBall(){
         for(var i=0;i<fireBallsList.length;i++){
             if(!fireBallsList[i]){
-                fireBalls[i]=new FireBall(Player.xPosition,Player.yPosition,GameGrid.mouseAngleInGame,.00,20,0);
+                fireBalls[i]=new FireBall(Player.xPosition,Player.yPosition,GameGrid.mouseAngleInGame,.8,20,130);
                 fireBallsList[i]=true;
+                Stats.mana-=1;
                 return;
             }
         }

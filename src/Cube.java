@@ -115,6 +115,7 @@ public class Cube {
 
          }
         newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio);
+        //sizeRatio*(GameGrid.PVY-GameGrid.PFY+dif)=newPosY-GameGrid.PFY
         newWidth=  (width*sizeRatio);
         newHeight=  (height*sizeRatio);
         newDepth=  (depth*sizeRatio);

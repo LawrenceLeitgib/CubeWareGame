@@ -19,17 +19,22 @@ public class FireBall {
     double newPosY2;
     double newSize2;
     double angleOfShout;
-    static double speed;
+    double speed;
     int size;
     double damage;
 
     boolean marketForDeletion=false;
 
+    double yVelocity;
+    double xVelocity;
+
+
+
 
 
     FireBall(double xPos, double yPos, double angle, double speed, int size, double damage ){
         xPosition=xPos;
-        yPosition=yPos;
+        yPosition=yPos-0.5;
         angleOfShout=angle;
         this.speed=speed;
         this.size=size;
@@ -40,36 +45,39 @@ public class FireBall {
     }
 
     public void updateData(double deltaTime) {
-        xPosition += speed * Math.cos(angleOfShout);
-        yPosition += speed * Math.sin(angleOfShout);
-        double correction=0;
-        double difPosXA = (xPosition - correction - Player.xPosition);
-        double difPosYA = (yPosition + correction - Player.yPosition);
+        xVelocity=speed * Math.cos(angleOfShout);
+        yVelocity=speed * Math.sin(angleOfShout);
+        xPosition += xVelocity;
+        yPosition +=yVelocity;
+        double correctionY=0.5;
+        double correctionX=0;
+        double difPosXA = (xPosition - correctionX - Player.xPosition);
+        double difPosYA = (yPosition + correctionY - Player.yPosition);
 
         if(Math.sqrt(Math.pow(difPosYA,2)+Math.pow(difPosXA,2))>20)marketForDeletion=true;
 
 
         double difPosZ=((Player.zPosition-zPosition)*Cube.defaultSize);
 
-        double xPositionA = (Player.xPosition + difPosXA * Math.cos(GameGrid.angleForXRotation) + difPosYA * Math.sin(GameGrid.angleForXRotation) + correction);
-        double yPositionA = (Player.yPosition - difPosXA * Math.sin(GameGrid.angleForXRotation) + difPosYA * Math.cos(GameGrid.angleForXRotation) - correction);
+        double xPositionA = (Player.xPosition + difPosXA * Math.cos(GameGrid.angleForXRotation) + difPosYA * Math.sin(GameGrid.angleForXRotation) + correctionX);
+        double yPositionA = (Player.yPosition - difPosXA * Math.sin(GameGrid.angleForXRotation) + difPosYA * Math.cos(GameGrid.angleForXRotation) - correctionY);
         double difPosXR=((Player.xPosition-xPositionA)*Cube.width);
         double difPosYR= ((Player.yPosition-(yPositionA-Player.cubeAway))*Cube.depth);
         double sizeRatio=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
         double sizeRatio2=GameGrid.GAME_HEIGHT/(difPosYR*1.0*GameGrid.depthRatio+GameGrid.GAME_HEIGHT);
-        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio-80);
+        newPosY=((GameGrid.PVY-GameGrid.PFY)*sizeRatio+GameGrid.PFY+difPosZ*sizeRatio-80*sizeRatio);
         newSize=  (size*sizeRatio);
         newPosX=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.depth)*sizeRatio-newSize/2);
-        //newPosY2=((GameGrid.PVY-GameGrid.PFY)*sizeRatio2+GameGrid.PFY);
-        //newSize2=  (size*sizeRatio2);
-       // newPosX2=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.depth)*sizeRatio-newSize2/2);
+        newPosY2=((GameGrid.PVY-GameGrid.PFY)*sizeRatio2+GameGrid.PFY+difPosZ*sizeRatio+(Player.zPosition-2)*sizeRatio*Cube.defaultSize);
+        newSize2=  (size*sizeRatio2);
+        newPosX2=  (GameGrid.PVX-((Player.xPosition-xPositionA)*Cube.depth)*sizeRatio-newSize2/2);
 
 
 
     }
     public void draw(Graphics g){
-       // g.setColor(Color.gray);
-        //g.fillOval((int) (newPosX2-newSize2/2), (int) (newPosY2-newSize2/2), (int) newSize2, (int) newSize2);$
+        g.setColor(new Color(10,10,10,60));
+        g.fillOval((int) (newPosX2), (int) (newPosY2-newSize2/2), (int) newSize2, (int) newSize2);
         g.setColor(Color.yellow);
         g.fillOval((int) (newPosX-newSize/10), (int) (newPosY-newSize/2-newSize/10), (int) ( newSize+newSize/50), (int) (newSize+newSize/50));
         g.setColor(Color.orange);
