@@ -67,9 +67,9 @@ public class Cube {
 
 
     public void updateData(double deltaTime) {
-        double difPosX=(Player.xPosition-xPosition*width);
-        double difPosY= ((Player.yPosition-(yPosition-Player.cubeAway)*depth));
-        double difPosZ=(Player.zPosition-zPosition*height);
+        double difPosX=((Player.xPosition-xPosition)*width);
+        double difPosY= ((Player.yPosition-(yPosition-Player.cubeAway))*depth);
+        double difPosZ=((Player.zPosition-zPosition)*height);
         double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
          sizeRatio=GAME_HEIGHT/(difPosY*1.0*depthRatio+GAME_HEIGHT);
          if(difPosY<sizeRatioValue){
@@ -80,7 +80,7 @@ public class Cube {
          newWidth=  (width*sizeRatio);
          newHeight=  (height*sizeRatio);
          newDepth=  (depth*sizeRatio);
-         newPosX=  (GAME_WIDTH/2.0-(Player.xPosition-xPosition*width)*sizeRatio);
+         newPosX=  (GAME_WIDTH/2.0-((Player.xPosition-xPosition)*width)*sizeRatio);
 
         if (Math.abs(difPosX)<=width/2&&newPosY>GAME_HEIGHT*2&&difPosZ<0){
             drawCube=false;
@@ -138,9 +138,9 @@ public class Cube {
 
         if (blockBackEmpty && drawCube) {
             g.setColor(Color.BLACK);
-            g.fillRect((int) (corners[0][0] - 0.5), (int) (corners[0][1] - 0.5), (int) (newWidth + 2.5), (int) (newHeight + 2.5));
+            g.fillRect((int) (corners[0][0] - 1), (int) (corners[0][1] - 1), (int) (newWidth + 2), (int) (newHeight + 2));
             g.setColor(color);
-            g.fillRect((int) (corners[0][0] + 0.5), (int) (corners[0][1] + 0.5), (int) (newWidth + 0.5), (int) (newHeight + 0.5));
+            g.fillRect((int) (corners[0][0]), (int) (corners[0][1]), (int) (newWidth), (int) (newHeight));
 
         }
 
@@ -337,10 +337,9 @@ public class Cube {
 
 
             double sizeRatioAtPosition=GAME_HEIGHT/((difPosY+depth)*depthRatio+GAME_HEIGHT);
-            /*
-            if(groundAngle==Math.PI/2 );
-            if(groundAngle==3*Math.PI/2);
 
+
+            /*
             double LimitValue=groundRatio * Math.cos(groundAngle)*Math.tan(angleList[a1]);
             groundRatio*Math.cos(Math.atan(deltaYAngle/deltaXAngle))*(GameGrid.PFY-corners[a1][1])/(GameGrid.PFX-corners[a1][0]);
             double LimitValue=groundRatio*Math.cos(groundAngle)*(GameGrid.PFY-corners[a1][1])/(GameGrid.PFX-corners[a1][0]);

@@ -15,7 +15,7 @@ public class GameGrid {
     static double PVY;
     CubeContainer cubeContainer;
 
-    static double depthRatio=1/0.5;
+    static double depthRatio=2.0;
 
 
 
@@ -44,7 +44,7 @@ public class GameGrid {
     }
     public void updateData(double deltaTime){
         player.updateData(deltaTime);
-        cubeContainer.updateData(deltaTime, player.xPosition, player.yPosition, player.zPosition);
+        cubeContainer.updateData(deltaTime);
     }
     public void draw(Graphics g){
 

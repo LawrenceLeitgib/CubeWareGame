@@ -13,8 +13,6 @@ public class CubeContainer {
     static boolean[] cubePositionZ=new boolean[2*numberOfCubesZ+1];
     static double depthRatio;
 
-    static boolean hasBeenDrawnFrontPlayer=false;
-    static boolean hasBeenDrawnBelowGrid=false;
     boolean drawGrid=true;
 
     CubeContainer(double depthRatio){
@@ -116,6 +114,24 @@ public class CubeContainer {
     }
     public void createCubes(){
         drawMap(0,0,0);
+
+/*
+        newCube(-5,0,-1);
+        newCube(-6,0,-2);
+        newCube(-7,0,-3);*/
+
+        for(var i=2;i<5;i++){
+            for(var j=2;j<5;j++){
+                for(var k=2;k<5;k++){
+                    drawHeart(i*10,j*10,k*10);
+
+                }
+
+            }
+
+
+        }
+
         /*
         newCube(-10,0,-1);
 
@@ -131,13 +147,34 @@ public class CubeContainer {
         newCube(-6,0,2);
         newCube(-5,0,3);
         */
-        newCube(-5,0,4);
+       // newCube(2,0,0);
+        //newCube(0,0,0);
+        /*
+        newCube(3,0,10);
+        newCube(4,-5,10);
+        newCube(4,-4,10);
+        newCube(3,-4,10);
+        newCube(3,-5,10);
+
+         */
+
+
+        //newCube(-1,0,0);
+        //newCube(-2,0,0);
+
+        /*
+        newCube(-5,0,3);
+        newCube(-5,0,2);
+        newCube(-5,0,1);
+        newCube(-5,0,0);
+
+         */
        // newCube(-5,0,5);
         //newCube(-5,0,6);
 
 
     }
-    public void updateData(double deltaTime,double playerPosX,double playerPosy,double playerPosZ){
+    public void updateData(double deltaTime){
 
 
         for(var i=0;i<2*numberOfCubes+1;i++){
@@ -173,10 +210,8 @@ public class CubeContainer {
     public void drawCubes(Graphics g,int beginning,int end,int num){
 
 
-        hasBeenDrawnBelowGrid=false;
         for (var i= beginning; i < end; i++) {
             if(i==numberOfCubesZ){
-                hasBeenDrawnBelowGrid=true;
                 if(drawGrid)drawGrillage(g);
             }
             if (cubePositionZ[i])
@@ -185,8 +220,8 @@ public class CubeContainer {
                         for (var k = 0; k < 2 * numberOfCubes + 1; k++) {
                             if (cubePosition[k][j][i]) {
                                 cubes[k][j][i].draw(g);
-                                if(Player.yPosition-(cubes[k][j][i].yPosition)*cubes[k][j][i].depth>=0){
-                                    hasBeenDrawnFrontPlayer=true;
+                                //(1-Player.depth/Cube.defaultSize)/2.0
+                                if((Player.yPosition+1-(1-Player.depth/Cube.defaultSize)/2.0-(cubes[k][j][i].yPosition))>0){
                                     Player.draw(g);
                                 }
 
@@ -197,7 +232,6 @@ public class CubeContainer {
 
         for (var i= end-1; i > beginning-1; i--) {
             if(i+1==numberOfCubesZ){
-                hasBeenDrawnBelowGrid=true;
                 if(!drawGrid)drawGrillage(g);
             }
 
@@ -205,7 +239,7 @@ public class CubeContainer {
                 for (var j = 0; j < 2 * numberOfCubes + 1; j++) {
                     if (cubePositionY[j])
                         for (var k = 0; k < 2 * numberOfCubes + 1; k++) {
-                            if (cubePosition[k][j][i]&&(i-numberOfCubesZ+1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition) {
+                            if (cubePosition[k][j][i]&&(i-numberOfCubesZ+1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition*Cube.defaultSize) {
                                 cubes[k][j][i].draw(g);
                             }
                         }
@@ -226,9 +260,10 @@ public class CubeContainer {
         int numOfBlocksXaxis=1000;
         int numOfBlocksYaxis=1000;
         int sizeOfBlocks=Cube.defaultSize;
-        int xGrillNumToAdd= (int) Player.xPosition;
-        int yGrillNumToAdd= (int) Player.yPosition;
+        double xGrillNumToAdd=  (Player.xPosition*Cube.defaultSize);
+        double yGrillNumToAdd= ( Player.yPosition*Cube.defaultSize);
         double yValue;
+
 
         while(xGrillNumToAdd>sizeOfBlocks){
             xGrillNumToAdd-=sizeOfBlocks;
@@ -249,11 +284,12 @@ public class CubeContainer {
         }
 
 
+
         g.setColor(new Color(119, 133, 17, 50));
 
 
         for(var i=-numOfBlocksXaxis+1;i<=numOfBlocksXaxis;i++ ){
-            g.drawLine(GAME_WIDTH/2+sizeOfBlocks/2+i*sizeOfBlocks-xGrillNumToAdd, (int) (GAME_HEIGHT+Player.zPosition), (int) GameGrid.PFX, (int) GameGrid.PFY);
+            g.drawLine((int) (GAME_WIDTH/2.0+sizeOfBlocks/2.0+i*sizeOfBlocks-xGrillNumToAdd), (int) (GAME_HEIGHT+Player.zPosition*Cube.defaultSize), (int) GameGrid.PFX, (int) GameGrid.PFY);
         }
         //double sum=0;
         for(var i=0;i<numOfBlocksYaxis;i++ ){
@@ -261,7 +297,7 @@ public class CubeContainer {
             //double sizeRatio=GAME_HEIGHT/((sizeOfBlocks*(i-1)+yGrillNumToAdd)*1.0*depthRatio+GAME_HEIGHT);
             //newPosY=(2*GAME_HEIGHT/3.0*sizeRatio+GAME_HEIGHT/3.0+difPosZ*sizeRatio);
             //yValue=  (2*GAME_HEIGHT/3.0*(GAME_HEIGHT/((sizeOfBlocks*(i-10.0)+yGrillNumToAdd)*depthRatio+GAME_HEIGHT))+GAME_HEIGHT/3.0);
-            yValue=  ((GameGrid.PVY-GameGrid.PFY+Player.zPosition)*((GAME_HEIGHT)/((sizeOfBlocks*(i-1)+yGrillNumToAdd)*depthRatio+GAME_HEIGHT))+GameGrid.PFY);
+            yValue=  ((GameGrid.PVY-GameGrid.PFY+Player.zPosition*Cube.defaultSize)*((GAME_HEIGHT)/((sizeOfBlocks*(i-1)+yGrillNumToAdd)*depthRatio+GAME_HEIGHT))+GameGrid.PFY);
             //if ((int)yValue<GAME_HEIGHT/3)yValue=GAME_HEIGHT/3;
             //g.drawLine(0,(yValue),  GAME_WIDTH,  ( yValue));
 
