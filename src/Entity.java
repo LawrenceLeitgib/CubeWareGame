@@ -1,7 +1,5 @@
 import java.awt.*;
-
 public class Entity {
-
     boolean marketForDeletion;
     double xPosition;
     double yPosition;
@@ -16,16 +14,11 @@ public class Entity {
     static int[] chunkIn=new int[2];
     double sizeRatio;
 
-
-
     double height=2*Cube.defaultSize;
     double width=.8*Cube.defaultSize;
     double depth=.8*Cube.defaultSize;
     double speed=.5;
-    //double runningMultiplier=4.5*2;
-
     double runningMultiplier=7;
-
     double xVelocity=0;
     double yVelocity=0;
     double zVelocity=0;
@@ -60,8 +53,6 @@ public class Entity {
     }
 
     public void setNewPositions(double deltaTime){
-        //xVelocity=-Math.cos(angleWithPlayer)*speed*runningMultiplier;
-        //yVelocity=-Math.sin(angleWithPlayer)*speed*runningMultiplier;
         detectionCollisionWithOther(deltaTime);
         zVelocity-=GameGrid.gravityAcceleration*deltaTime;
         if(zVelocity<-90)zVelocity+=GameGrid.gravityAcceleration*deltaTime;
@@ -78,9 +69,6 @@ public class Entity {
                     if((coli[3]&&!coli[7])||(coli[4]&&!coli[8])||(coli[5]&&!coli[9])||(coli[6]&&!coli[10]))
                         zVelocity=Player.jumpSpeed;
                 }
-
-
-
             }
         }
         else{
@@ -103,7 +91,6 @@ public class Entity {
         }
         detectionCollisionWithBlocks(0);
     }
-
     private void setBasicData(){
         chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX);
         chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
@@ -491,7 +478,6 @@ public class Entity {
 
         return corners;
     }
-
     public boolean[] detectionCollisionWithBlocks(int num){
         boolean[] collision=new boolean[11];
         Chunk chunkInside=CubeContainer.chunks[CubeContainer.numOfChunkX+chunkIn[0]][CubeContainer.numOfChunkY+chunkIn[1]];
@@ -772,11 +758,10 @@ public class Entity {
         }
         return false;
     }
-
     private void projectileCollisionHandler(double deltaTime){
         for(var i = 0; i< ProjectileContainer.Projectiles.size(); i++){
             if(ProjectileContainer.Projectiles.get(i).isFriendly) {
-                if (detectionCollisionWithProjectile(ProjectileContainer.Projectiles.get(i).xPosition, ProjectileContainer.Projectiles.get(i).yPosition, ProjectileContainer.Projectiles.get(i).zPosition, ProjectileContainer.Projectiles.get(i).size)) {
+                if (detectionCollisionWithProjectile(ProjectileContainer.Projectiles.get(i).getxPosition(), ProjectileContainer.Projectiles.get(i).getyPosition(), ProjectileContainer.Projectiles.get(i).getzPosition(), ProjectileContainer.Projectiles.get(i).size)) {
                     yPosition += ProjectileContainer.Projectiles.get(i).yVelocity  * deltaTime;
                     xPosition += ProjectileContainer.Projectiles.get(i).xVelocity  * deltaTime;
                     if (HP < ProjectileContainer.Projectiles.get(i).damage) {
@@ -848,5 +833,4 @@ public class Entity {
             this.marketForDeletion=true;
         }
     }
-
 }

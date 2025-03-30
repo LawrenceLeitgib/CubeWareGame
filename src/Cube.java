@@ -1,87 +1,54 @@
 import java.awt.*;
 public class Cube {
+    /*
     private final int xPosition;
     private final int yPosition;
     private final int zPosition;
+
+     */
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
-    static int defaultSize=100;
-    static int width=defaultSize;
-    static int height=defaultSize;
-    static int depth=defaultSize;
-    /*
-    private boolean blockLeftEmpty=true;
-    private boolean blockRightEmpty=true;
-    private boolean blockFrontEmpty=true;
-    private boolean blockBackEmpty=true;
-    private boolean blockTopEmpty=true;
-    private boolean blockBottomEmpty=true;
-
-     */
-    //private double[][] corners=new double[8][2];
-    //private  final int[][][] allPolygon=new int[6][2][4];
-    /*
-    private final int[][] polygonTop=new int[2][4];
-    private final int[][] polygonBottom=new int[2][4];
-    private final int[][] polygonLeft=new int[2][4];
-    private final int[][] polygonRight=new int[2][4];
-    private final int[][] polygonBack =new int[2][4];
-    private final int[][] polygonFront =new int[2][4];
-
-     */
-    static double xCorrectorForRotation=.5;
-    static double yCorrectorForRotation=.5;
-    int type;
-    private Color colorTop;
-    private Color colorSide;
-    private Color colorLeft;
-    private Color colorRight;
-    private Color colorFront;
-    private Color colorBack;
-    private Color colorBottom;
-    //private boolean drawCube=true;
-    Chunk chunk;
-
-
-    Cube(int xPosition, int yPosition, int zPosition,Chunk chunk,Color colorTop,Color colorSide,int type){
-        this.xPosition=xPosition;
-        this.yPosition=yPosition;
-        this.zPosition=zPosition;
-        //this.colorTop=colorTop;
-        //this.colorSide=colorSide;
-        this.chunk=chunk;
+    final static int defaultSize=100;
+    final static int  width=defaultSize;
+    final static int height=defaultSize;
+    final static int depth=defaultSize;
+    final static double xCorrectorForRotation=.5;
+    final static double yCorrectorForRotation=.5;
+    private int type;
+    Cube(int xPosition, int yPosition, int zPosition, Color colorTop, Color colorSide, int type){
         this.type=type;
-        this.colorTop=CubeContainer.colorsList[type][0];
-        this.colorSide=CubeContainer.colorsList[type][1];
-        colorLeft=colorSide;
-        colorRight=colorSide;
-        colorFront=colorSide;
-        colorBack=colorSide;
-        colorBottom=colorSide;
     }
-    Cube(int xPosition, int yPosition, int zPosition, Chunk chunk){
-        this(xPosition,  yPosition, zPosition, chunk, new Color(5, 168, 30),new Color(95, 43, 1),0);
+    Cube(int xPosition, int yPosition, int zPosition){
+        this(xPosition,  yPosition, zPosition, new Color(5, 168, 30),new Color(95, 43, 1),0);
     }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
     static void setGameWidth(int gameWidth) {
         GAME_WIDTH = gameWidth;
     }
     static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
     }
-
-    public void draw(Graphics g){
+    void draw(Graphics g,int x,int y,int z){
         boolean drawCube=true;
-        boolean[] sidesCheck=CheckToDraw(xPosition,yPosition,zPosition,chunk);
+        boolean[] sidesCheck=CheckToDraw(x,y,z);
         if(!sidesCheck[6]){
             return;
         }
-        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
-        double[][] corners=getCorners(xPosition,yPosition,zPosition);
+        if(Math.sqrt(Math.pow(y-Player.yPosition,2)+Math.pow(x-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        double[][] corners=getCorners(x,y,z);
         if(corners[8][0]==-1)drawCube=false;
         if(drawCube)
-        drawOnAngle(g,corners,sidesCheck);
+        drawOnAngle(g,corners,sidesCheck,type);
     }
-    public void drawOnAngle(Graphics g,double[][] corners,boolean[] sidesCheck){
+    static void drawOnAngle(Graphics g,double[][] corners,boolean[] sidesCheck,int type){
         int[][][] allPolygon=setAllPolygon(corners);
         final int[][] polygonBottom=allPolygon[0];
         final int[][] polygonTop=allPolygon[1];
@@ -89,13 +56,21 @@ public class Cube {
         final int[][] polygonRight=allPolygon[5];
         final int[][] polygonBack =allPolygon[2];
         final int[][] polygonFront =allPolygon[3];
-
         boolean blockTopEmpty=sidesCheck[0];
         boolean blockBottomEmpty=sidesCheck[1];
         boolean blockLeftEmpty=sidesCheck[2];
         boolean blockRightEmpty=sidesCheck[3];
         boolean blockFrontEmpty=sidesCheck[4];
         boolean blockBackEmpty=sidesCheck[5];
+        Color colorTop=CubeContainer.colorsList[type][0];
+        Color colorSide=CubeContainer.colorsList[type][1];
+        Color colorLeft=colorSide;
+        Color colorRight=colorSide;
+        Color colorFront=colorSide;
+        Color colorBack=colorSide;
+        Color colorBottom=colorSide;
+        //this.colorTop=CubeContainer.colorsList[type][0];
+       // this.colorSide=CubeContainer.colorsList[type][1];
 
 
         if(GameGrid.angleForXRotation<Math.PI/4) {
@@ -152,95 +127,6 @@ public class Cube {
         }
 
     }
-    static boolean[] CheckToDraw(int x,int y,int z,Chunk chunk){
-        int leftPosCheck=x-1- chunk.chunkToNormNumX;
-        int rightPosCheck=x+1- chunk.chunkToNormNumX;
-        int frontPosCheck=y-1- chunk.chunkToNormNumY;
-        int backPosCheck=y+1- chunk.chunkToNormNumY;
-        int topPosCheck=z+1;
-        int bottomPosCheck=z-1;
-
-        boolean blockTopEmpty=true;
-        boolean blockBottomEmpty=true;
-        boolean blockLeftEmpty=true;
-        boolean blockRightEmpty=true;
-        boolean blockFrontEmpty=true;
-        boolean blockBackEmpty=true;
-        int countForDrawing=0;
-        if(leftPosCheck>=0) {
-            if (chunk.cubePositions[leftPosCheck][y - chunk.chunkToNormNumY][z]) {
-                blockLeftEmpty = false;
-                countForDrawing++;
-            }
-        }
-        else {
-            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition - 1][CubeContainer.numOfChunkY + chunk.yPosition]) {
-                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition - 1][CubeContainer.numOfChunkY + chunk.yPosition].cubePositions[leftPosCheck + Chunk.numOfCubeX][y - chunk.chunkToNormNumY][z]) {
-                    blockLeftEmpty = false;
-                    countForDrawing++;
-                }
-            }
-        }
-        if(rightPosCheck<Chunk.numOfCubeX) {
-            if(chunk.cubePositions[rightPosCheck][y- chunk.chunkToNormNumY][z]){
-                blockRightEmpty=false;
-                countForDrawing++;
-            }
-        }
-        else {
-            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition +1][CubeContainer.numOfChunkY + chunk.yPosition]) {
-                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition +1][CubeContainer.numOfChunkY + chunk.yPosition].cubePositions[rightPosCheck - Chunk.numOfCubeX][y - chunk.chunkToNormNumY][z]) {
-                    blockRightEmpty = false;
-                    countForDrawing++;
-                }
-            }
-        }
-        if(frontPosCheck>=0) {
-            if (chunk.cubePositions[x - chunk.chunkToNormNumX][frontPosCheck][z]) {
-                blockFrontEmpty = false;
-                countForDrawing++;
-            }
-        }
-        else{
-            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition-1]) {
-                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition-1].cubePositions[x - chunk.chunkToNormNumX][frontPosCheck+Chunk.numOfCubeY][z]) {
-                    blockFrontEmpty = false;
-                    countForDrawing++;
-                }
-            }
-
-        }
-        if(backPosCheck<Chunk.numOfCubeY){
-            if(chunk.cubePositions[x- chunk.chunkToNormNumX][backPosCheck][z]) {
-                blockBackEmpty = false;
-                countForDrawing++;
-            }
-        }
-        else{
-            if (CubeContainer.chunksPosition[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition+1]) {
-                if (CubeContainer.chunks[CubeContainer.numOfChunkX + chunk.xPosition][CubeContainer.numOfChunkY + chunk.yPosition+1].cubePositions[x - chunk.chunkToNormNumX][backPosCheck-Chunk.numOfCubeY][z]) {
-                    blockBackEmpty = false;
-                    countForDrawing++;
-                }
-            }
-
-        }
-        if(topPosCheck<Chunk.numOfCubeZ){
-            if(chunk.cubePositions[x- chunk.chunkToNormNumX][y- chunk.chunkToNormNumY][topPosCheck]){
-                blockTopEmpty=false;
-                countForDrawing++;
-            }
-        }
-        if(bottomPosCheck>=0){
-            if(chunk.cubePositions[x- chunk.chunkToNormNumX][y- chunk.chunkToNormNumY][bottomPosCheck]){
-                blockBottomEmpty=false;
-                countForDrawing++;
-            }
-        }
-
-        return new boolean[]{blockTopEmpty,blockBottomEmpty, blockLeftEmpty, blockRightEmpty,blockFrontEmpty, blockBackEmpty, countForDrawing < 6};
-    }
-
     static boolean[] CheckToDraw(int x,int y,int z){
 
         int[] leftPosCheck=CubeContainer.YAndXPositionToChunkPos(x-1);
@@ -249,10 +135,6 @@ public class Cube {
         int[] backPosCheck=CubeContainer.YAndXPositionToChunkPos(y-1);
         int[] thisPosCheckX=CubeContainer.YAndXPositionToChunkPos(x);
         int[] thisPosCheckY=CubeContainer.YAndXPositionToChunkPos(y);
-
-        int topPosCheck=z+1;
-        int bottomPosCheck=z-1;
-
         boolean blockTopEmpty=true;
         boolean blockBottomEmpty=true;
         boolean blockLeftEmpty=true;
@@ -260,6 +142,27 @@ public class Cube {
         boolean blockFrontEmpty=true;
         boolean blockBackEmpty=true;
         int countForDrawing=0;
+
+            if (CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z + 1]) {
+                blockTopEmpty = false;
+            }
+            if (z != 0 && CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][thisPosCheckY[1]][z - 1]) {
+                blockBottomEmpty = false;
+            }
+            if (CubeContainer.chunks[leftPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[leftPosCheck[1]][thisPosCheckY[1]][z]) {
+                blockLeftEmpty = false;
+            }
+            if (CubeContainer.chunks[rightPosCheck[0] + CubeContainer.numOfChunkX][thisPosCheckY[0] + CubeContainer.numOfChunkY].cubePositions[rightPosCheck[1]][thisPosCheckY[1]][z]) {
+                blockRightEmpty = false;
+            }
+            if (CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][frontPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][frontPosCheck[1]][z]) {
+                blockBackEmpty = false;
+            }
+            if (CubeContainer.chunks[thisPosCheckX[0] + CubeContainer.numOfChunkX][backPosCheck[0] + CubeContainer.numOfChunkY].cubePositions[thisPosCheckX[1]][backPosCheck[1]][z]) {
+                blockFrontEmpty = false;
+            }
+
+
 
         return new boolean[]{blockTopEmpty,blockBottomEmpty, blockLeftEmpty, blockRightEmpty,blockFrontEmpty, blockBackEmpty, countForDrawing < 6};
     }
@@ -505,15 +408,6 @@ public class Cube {
 
         }
     }
-    /*static private  void fillPolygonB(Graphics g,int[] listX,int[] listY,Color color,String side,int type){
-        g.setColor(color);
-        g.fillPolygon(listX,listY,4);
-        g.setColor(Color.black);
-        g.drawPolygon(listX,listY,4);
-
-    }
-
-     */
     static int[][] getSmallerCorners(int[] listX,int[] listY,double num){
         int[] newListX=new int[4];
         int[] newListY=new int[4];
@@ -554,7 +448,6 @@ public class Cube {
 
         return new int[][]{newListX, newListY};
     }
-
     static int[][][] getDivisionInPolygon(int[] listX,int[] listY,int num){
         int[][] newListX=new int[4][num];
         int[][] newListY=new int[4][num];

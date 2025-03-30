@@ -36,6 +36,7 @@ public class Stats {
     static int statsState;
 
     static int numOfRectForStat =6;
+
     static Rectangle[] rectForStats=new Rectangle[numOfRectForStat];
 
     static int numOfRectAS=2;
@@ -60,7 +61,7 @@ public class Stats {
 
 
         statsState=StatsStates.get("General");
-        currentLevel=30;
+        currentLevel=10;
         setRectForStats();
         setPlayerStats();
         setRectForAS();

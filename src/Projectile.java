@@ -1,13 +1,12 @@
 import java.awt.*;
 
 public class Projectile {
-    double xPosition;
-    double yPosition;
-    double zPosition;
-
-    double xPositionIni;
-    double yPositionIni;
-    double zPositionIni;
+    private double xPosition;
+    private double yPosition;
+    private double zPosition;
+    private final double xPositionIni;
+    private final double yPositionIni;
+    private final double zPositionIni;
     double newPosX;
     double newPosY;
     double newSize;
@@ -27,11 +26,9 @@ public class Projectile {
     int xChunkNum=0;
     int yChunkNum=0;
     static int diSpawnDistance=50;
-
     static int range=50;
-
-    static double distanceWithPlayer;
-    static double distanceWithOrigin;
+    private double distanceWithPlayer;
+    private double distanceWithOrigin;
     boolean isFriendly;
     Projectile(double xPos, double yPos, double zPos, double angle, double speed, int size, double damage,boolean isFriendly ){
         xPosition=xPos;
@@ -40,7 +37,6 @@ public class Projectile {
         xPositionIni=xPos;
         yPositionIni=yPos-0.5;
         zPositionIni=zPos;
-
         angleOfShout=angle;
         this.speed=speed;
         this.size=size;
@@ -48,6 +44,19 @@ public class Projectile {
         this.isFriendly=isFriendly;
         setNewCubeIn();
     }
+
+    public double getxPosition() {
+        return xPosition;
+    }
+
+    public double getyPosition() {
+        return yPosition;
+    }
+
+    public double getzPosition() {
+        return zPosition;
+    }
+
     public void updateData(double deltaTime) {
         setNewPosition(deltaTime);
         setNewCubeIn();

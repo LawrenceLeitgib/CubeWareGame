@@ -8,58 +8,39 @@ public class Player {
     static double zPosition;
     static int GAME_WIDTH;
     static int GAME_HEIGHT;
-
     static double cubeAway=2;
     static double width=.8*Cube.defaultSize;
     static double height=1.8*Cube.defaultSize;
     static double depth=.8*Cube.defaultSize;
     static double[][] corners=new double[12][2];
     double speed=4.2;
-
     double runningMultiplier=1.8;
-
     static double xVelocity;
     static double yVelocity;
     double zVelocity;
-
     boolean isSlowing=false;
     boolean isFlying=true;
     boolean isJumping=false;
-
-
     double slowMultiplier=0.1;
     boolean isRunning;
-
-
     boolean isMovingUp=false;
     boolean isMovingDown=false;
     boolean isMovingForward =false;
     boolean isMovingBackward =false;
     boolean isMovingLeft=false;
     boolean isMovingRight=false;
-
-
     static double newPosY;
     static double newPosX;
-
-
-
-
     static int[] chunkIn=new int[2];
-
-    static int numOfChunkToDraw=3;
-
+    static int numOfChunkToDraw=2;
     static boolean thirdPerspective=true;
     boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
     static int[] cubeIn=new int[3];
-
     int yPosCount=0;
     double[] yPosHistoric=new double[10];
     boolean spaceHasBeenClick;
-
     double flyingCount=0;
     double flyingTime=.2;
-
     boolean spaceHasBeenReleased;
     static double distanceFromMiddle;
     static double jumpSpeed=15;
@@ -708,7 +689,7 @@ public class Player {
     private void projectileCollisionHandler(double deltaTime){
         for(var i = 0; i< ProjectileContainer.Projectiles.size(); i++){
             if(!ProjectileContainer.Projectiles.get(i).isFriendly) {
-                if (detectionCollisionWithProjectile(ProjectileContainer.Projectiles.get(i).xPosition, ProjectileContainer.Projectiles.get(i).yPosition, ProjectileContainer.Projectiles.get(i).zPosition, ProjectileContainer.Projectiles.get(i).size)) {
+                if (detectionCollisionWithProjectile(ProjectileContainer.Projectiles.get(i).getxPosition(), ProjectileContainer.Projectiles.get(i).getyPosition(), ProjectileContainer.Projectiles.get(i).getzPosition(), ProjectileContainer.Projectiles.get(i).size)) {
                     yVelocity = ProjectileContainer.Projectiles.get(i).yVelocity  * deltaTime*2;
                     xVelocity = ProjectileContainer.Projectiles.get(i).xVelocity  * deltaTime*2;
                     yPosition += ProjectileContainer.Projectiles.get(i).yVelocity  * deltaTime*2;
