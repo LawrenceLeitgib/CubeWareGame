@@ -255,15 +255,165 @@ public class CubeContainer {
          */
         }
 
+    public void draw(Graphics g) {
 
-    public void draw(Graphics g){
+        g.setColor(new Color(147, 196, 49));
+        g.fillRect(0, (int) GameGrid.PFY, GAME_WIDTH, GAME_HEIGHT);
+        int[] newChunkIn=new int[2];
+        /*
+        newChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX);
+        newChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY);
+        if(Player.xPosition-10<0)newChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(10)+0.5)/Chunk.numOfCubeX-1);
+        if(Player.yPosition-10<0)newChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY-1);
+
+         */
+        newChunkIn[0]=Player.cameraChunkIn[0];
+        newChunkIn[1]=Player.cameraChunkIn[1];
+        if(Cube.angleForXRotation<Math.PI/4){
+            for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
+                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+
+            }
+
+        }
+        else if(Cube.angleForXRotation<Math.PI/2){
+            for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
+                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+
+
+            }
+        }
+        else if(Cube.angleForXRotation<3*Math.PI/4){
+            for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0]-Player.numOfChunkToDraw;k--){
+                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+            }
+        }
+        else if(Cube.angleForXRotation<Math.PI){
+            for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
+                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+            }
+        }
+        else if(Cube.angleForXRotation<5*Math.PI/4){
+            for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1]-Player.numOfChunkToDraw;j--){
+                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+            }
+        }
+        else if(Cube.angleForXRotation<3*Math.PI/2){
+            for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
+                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+
+
+            }
+        }
+        else if(Cube.angleForXRotation<7*Math.PI/4){
+            for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0]+Player.numOfChunkToDraw;k++){
+                for(var j=newChunkIn[1]+Player.numOfChunkToDraw;j>=newChunkIn[1];j--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1];j++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+
+
+            }
+        }
+        else if(Cube.angleForXRotation<2*Math.PI){
+            for(var j=newChunkIn[1]-Player.numOfChunkToDraw;j<=newChunkIn[1]+Player.numOfChunkToDraw;j++){
+                for(var k=newChunkIn[0]+Player.numOfChunkToDraw;k>=newChunkIn[0];k--){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+                for(var k=newChunkIn[0]-Player.numOfChunkToDraw;k<=newChunkIn[0];k++){
+                    if (chunksPosition[k+numOfChunkX][j+numOfChunkY]) {
+                        chunks[k+numOfChunkX][j+numOfChunkY].draw(g);
+                    }
+                }
+
+            }
+
+        }
+
+
+    }
+    public void draw(Graphics g,int PasTOuche){
 
         g.setColor(new Color(147, 196, 49));
         g.fillRect(0, (int) GameGrid.PFY,GAME_WIDTH,GAME_HEIGHT);
-        double[] newChunkIn=new double[2];
+        int[] newChunkIn=new int[2];
+/*
+       newChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(Player.initialCubeAway+0.5)+0.5)/Chunk.numOfCubeX);
+       newChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(Player.initialCubeAway+0.5)+0.5)/Chunk.numOfCubeY);
+        if(Player.xPosition-Player.initialCubeAway<0)newChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(Player.initialCubeAway+0.5)+0.5)/Chunk.numOfCubeX-1);
+        if(Player.yPosition-Player.initialCubeAway<0)newChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(Player.initialCubeAway+0.5)+0.5)/Chunk.numOfCubeY-1);
 
-        newChunkIn[0]=(int)((Player.xPosition+0.5)/Chunk.numOfCubeX);
-        newChunkIn[1]=(int)((Player.yPosition+Player.cubeAway+0.5)/Chunk.numOfCubeY);
+
+ */
+        newChunkIn[0]=Player.cameraChunkIn[0];
+        newChunkIn[1]=Player.cameraChunkIn[1];
+        // newChunkIn[0]=(int)((Player.xPosition+0.5)/Chunk.numOfCubeX);
+       //  newChunkIn[1]=(int)((Player.yPosition+Player.cubeAway+2+0.5)/Chunk.numOfCubeY);
+      //  newChunkIn[0]=Player.chunkIn[0];
+        //newChunkIn[1]=Player.chunkIn[1];
+        //System.out.println((int)((Player.xPosition+0.5)/Chunk.numOfCubeX)+" "+Player.chunkIn[0]+" ");
 
        // drawGrillage(g);
         int xNum=0;
@@ -279,26 +429,26 @@ public class CubeContainer {
 
             }
         }*/
-        for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<Player.chunkIn[1];i++) {
-            for(var j=Player.chunkIn[0]-Player.numOfChunkToDraw;j<Player.chunkIn[0];j++) {
+        for(var i=newChunkIn[1]-Player.numOfChunkToDraw;i< newChunkIn[1];i++) {
+            for(var j= newChunkIn[0]-Player.numOfChunkToDraw;j< newChunkIn[0];j++) {
                 if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
                     chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
                 }
             }
-            for(var j=Player.chunkIn[0]+Player.numOfChunkToDraw;j>Player.chunkIn[0];j--) {
+            for(var j= newChunkIn[0]+Player.numOfChunkToDraw;j> newChunkIn[0];j--) {
                 if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
                     chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
                 }
             }
         }
         //System.out.println(Player.chunkIn[1]);
-        for(var i=Player.chunkIn[1]+Player.numOfChunkToDraw;i>Player.chunkIn[1];i--) {
-            for(var j=Player.chunkIn[0]-Player.numOfChunkToDraw;j<Player.chunkIn[0];j++) {
+        for(var i= newChunkIn[1]+Player.numOfChunkToDraw;i> newChunkIn[1];i--) {
+            for(var j= newChunkIn[0]-Player.numOfChunkToDraw;j< newChunkIn[0];j++) {
                 if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
                     chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
                 }
             }
-            for(var j=Player.chunkIn[0]+Player.numOfChunkToDraw;j>Player.chunkIn[0];j--) {
+            for(var j= newChunkIn[0]+Player.numOfChunkToDraw;j> newChunkIn[0];j--) {
                 if (chunksPosition[numOfChunkX + j][numOfChunkY+i]){
                     chunks[numOfChunkX + j][numOfChunkY+i].draw(g);
                 }
@@ -306,39 +456,44 @@ public class CubeContainer {
 
         }
 
-        for(var i=Player.chunkIn[1]-Player.numOfChunkToDraw;i<Player.chunkIn[1];i++) {
-            if (chunksPosition[numOfChunkX + Player.chunkIn[0]][numOfChunkY+i]){
-                chunks[numOfChunkX +  Player.chunkIn[0]][numOfChunkY+i].draw(g);
+        for(var i= newChunkIn[1]-Player.numOfChunkToDraw;i< newChunkIn[1];i++) {
+            if (chunksPosition[numOfChunkX + newChunkIn[0]][numOfChunkY+i]){
+                chunks[numOfChunkX +  newChunkIn[0]][numOfChunkY+i].draw(g);
             }
 
         }
 
-        for(var i=Player.chunkIn[1]+Player.numOfChunkToDraw;i>Player.chunkIn[1];i--) {
-            if (chunksPosition[numOfChunkX + Player.chunkIn[0]][numOfChunkY+i]){
-                chunks[numOfChunkX +  Player.chunkIn[0]][numOfChunkY+i].draw(g);
+        for(var i= newChunkIn[1]+Player.numOfChunkToDraw;i> newChunkIn[1];i--) {
+            if (chunksPosition[numOfChunkX +newChunkIn[0]][numOfChunkY+i]){
+                chunks[numOfChunkX +  newChunkIn[0]][numOfChunkY+i].draw(g);
             }
         }
 
 
-/*
-        for(var i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<Player.chunkIn[0];i++) {
-            if (chunksPosition[numOfChunkX + i][numOfChunkY+Player.chunkIn[1]]){
-                chunks[numOfChunkX +  i][numOfChunkY+Player.chunkIn[1]].draw(g);
+
+        for(var i=newChunkIn[0]-Player.numOfChunkToDraw;i<newChunkIn[0];i++) {
+            if (chunksPosition[numOfChunkX + i][numOfChunkY+newChunkIn[1]]){
+                chunks[numOfChunkX +  i][numOfChunkY+newChunkIn[1]].draw(g);
             }
 
         }
 
-        for(var i=Player.chunkIn[0]+Player.numOfChunkToDraw;i>Player.chunkIn[0];i--) {
-            if (chunksPosition[numOfChunkX +i][numOfChunkY+Player.chunkIn[1]]){
-                chunks[numOfChunkX +  i][numOfChunkY+Player.chunkIn[1]].draw(g);
+        for(var i=newChunkIn[0]+Player.numOfChunkToDraw;i>newChunkIn[0];i--) {
+            if (chunksPosition[numOfChunkX +i][numOfChunkY+newChunkIn[1]]){
+                chunks[numOfChunkX +  i][numOfChunkY+newChunkIn[1]].draw(g);
             }
         }
 
- */
-        if (chunksPosition[numOfChunkX +Player.chunkIn[0]][numOfChunkY+Player.chunkIn[1]]){
-            chunks[numOfChunkX + Player.chunkIn[0]][numOfChunkY+Player.chunkIn[1]].draw(g);
+
+        if (chunksPosition[numOfChunkX +newChunkIn[0]][numOfChunkY+newChunkIn[1]]){
+            chunks[numOfChunkX + newChunkIn[0]][numOfChunkY+newChunkIn[1]].draw(g);
         }
 
+
+
+
+
+       // System.out.println(newChunkIn[0]+" "+newChunkIn[1] );
 
         //Player.draw(g);
 

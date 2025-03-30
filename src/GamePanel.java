@@ -49,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
         Rectangle r = getBounds();
         //r=new Rectangle(GAME_WIDTH,GAME_HEIGHT);
         if(GameGrid.GAME_HEIGHT!=r.height) {
+
             GameGrid.setGameHeight(r.height);
             GameGrid.setGameWidth(r.width);
             Stats.setGameHeight(r.height);

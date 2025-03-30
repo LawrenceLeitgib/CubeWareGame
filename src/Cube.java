@@ -383,9 +383,7 @@ public class Cube {
 
         g.setColor(new Color(21, 92, 5));
         if (drawCube){
-            if (blockBottomEmpty) {
-                fillPolygonB(g,polygonBottom[0],polygonBottom[1] ,Color.darkGray );
-            }
+
             if(angleForXRotation<Math.PI/4) {
                 if (blockRightEmpty) fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
                 if (blockLeftEmpty)   fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
@@ -431,48 +429,12 @@ public class Cube {
 
 
             }
-            /*
-            if(angleForXRotation>Math.PI/2&&angleForXRotation<3*Math.PI/2){
-                if (blockBackEmpty) {
-                    fillPolygonB(g,polygonFront[0],polygonFront[1],Color.CYAN );
-                }
-                if (blockFrontEmpty) {
-                    fillPolygonB(g,polygonBack[0],polygonBack[1],Color.blue );
 
-                }
-            }
-            else{
-                if (blockFrontEmpty) {
-                fillPolygonB(g,polygonBack[0],polygonBack[1],Color.blue );
-            }
-                if (blockBackEmpty) {
-                fillPolygonB(g,polygonFront[0],polygonFront[1],Color.CYAN );
-            }
+            if (blockTopEmpty&&newPosY<GameGrid.PFY) {
+                fillPolygonB(g,polygonBottom[0],polygonBottom[1] ,Color.darkGray );
             }
 
-            if(angleForXRotation>0&&angleForXRotation<Math.PI){
-                //newPosX+newWidth/2<GAME_WIDTH/2
-
-                if (blockRightEmpty) {
-                    fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
-                }
-                if (blockLeftEmpty) {
-                    fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
-                }
-            }
-            else{
-                if (blockLeftEmpty) {
-                    fillPolygonB(g,polygonLeft[0],polygonLeft[1],Color.YELLOW  );
-                }
-                if (blockRightEmpty) {
-                    fillPolygonB(g,polygonRight[0],polygonRight[1],Color.PINK  );
-                }
-            }
-
-             */
-
-
-            if (blockTopEmpty) {
+            if (blockTopEmpty&&newPosY-newHeight>GameGrid.PFY) {
                 fillPolygonB(g,polygonTop[0],polygonTop[1],Color.GREEN  );
 
             }

@@ -1,3 +1,4 @@
+import javax.xml.crypto.dsig.CanonicalizationMethod;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -10,6 +11,7 @@ public class Player {
     static int GAME_HEIGHT;
 
     static double cubeAway=2;
+    static double initialCubeAway=2;
 
     static double width=.8*Cube.defaultSize;
     static double height=1.8*Cube.defaultSize;
@@ -41,8 +43,11 @@ public class Player {
 
 
     static int[] chunkIn=new int[2];
+    static int[] cameraChunkIn=new int[2];
 
     static int numOfChunkToDraw=2;
+
+    static boolean thirdPerspective=true;
 
     Cube[][][] megaChunkCubes=new Cube[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
     boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
@@ -76,6 +81,37 @@ public class Player {
         Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
         if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
         if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
+        cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX);
+        cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY);
+        if(Player.xPosition-10<0)cameraChunkIn[0]=(int)((Player.xPosition-Math.sin(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeX-1);
+        if(Player.yPosition-10<0)cameraChunkIn[1]=(int)((Player.yPosition+Math.cos(Cube.angleForXRotation)*(10+0.5)+0.5)/Chunk.numOfCubeY-1);
+
+
+//System.out.println(GameGrid.PVY-GameGrid.PFY);
+        if(!thirdPerspective){
+            cubeAway=-6.5;
+            GameGrid.PFY=GAME_HEIGHT/2.0;
+            //GameGrid.PVY=GAME_HEIGHT*.8;
+            GameGrid.PVY=GameGrid.PFY+height;
+            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY)/4.0;
+
+            cameraChunkIn[0]=(int)((Player.xPosition)/Chunk.numOfCubeX);
+            cameraChunkIn[1]=(int)((Player.yPosition-1)/Chunk.numOfCubeY);
+            if(Player.xPosition+1<0)cameraChunkIn[0]=(int)((Player.xPosition)/Chunk.numOfCubeX-1);
+            if(Player.yPosition+1<0)cameraChunkIn[1]=(int)((Player.yPosition-1)/Chunk.numOfCubeY-1);
+
+
+
+
+        }else{
+            cubeAway=2;
+            GameGrid.PFY=0;
+            GameGrid.PVY=GAME_HEIGHT;
+            GameGrid.depthRatio=GAME_HEIGHT/(GameGrid.PVY-GameGrid.PFY);
+
+        }
+        Player.chunkIn[0]= cameraChunkIn[0];
+        Player.chunkIn[1] =cameraChunkIn[1];
 
 
         //System.out.println(Player.chunkIn[0]+" "+Player.chunkIn[1]);
@@ -199,6 +235,14 @@ public class Player {
         GAME_HEIGHT = gameHeight;
     }
     public static void draw(Graphics g){
+        g.setColor(Color.black);
+        g.setFont(new Font("Arial",Font.PLAIN,24));
+        g.setColor(Color.black);
+        g.drawString(String.valueOf(yPosition),15,90);
+        g.drawString(Double.toString(xPosition),15,70);
+        g.drawString(Double.toString(zPosition),15,110);
+
+        if(!thirdPerspective)return;
 
 
         double sizeRatio=GAME_HEIGHT/((cubeAway*Cube.defaultSize+(Cube.defaultSize-depth)/2.0)*GameGrid.depthRatio+GAME_HEIGHT);
@@ -206,44 +250,12 @@ public class Player {
         double newWidth=  (width*sizeRatio);
         double newHeight=  (height*sizeRatio);
         newPosX=  (GAME_WIDTH/2.0);
-        //double corners[][]=new double[4][2];
-         /*
-        corners[3][0]=newPosX-newWidth/2.0;
-        corners[3][1]=newPosY;
-        corners[2][0]=corners[3][0]+newWidth;
-        corners[2][1]=corners[3][1];
-        double deltaXAngle=corners[3][0]-GameGrid.PFX;
-        double deltaYAngle= corners[3][1]-GameGrid.PFY;
-        groundAngle=Math.atan(deltaYAngle/deltaXAngle);
-        if (deltaXAngle>0&&deltaYAngle<0){
-            groundAngle=Math.PI*2.0+Math.atan(deltaYAngle/deltaXAngle);
-        }
-        else  if(deltaXAngle<0) groundAngle=Math.PI+Math.atan(deltaYAngle/deltaXAngle);
-        double sizeRatioAtPosition=GAME_HEIGHT/((cubeAway*depth+depth)*GameGrid.depthRatio+GAME_HEIGHT);
-        double DeltaY=(newPosY)-((GameGrid.PVY-GameGrid.PFY)*(sizeRatioAtPosition)+GameGrid.PFY);
-        double groundRatio=DeltaY/Math.sin(groundAngle);
-        corners[0][0] = corners[3][0] -groundRatio  * Math.cos(groundAngle);
-        corners[0][1] = corners[3][1] -groundRatio* Math.sin(groundAngle);
-        corners[1][0] = corners[0][0] +sizeRatioAtPosition*width;
-        corners[1][1] = corners[0][1] ;
 
-
-
-        */
 
         double[][] corners=getCorners(newPosX,newPosY,newWidth,newHeight);
         double[] angleList=getAngleList(corners);
         double[][] newCorners=getCornersB(corners,angleList,newPosY);
-        /*g.setColor(Color.red);
-        g.fillOval((int) (corners[0][0]-5), (int) (corners[0][1]-5),10,10);
-        g.fillOval((int) (corners[1][0]-5), (int) (corners[1][1]-5),10,10);
-        g.fillOval((int) (corners[2][0]-5), (int) (corners[2][1]-5),10,10);
-        g.fillOval((int) (corners[3][0]-5), (int) (corners[3][1]-5),10,10);
 
-
-
-
-*/
 
         for(var i=0;i<4;i++) {
             g.setColor(Color.BLACK);
@@ -260,32 +272,10 @@ public class Player {
             g.drawLine((int) corners[i][0], (int) corners[i][1], (int) newCorners[i][0], (int) newCorners[i][1]);
 
         }
-        g.setColor(Color.red);
-        //g.fillRect((int) corners[0][0], (int) corners[0][1], (int) newWidth, (int) newHeight);
 
 
 
 
-
-
-
-
-
-        g.setColor(new Color(3, 40, 252));
-        //g.fillRect((int) corners[0][0], (int) corners[0][1], (int) newWidth, (int) newHeight);
-        //g.fillPolygon(xPointsList,yPointsList,4);
-        //g.fillRect(GAME_WIDTH/2-width/2,2*GAME_HEIGHT/3-height/2,width,height);
-        //g.fillOval(GAME_WIDTH/2-width/2, (int) (3*GAME_HEIGHT/4-height*CubeContainer.depthRatio/4),width, (int) (height*CubeContainer.depthRatio/2));
-       // g.fillRect((int) (newPosX-newWidth/2.0), (int) (newPosY-newHeight), (int) newWidth, (int) newHeight);
-
-
-
-        g.setColor(Color.black);
-        g.setFont(new Font("Arial",Font.PLAIN,24));
-        g.setColor(Color.black);
-        g.drawString(String.valueOf(yPosition),15,90);
-        g.drawString(Double.toString(xPosition),15,70);
-        g.drawString(Double.toString(zPosition),15,110);
     }
 
     public void updateMegaChunk(){
@@ -609,6 +599,9 @@ public class Player {
             case 16:
                 isSlowing=true;
                 break;
+            case 80:
+              togglePerspective();
+                break;
 
 
         }
@@ -645,5 +638,14 @@ public class Player {
                 isSlowing=false;
                 break;
         }
+    }
+    static public void togglePerspective(){
+
+        if(thirdPerspective){
+            thirdPerspective=false;
+        }else{
+            thirdPerspective=true;
+        }
+
     }
 }

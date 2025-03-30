@@ -18,6 +18,9 @@ public class GameGrid {
 
     static double depthRatio=1.0;
 
+    static boolean isRotatingLeft=false;
+    static boolean isRotatingRight=false;
+
 
 
 
@@ -49,7 +52,12 @@ public class GameGrid {
 
     }
     public void draw(Graphics g){
-
+        if(isRotatingLeft){
+            Cube.angleForXRotation-=Math.PI/128;
+        }
+        if(isRotatingRight){
+            Cube.angleForXRotation+=Math.PI/128;
+        }
 
         cubeContainer.draw(g);
         g.setColor(Color.red);
@@ -62,50 +70,14 @@ public class GameGrid {
 
     public void keyReleased(KeyEvent e) {
         switch(e.getKeyCode()){
-            case 75:
-                PFY+=50;
-               // PVY+=20;
-                //depthRatio+=0.02;
-                depthRatio=GAME_HEIGHT/(PVY-PFY);
-                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
-               // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
-                //System.out.println(depthRatio+" "+Player.cubeAway);
-               // System.out.println(Player.cubeAway);
-               // PFX+=10;
-                break;
-            case 79:
-                PFY-=50.0;
-                //PVY-=20;
-                //depthRatio-=0.02;
-                depthRatio=GAME_HEIGHT/(PVY-PFY);
-                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
-               // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
-                //PFX-=10;
-                break;
-            case 73:
-                PVY+=20;
-                //Player.cubeAway+=0.5;
-                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
-               // System.out.println(PVY);
-                //PVX+=10;
-                break;
-            case 74:
-                PVY-=20;
-                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
-                //Player.cubeAway-=0.5;
-               // PVX-=10;
-                break;
             case 85:
-                //PFX+=10;
-                //PVX+=10;
-                //Cube.xAddingNumber+=10;
-                Cube.angleForXRotation+=Math.PI/32;
+
+                isRotatingRight=false;
                 break;
             case 72:
-                //PFX-=10;
-                //PVX- =10;
-                //Cube.xAddingNumber-=10;
-                Cube.angleForXRotation-=Math.PI/32;
+
+
+                isRotatingLeft=false;
                 break;
 
         }
@@ -113,5 +85,54 @@ public class GameGrid {
     }
 
     public void keyPressed(KeyEvent e) {
+        switch(e.getKeyCode()){
+            case 75:
+                PFY+=50;
+                // PVY+=20;
+                //depthRatio+=0.02;
+                depthRatio=GAME_HEIGHT/(PVY-PFY);
+                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
+                // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
+                //System.out.println(depthRatio+" "+Player.cubeAway);
+                // System.out.println(Player.cubeAway);
+                // PFX+=10;
+                break;
+            case 79:
+                PFY-=50.0;
+                //PVY-=20;
+                //depthRatio-=0.02;
+                depthRatio=GAME_HEIGHT/(PVY-PFY);
+                //Player.cubeAway=-GAME_HEIGHT/(PVY-PFY)+2;
+                // Player.cubeAway=GAME_HEIGHT/((GAME_HEIGHT-PFY)*(GAME_HEIGHT-PFY));
+                //PFX-=10;
+                break;
+            case 73:
+                PVY+=20;
+                //Player.cubeAway+=0.5;
+                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
+                // System.out.println(PVY);
+                //PVX+=10;
+                break;
+            case 74:
+                PVY-=20;
+                //Player.cubeAway=GAME_HEIGHT/(PVY-PFY)+2;
+                //Player.cubeAway-=0.5;
+                // PVX-=10;
+                break;
+            case 85:
+                //PFX+=10;
+                //PVX+=10;
+                //Cube.xAddingNumber+=10;
+                isRotatingRight=true;
+                break;
+            case 72:
+                //PFX-=10;
+                //PVX- =10;
+                //Cube.xAddingNumber-=10;
+
+                isRotatingLeft=true;
+                break;
+
+        }
     }
 }
