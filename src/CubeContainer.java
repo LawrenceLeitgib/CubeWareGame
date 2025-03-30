@@ -161,27 +161,10 @@ public class CubeContainer {
         //System.out.println(drawGrid);
         drawGrillage(g);//DO NOT DELET
         Player.draw(g);
-
-        if(drawGrid){
-            /*
-            drawCubes(g ,0,numberOfCubesZ,0);
-            drawGrillage(g);
-            drawCubes(g ,numberOfCubesZ,2*numberOfCubesZ+1,1);
-             */
-            drawCubes(g ,0,2*numberOfCubesZ+1,0);
+        drawCubes(g ,0,2*numberOfCubesZ+1,0);
 
 
-        }
-        //System.out.println(drawGrid);
 
-        if(!drawGrid){
-            /*drawCubes(g ,numberOfCubesZ,2*numberOfCubesZ+1,3);
-            drawGrillage(g);
-            drawCubes(g ,0,numberOfCubesZ,4);
-             */
-            drawCubes(g ,0,2*numberOfCubesZ+1,0);
-
-        }
 
 
 
@@ -189,10 +172,6 @@ public class CubeContainer {
     }
     public void drawCubes(Graphics g,int beginning,int end,int num){
 
-        //System.out.println( cubePosition[k][j][numberOfCubesZ-1-i]);
-        //if((numberOfCubesZ-1-i)*Cube.height<Player.zPosition && cubePosition[k][j][numberOfCubesZ-1-i])System.out.println("test");
-        //cubes[k][j][numberOfCubesZ-1-i].draw(g);
-        //System.out.println(num);
 
         hasBeenDrawnBelowGrid=false;
         for (var i= beginning; i < end; i++) {
@@ -232,86 +211,6 @@ public class CubeContainer {
                         }
                 }
         }
-
-        /*
-
-        for (var i= beginning; i < end; i++) {
-            if (cubePositionZ[i])
-                for (var j = 0; j < 2 * numberOfCubes + 1; j++) {
-                    if (cubePositionY[j])
-                        for (var k = 0; k < 2 * numberOfCubes + 1; k++) {
-                            if (cubePosition[k][j][i]) {
-                                //cubes[k][j][i].draw(g);
-                                if((Player.yPosition-(cubes[k][j][i].yPosition)*cubes[k][j][i].depth>=0)){
-                                    cubes[k][j][i].draw(g);
-                                }
-                                if(i+1==numberOfCubesZ)drawGrillage(g);
-
-                            }
-                        }
-                }
-        }
-        if(num==0){
-            Player.draw(g);
-        }
-        for (var i= beginning; i < end; i++) {
-                if(cubePositionZ[i]);
-                for (var j = 0; j < 2 * numberOfCubes + 1; j++) {
-                    if (cubePositionY[j])
-                        for (var k = 0; k < 2 * numberOfCubes + 1; k++) {
-                            if (cubePosition[k][j][i]) {
-                                if((Player.yPosition-(cubes[k][j][i].yPosition)*cubes[k][j][i].depth<0)){
-                                    cubes[k][j][i].draw(g);
-                                }
-                                if(i+1==numberOfCubesZ)drawGrillage(g);
-
-                            }
-                        }
-
-                }
-        }
-
-         */
-        //cubes[CubeContainer.numberOfCubes][CubeContainer.numberOfCubes][CubeContainer.numberOfCubesZ-1].draw(g);
-
-/*
-        for (var i= end-1; i > beginning-1; i--) {
-            if (cubePositionZ[i])
-                for (var j = 0; j < 2 * numberOfCubes + 1; j++) {
-                    if (cubePositionY[j])
-                        for (var k = 0; k < 2 * numberOfCubes + 1; k++) {
-
-                            if (cubePosition[k][j][i]&&(i-numberOfCubesZ+1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition) {
-                                if((Player.yPosition-(cubes[k][j][i].yPosition)*cubes[k][j][i].depth>=0)){
-                                    cubes[k][j][i].draw(g);
-                                }
-
-                            }
-                        }
-                }
-        }
-        if(num==3||num==4){
-            Player.draw(g);
-        }
-        for (var i= end-1; i > beginning-1; i--) {
-            if (cubePositionZ[i])
-                for (var j = 0; j < 2 * numberOfCubes + 1; j++) {
-                    if (cubePositionY[j])
-                        for (var k = 0; k < 2 * numberOfCubes + 1; k++) {
-
-                            if (cubePosition[k][j][i]&&(i-numberOfCubesZ+1)*Cube.defaultSize-GameGrid.PFY>Player.zPosition) {
-                                if((Player.yPosition-(cubes[k][j][i].yPosition)*cubes[k][j][i].depth<0)){
-                                    cubes[k][j][i].draw(g);
-                                }
-                            }
-                        }
-                }
-        }
-
- */
-
-
-
 
     }
 

@@ -237,6 +237,8 @@ public class Player {
 
         int collisionCount=0;
 
+
+
         for(var i=0;i<CubeContainer.cubePositionX.length;i++){
             if(CubeContainer.cubePositionX[i])
                 for (var j = 0; j < CubeContainer.cubePositionY.length; j++) {
@@ -251,6 +253,7 @@ public class Player {
                         }
                 }
         }
+
         return listOfCollision;
     }
     public boolean[] detectionCollision(int x,int y,int z){
