@@ -34,34 +34,90 @@ public class Cube {
     }
 
     public void draw(Graphics g, int[] grillCoord,double playerPosX,double playerPosY){
-        double a = 100;
+        double a =3 ;
+        double b=a;
+
+        depthRatio=1/2.5;
+
+
+
         int difPosX=(int)(playerPosX-xPosition);
         int difPosY=(int)(playerPosY-yPosition);
+
+
+
         int distance=(int)Math.sqrt(Math.pow(difPosX,2.0)+Math.pow(difPosY,2.0));
 
-        if (difPosY<(int)a)difPosY=(int)a;
+        //if (difPosY<(int)a)difPosY=(int)a;
+        if (difPosY<(int)-GAME_HEIGHT*2/3)difPosY=(int)-GAME_HEIGHT*2/3;
+        /*
+        int newWidth= (int) ((a*width/difPosY));
+        int newHeight= (int) ((a*height/difPosY));
+        int newDepth= (int) ((a*depth/difPosY));
 
-        int newWidth= (int) (a*width/difPosY);
-        int newHeight= (int) (a*height/difPosY);
-        int newDepth= (int) (a*depth/difPosY);
-        int newPosY= (int) (((a*(2*GAME_HEIGHT/3))/difPosY)+GAME_HEIGHT/3+yPosition*newHeight*1.0/height);
+        int newWidth= (int) (-(a*width/difPosY)*(1+yPosition/b));
+        int newHeight= (int) (-(a*height/difPosY)*(1+yPosition/b));
+        int newDepth= (int) (-(a*depth/difPosY)*(1+yPosition/b));
+        int newPosY= (int) (-((a*(2*GAME_HEIGHT/3.0)/difPosY)*(1+yPosition/b))+GAME_HEIGHT/3.0);
+
+
+
+        int newWidth= (int) (width*width/(difPosY+width));
+        int newHeight= (int) (height*height/(difPosY+height));
+        int newDepth= (int) (depth*depth/(difPosY+depth));
+
+        newWidth= (int) ((a*width/difPosY)+0.5);
+        newHeight= (int) ((a*height/difPosY)+0.5);
+        newDepth= (int) ((a*depth/difPosY)+0.5);
+          */
+        int newPosY= (int) ((1.0*GAME_HEIGHT)*(2*GAME_HEIGHT/3.0)/(difPosY*1.0+GAME_HEIGHT)+GAME_HEIGHT/3.0+0.5);
+        //double newPosY= ((1.0*GAME_HEIGHT)*(2*GAME_HEIGHT/3.0)/(difPosY*1.0+GAME_HEIGHT)+GAME_HEIGHT/3.0);
+
+        double sizeRatio=(newPosY-GAME_HEIGHT/3.0)*(3/2.0)/GAME_HEIGHT;
+
+        int newWidth= (int) (width*sizeRatio+0.5);
+        int newHeight= (int) (height*sizeRatio+0.5);
+        int newDepth= (int) (depth*sizeRatio+0.5);
+        int newPosX= (int) (GAME_WIDTH/2.0-(playerPosX+xPosition)*sizeRatio+0.5);
+
+        //System.out.println(sizeRatio);
+
+
+
+
+
+        /*
+        int newWidth= (int) (-a*(width+yPosition)/(1.0*difPosY-yPosition));
+        int newHeight= (int) (-a*(height+yPosition)/(1.0*difPosY-yPosition));
+        int newDepth= (int) (-a*(depth+yPosition)/(1.0*difPosY-yPosition));
+
+
+        int newPosY= (int) ((a*(2*GAME_HEIGHT/3.0+yPosition)/(difPosY-yPosition))+GAME_HEIGHT/3.0);
+        */
+
+        //int newPosY= (int) (((a*(2*GAME_HEIGHT/3))/difPosY)+GAME_HEIGHT/3);
+        //int newPosY= (int) Math.pow(1/3.0*GAME_HEIGHT,2)/difPosY+GAME_HEIGHT/3;
+        //int newPosY= (int) ((a*(2.0*GAME_HEIGHT/3)/(difPosY+yPosition))+GAME_HEIGHT/3);
+        //int newPosY=(int) (GAME_HEIGHT*GAME_HEIGHT/difPosY+GAME_HEIGHT/3);
         //newPosY=(int) (GAME_HEIGHT-(playerPosY+yPosition)*newHeight*1.0/height);
+        //int newPosY= (int) (((a*(2*GAME_HEIGHT/3)+playerPosY*depthRatio)/difPosY)+GAME_HEIGHT/3+yPosition*newHeight*1.0/height);
+        //System.out.println(difPosY);
 
-        int newPosX= (int) (GAME_WIDTH/2- (playerPosX+xPosition)*newWidth*1.0/width);
+
 
         int distancePFToC=(int)Math.sqrt(Math.pow(newPosX-PFX,2.0)+Math.pow(newPosY-PFY,2.0));
         int distancePVToC=(int)Math.sqrt(Math.pow(newPosX-PVX,2.0)+Math.pow(newPosY-PVY,2.0));
         int distancePVToPF=(int)Math.sqrt(Math.pow(PFX-PVX,2.0)+Math.pow(PFY-PVY,2.0));
-        //System.out.println(GAME_HEIGHT-newPosY);
-
-        depthRatio=1/4.0;
+        //System.out.println(newPosY-GAME_HEIGHT);
 
 
 
 
 
 
-        corners=getCorners(newPosX,newPosY,newWidth,newHeight);
+
+
+        corners=getCorners(newPosX,(newPosY),newWidth,newHeight);
         g.setColor(new Color(7, 252, 3));
         //g.fillRect( newPosX-newWidth/2,newPosY-newHeight/2,newWidth,newHeight);
 
@@ -243,7 +299,7 @@ public class Cube {
         double distance=Math.sqrt(Math.pow(corners[0][0]-PFX,2)+Math.pow(corners[0][1]-PFY,2));
         for(var i=0;i<4;i++){
             if(Math.sqrt(Math.pow(corners[i][0]-PFX,2)+Math.pow(corners[i][1]-PFY,2))<distance){
-                distance=distance=Math.sqrt(Math.pow(corners[i][0]-PFX,2)+Math.pow(corners[i][1]-PFY,2));
+                distance=Math.sqrt(Math.pow(corners[i][0]-PFX,2)+Math.pow(corners[i][1]-PFY,2));
                 closest=i;
             }
         }

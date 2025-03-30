@@ -22,8 +22,8 @@ public class GameGrid {
         this.GAME_HEIGHT=GAME_HEIGHT;
         player = new Player(GAME_WIDTH,GAME_HEIGHT,0,0);
         cube = new Cube(GAME_WIDTH,GAME_HEIGHT,0,0);
-        //cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,100,0);
-        //cube3=new Cube(GAME_WIDTH,GAME_HEIGHT,200,-15);
+        //cube2 = new Cube(GAME_WIDTH,GAME_HEIGHT,0,-120);
+        //cube3=new Cube(GAME_WIDTH,GAME_HEIGHT,0,-240);
         PFX=GAME_WIDTH/2.0;
         PFY=GAME_HEIGHT/3.0;
 
@@ -40,7 +40,6 @@ public class GameGrid {
     }
     public void draw(Graphics g){
         int[] grillCoord=playerCoordToGrillCoord(player.xPosition, player.yPosition);
-
         int numOfBlocksXaxis=100;
         int SizeOfBlocks=100;
         int xGrillNumToAdd= (int) player.xPosition;
@@ -64,9 +63,23 @@ public class GameGrid {
 
             g.drawLine(GAME_WIDTH/2+SizeOfBlocks/2+i*SizeOfBlocks-xGrillNumToAdd,GAME_HEIGHT, (int) PFX, (int) PFY);
         }
-        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
-        //cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
+        Cube[] cubes=new Cube[100];
         //cube3.draw(g,grillCoord,player.xPosition,player.yPosition);
+        //cube2.draw(g,grillCoord,player.xPosition,player.yPosition);
+        cube.draw(g,grillCoord,player.xPosition,player.yPosition);
+        for(var i=0;i<10;i++){
+            for(var j=0;j<10;j++){
+                cubes[j*10+i]=new Cube(GAME_WIDTH,GAME_HEIGHT,100*i,100*j);
+                //System.out.println(j*10+i);
+            }
+        }
+
+        for(var i=0;i<100;i++){
+            cubes[i].draw(g,grillCoord, player.xPosition, player.yPosition);
+        }
+
+
+
 
         player.draw(g);
 
