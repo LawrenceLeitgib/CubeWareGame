@@ -62,6 +62,9 @@ public class Cube {
     int[][] polygonFront=new int[2][4];
     int[][] polygonBack=new int[2][4];
 
+    double xCorrectorForRotation=.5;
+    double yCorrectorForRotation=.5;
+
 
 
 
@@ -97,7 +100,7 @@ public class Cube {
 
     public void updateData(double deltaTime) {
         depthRatio=GameGrid.depthRatio;
-      // angleForXRotation+=0.05;
+        //angleForXRotation+=0.0002;
         //System.out.println(angleForXRotation);
 
       // angleForXRotation=Math.PI/2;
@@ -109,13 +112,13 @@ public class Cube {
         }
         //System.out.println(angleForXRotation);
 
-        double difPosXA=(xPosition-Player.xPosition);
-        double difPosYA= (yPosition-Player.yPosition);
+        double difPosXA=(xPosition-xCorrectorForRotation-Player.xPosition);
+        double difPosYA= (yPosition+yCorrectorForRotation-Player.yPosition);
 
 
 
-        xPositionA= (Player.xPosition+difPosXA*Math.cos(angleForXRotation)+difPosYA*Math.sin(angleForXRotation));
-        yPositionA=  (Player.yPosition-difPosXA*Math.sin(angleForXRotation)+difPosYA*Math.cos(angleForXRotation));
+        xPositionA= (Player.xPosition+difPosXA*Math.cos(angleForXRotation)+difPosYA*Math.sin(angleForXRotation)+xCorrectorForRotation);
+        yPositionA=  (Player.yPosition-difPosXA*Math.sin(angleForXRotation)+difPosYA*Math.cos(angleForXRotation)-yCorrectorForRotation);
         //System.out.println(difPosXA+" "+difPosYA);
       //  System.out.println(xPositionA+" "+yPositionA);
         //System.out.println(xPosition+" "+yPosition);
@@ -449,7 +452,7 @@ public class Cube {
 
             if(angleForXRotation>Math.PI/2&&angleForXRotation<3*Math.PI/2){
                 if (blockBackEmpty) {
-                    fillPolygonB(g,polygonFront[0],polygonFront[1],Color.red );
+                    fillPolygonB(g,polygonFront[0],polygonFront[1],Color.CYAN );
                 }
                 if (blockFrontEmpty) {
                     fillPolygonB(g,polygonBack[0],polygonBack[1],Color.blue );
@@ -460,7 +463,7 @@ public class Cube {
                 fillPolygonB(g,polygonBack[0],polygonBack[1],Color.blue );
             }
                 if (blockBackEmpty) {
-                fillPolygonB(g,polygonFront[0],polygonFront[1],Color.red );
+                fillPolygonB(g,polygonFront[0],polygonFront[1],Color.CYAN );
             }
             }
             if(angleForXRotation>0&&angleForXRotation<Math.PI){
@@ -537,29 +540,47 @@ public class Cube {
         return newList;
     }
     public double[][] getCorners(double newPosX,double newPosY,double newWidth,double newHeight,double difPosZ,double difPosXA,double difPosYA){
+        double sizeRatioValue=(depthRatio-GAME_HEIGHT)/depthRatio;
 
-
-        double difPosXARight=(xPosition+1-Player.xPosition);
-        double yPositionARight=  (Player.yPosition-difPosXARight*Math.sin(angleForXRotation)+difPosYA*Math.cos(angleForXRotation));
-        double xPositionARight=  (Player.xPosition+difPosXARight*Math.cos(angleForXRotation)+difPosYA*Math.sin(angleForXRotation));;
+        double difPosXARight=(xPosition+1-xCorrectorForRotation-Player.xPosition);
+        double yPositionARight=  (Player.yPosition-difPosXARight*Math.sin(angleForXRotation)+difPosYA*Math.cos(angleForXRotation)-yCorrectorForRotation);
+        double xPositionARight=  (Player.xPosition+difPosXARight*Math.cos(angleForXRotation)+difPosYA*Math.sin(angleForXRotation)+xCorrectorForRotation);;
         double difPosYRRight= ((Player.yPosition-(yPositionARight-Player.cubeAway))*depth);
         double sizeRatioRight=GAME_HEIGHT/(difPosYRRight*1.0*depthRatio+GAME_HEIGHT);
+
+
+        if(difPosYRRight<sizeRatioValue){
+            sizeRatioRight=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYRRight-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+
+        }
         double newPosYRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioRight+GameGrid.PFY+difPosZ*sizeRatioRight);
         double newPosXRight=  (GameGrid.PVX-((Player.xPosition-xPositionARight)*width)*sizeRatioRight-(width*sizeRatioRight)/2);
 
-        double difPosYAFront=(yPosition-1-Player.yPosition);
-        double yPositionAFront=  (Player.yPosition-difPosXA*Math.sin(angleForXRotation)+difPosYAFront*Math.cos(angleForXRotation));
-        double xPositionAFront=  (Player.xPosition+difPosXA*Math.cos(angleForXRotation)+difPosYAFront*Math.sin(angleForXRotation));
+        double difPosYAFront=(yPosition-1+yCorrectorForRotation-Player.yPosition);
+        double yPositionAFront=  (Player.yPosition-difPosXA*Math.sin(angleForXRotation)+difPosYAFront*Math.cos(angleForXRotation)-yCorrectorForRotation);
+        double xPositionAFront=  (Player.xPosition+difPosXA*Math.cos(angleForXRotation)+difPosYAFront*Math.sin(angleForXRotation)+xCorrectorForRotation);
         double difPosYRFront= ((Player.yPosition-(yPositionAFront-Player.cubeAway))*depth);
         double sizeRatioFront=GAME_HEIGHT/(difPosYRFront*1.0*depthRatio+GAME_HEIGHT);
+
+        if(difPosYRFront<sizeRatioValue){
+            sizeRatioFront=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYRFront-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+
+        }
+
         double newPosYFront=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFront+GameGrid.PFY+difPosZ*sizeRatioFront);
         double newPosXFront=  (GameGrid.PVX-((Player.xPosition-xPositionAFront)*width)*sizeRatioFront-(width*sizeRatioFront)/2);
 
 
-        double yPositionAFrontRight=  (Player.yPosition-difPosXARight*Math.sin(angleForXRotation)+difPosYAFront*Math.cos(angleForXRotation));
-        double xPositionAFrontRight=  (Player.xPosition+difPosXARight*Math.cos(angleForXRotation)+difPosYAFront*Math.sin(angleForXRotation));
+        double yPositionAFrontRight=  (Player.yPosition-difPosXARight*Math.sin(angleForXRotation)+difPosYAFront*Math.cos(angleForXRotation)-yCorrectorForRotation);
+        double xPositionAFrontRight=  (Player.xPosition+difPosXARight*Math.cos(angleForXRotation)+difPosYAFront*Math.sin(angleForXRotation)+xCorrectorForRotation);
         double difPosYRFrontRight= ((Player.yPosition-(yPositionAFrontRight-Player.cubeAway))*depth);
         double sizeRatioFrontRight=GAME_HEIGHT/(difPosYRFrontRight*1.0*depthRatio+GAME_HEIGHT);
+        if(difPosYRFrontRight<sizeRatioValue){
+            sizeRatioFrontRight=(-GAME_HEIGHT*depthRatio)/(Math.pow(sizeRatioValue*depthRatio+GAME_HEIGHT,2))*(difPosYRFrontRight-sizeRatioValue)+GAME_HEIGHT/depthRatio;
+
+        }
+
+
         double newPosYFrontRight=((GameGrid.PVY-GameGrid.PFY)*sizeRatioFrontRight+GameGrid.PFY+difPosZ*sizeRatioFrontRight);
         double newPosXFrontRight=  (GameGrid.PVX-((Player.xPosition-xPositionAFrontRight)*width)*sizeRatioFrontRight-(width*sizeRatioFrontRight)/2);
 

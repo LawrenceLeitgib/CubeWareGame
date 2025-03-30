@@ -76,8 +76,11 @@ public class Player {
         Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY);
         if(xPosition<0)Player.chunkIn[0]=(int)((xPosition+0.5)/Chunk.numOfCubeX-1);
         if(yPosition<0)Player.chunkIn[1]=(int)((yPosition+0.5)/Chunk.numOfCubeY-1);
+
+
         //System.out.println(Player.chunkIn[0]+" "+Player.chunkIn[1]);
         updateMegaChunk();
+
 
         double multiplierOfSpeed=1;
         if(isSlowing)multiplierOfSpeed=slowMultiplier;
@@ -105,6 +108,47 @@ public class Player {
             }
 
         }
+        yVelocity=0;
+        xVelocity=0;
+        if(isMovingRight) {
+            yVelocity+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+            xVelocity+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+        }
+        if(isMovingLeft){
+            yVelocity-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+            xVelocity-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+        }
+
+        if(isMovingBackward){
+            yVelocity+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+            xVelocity-=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+        }
+        if(isMovingForward) {
+            yVelocity-=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
+            xVelocity+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
+
+        }
+
+
+        xPosition+=xVelocity;
+        yPosition+=yVelocity;
+
+        if(xVelocity>0){
+            System.out.println(xVelocity);
+            detectionCollision(4);
+        }
+        if(xVelocity<0){
+            detectionCollision(3);
+        }
+
+        if(yVelocity>0){
+            detectionCollision(6);
+        }
+        if(yVelocity<0){
+            detectionCollision(5);
+        }
+
+        /*
         if(isMovingRight) {
             yPosition+=speed*multiplierOfSpeed*Math.sin(Cube.angleForXRotation);
             xPosition+=speed*multiplierOfSpeed*Math.cos(Cube.angleForXRotation);
@@ -126,6 +170,7 @@ public class Player {
            detectionCollision(5);
 
        }
+       */
         detectionCollision(0);
         xPosition=  (int)((xPosition)*1000)/1000.0;
         yPosition=  (int)((yPosition)*1000)/1000.0;
@@ -425,23 +470,23 @@ public class Player {
            zVelocity=0;
           //isMovingUp=false;
        }
-       if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity&&isMovingLeft){
+       if(collision[3]&&(xLeftPos+1-(1-width/Cube.defaultSize)/2)-xPosition<sensitivity&&xVelocity<0){
 
            xPosition=xLeftPos+1-(1-width/Cube.defaultSize)/2;
          //   isMovingLeft=false;
 
        }
-       if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity&&isMovingRight){
+       if(collision[4]&&xPosition-(xRightPos-1+(1-width/Cube.defaultSize)/2)<sensitivity&&xVelocity>0){
 
            xPosition=xRightPos-1+(1-width/Cube.defaultSize)/2;
         //  isMovingRight=false;
        }
-       if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity&&isMovingForward){
+       if(collision[5]&&(yFrontPos+1-(1-depth/Cube.defaultSize)/2)-yPosition<sensitivity&&yVelocity<0){
 
            yPosition=yFrontPos+1-(1-depth/Cube.defaultSize)/2;
          //isMovingForward=false;
        }
-       if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&isMovingBackward){
+       if(collision[6]&&yPosition-(yBackPos-1+(1-depth/Cube.defaultSize)/2)<sensitivity&&yVelocity>0){
 
            yPosition=yBackPos-1+(1-depth/Cube.defaultSize)/2;
          // isMovingBackward=false;

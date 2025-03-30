@@ -153,8 +153,6 @@ public class Chunk {
 
             //newCube(2,7,0);
             //newCube(8,7,0);
-
-/*
             newCube(5, 5, 8);
             newCube(5, 5, 9);
             newCube(4, 5, 9);
@@ -163,7 +161,9 @@ public class Chunk {
             newCube(5, 4, 9);
             newCube(5, 5, 10);
 
- */
+
+
+
 
 
 
