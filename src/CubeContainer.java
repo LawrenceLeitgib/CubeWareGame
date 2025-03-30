@@ -7,6 +7,9 @@ public class CubeContainer {
     static int numOfChunkY=1000;
     static Chunk[][] chunks=new Chunk[numOfChunkX*2][numOfChunkY*2];
     static boolean[][]chunksPosition=new boolean[numOfChunkX*2][numOfChunkY*2];
+    static boolean[][]chunksGenerate=new boolean[numOfChunkX*2][numOfChunkY*2];
+    static boolean[][]chunksGenerateGround=new boolean[numOfChunkX*2][numOfChunkY*2];
+
     static boolean[] bigZLayer=new boolean[Chunk.numOfCubeZ];
     int[] newChunkIn={0,0};
 
@@ -15,13 +18,15 @@ public class CubeContainer {
         setColorsList();
         CubeContainer.depthRatio=depthRatio;
         CreateNewChunks();
-        createCubes();
+        //CreateNewGround();
+       // CreateNewStructure();
+        drawSpawn();
         newChunkIn[0] = Player.chunkIn[0];
         newChunkIn[1] = Player.chunkIn[1];
     }
     public void setColorsList(){
         colorsList[0][0]= new Color(5, 168, 30);
-        colorsList[0][1]=new Color(95, 43, 1);
+        colorsList[0][1]=new Color(110, 45, 0);
         colorsList[1][0]=new Color(119, 119, 119);
         colorsList[1][1]=new Color(119, 119, 119);
         colorsList[2][0]=new Color(51, 206, 179);
@@ -31,11 +36,11 @@ public class CubeContainer {
         colorsList[4][0]=new Color(255, 211, 13);
         colorsList[4][1]=new Color(255, 211, 13);
         colorsList[5][0]=new Color(218, 176, 101);
-        colorsList[5][1]=new Color(89, 46, 0);
+        colorsList[5][1]=new Color(79, 40, 0);
         colorsList[6][0]=new Color(29, 82, 0);
         colorsList[6][1]=new Color(29, 82, 0);
     }
-    public void newCube(int x,int y,int z){
+    public static void newCube(int x, int y, int z){
         newCube(x,y,z,0);
     }
     static public void newCube(int x,int y,int z,int type){
@@ -48,9 +53,8 @@ public class CubeContainer {
         int newX=xInfo[1];;
         int newY=yInfo[1];
         if(!chunksPosition[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]){
-            chunksPosition[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]=true;
-            chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]=new Chunk(xChunkNum,yChunkNum);
-
+           chunksPosition[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]=true;
+           chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]=new Chunk(xChunkNum,yChunkNum);
         }
         //if(!chunksPosition[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum]||chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubePositions[newX][newY][z])return;
         Cube cube=new Cube(x,y,z,chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum],colorsList[type][0],colorsList[type][1],type);
@@ -191,7 +195,7 @@ public class CubeContainer {
             }
         }
     }
-    public void fillCircle2(int x, int y, int z, int r, int type){
+    static public void fillCircle2(int x, int y, int z, int r, int type){
         for(int i=-r;i<r;i++){
             for(int k=-r;k<r;k++){
                 if(Math.sqrt(Math.pow(i,2)+Math.pow(k,2))<r){
@@ -324,6 +328,28 @@ public class CubeContainer {
     }
 
     static public void drawTree(int x,int y, int z,int height){
+        int[] xInfo=YAndXPositionToChunkPos(x);
+        int[] yInfo=YAndXPositionToChunkPos(y);
+
+        int xChunkNum=xInfo[0];
+        int yChunkNum=yInfo[0];
+
+        int newX=xInfo[1];
+        int newY=yInfo[1];
+
+        if(chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubes[newX][newY][z-1].type!=0)return;
+
+        if(chunks[numOfChunkX+xChunkNum][numOfChunkY+yChunkNum].cubePositions[newX][newY][z]){
+            drawTree(x,y,z+1, height);
+            return;
+        }
+
+
+
+
+
+
+
         for(int i=0;i<5;i++){
             for(int j=0;j<5;j++){
                 newCube (x+i-2,y+j-2,z+height-2,6);
@@ -346,48 +372,103 @@ public class CubeContainer {
         }
 
     }
+
+    static public void drawMountain(int x,int y, int z,int r,int step){
+        for(var i=0;i<r*step;i+=step){
+            if(r-i<=2)return;
+            fillCircle2(x,y,i/step,r-i,0);
+        }
+    }
+
     public void createCubes(){
-        drawSpawn();
+        /*
         drawCircle3(0,0,2,29,1);
         drawCircle3(0,0,2,30,1);
         drawCircle3(0,0,3,30,1);
         drawCircle3(0,0,2,31,1);
+
+         */
         for(var i=0;i<20;i++){
-            for(var j=i;j<20-i;j++){
-                for(var k=i;k<20-i;k++){
-                    newCube(k,j+60,i,1);
+            for(var j=i*2;j<40-i*2;j++){
+                for(var k=i*2;k<40-i*2;k++){
+                    //newCube(k+5,j+50,i+2,1);
+                   // newCube(k-40,j+50,i+2,0);
+
                 }
             }
         }
+
         drawBasicStructure(0,-70,2,15,15,2);
+        drawBasicStructure(1,-69,2,13,13,1);
+        drawBasicStructure(-1,-71,2,17,17,1);
+/*
+        drawMountain(0,60,2,30,4);
+        drawMountain(20,60,2,30,5);
+        drawMountain(30,40,2,20,2);
+        drawMountain(40,60,2,20,3);
 
-
-
-        drawTree(0,-30,2,5);
+ */
+        //drawTree(0,-30,2,5);
     }
     static public void newChunk(int x,int y){
-        System.out.println(x+", "+y);
-        drawTree(0,0,2,5);
-        chunks[numOfChunkX+x][numOfChunkY+y]=new Chunk(x,y);
-        chunksPosition[numOfChunkX+x][numOfChunkY+y]=true;
-
-
-
-
-
+        if((!chunksPosition[numOfChunkX+x][numOfChunkY+y])){
+            chunks[numOfChunkX + x][numOfChunkY + y] = new Chunk(x, y);
+            chunksPosition[numOfChunkX + x][numOfChunkY + y] = true;
+        }
     }
     static public void CreateNewChunks(){
-        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw-1;i<=Player.chunkIn[0]+Player.numOfChunkToDraw+1;i++){
-            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw-1;j<=Player.chunkIn[1]+Player.numOfChunkToDraw+1;j++){
+        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw-2;i<=Player.chunkIn[0]+Player.numOfChunkToDraw+2;i++){
+            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw-2;j<=Player.chunkIn[1]+Player.numOfChunkToDraw+2;j++){
                 if(!chunksPosition[numOfChunkX+i][numOfChunkY+j])
                 newChunk(i,j);
             }
         }
+    }
+    static public void CreateNewGround(){
+        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw-2;i<=Player.chunkIn[0]+Player.numOfChunkToDraw+2;i++){
+            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw-2;j<=Player.chunkIn[1]+Player.numOfChunkToDraw+2;j++){
+                if(!chunksGenerateGround[numOfChunkX+i][numOfChunkY+j]){
+                    GenerateGround(i,j);
+                    chunksGenerateGround[numOfChunkX+i][numOfChunkY+j]=true;
+                }
+            }
+        }
 
     }
+    static public void CreateNewStructure(){
+        for(int i=Player.chunkIn[0]-Player.numOfChunkToDraw;i<=Player.chunkIn[0]+Player.numOfChunkToDraw;i++){
+            for(int j=Player.chunkIn[1]-Player.numOfChunkToDraw;j<=Player.chunkIn[1]+Player.numOfChunkToDraw;j++){
+                if(!chunksGenerate[numOfChunkX+i][numOfChunkY+j]){
+                    generateChunk(i,j);
+                    chunksGenerate[numOfChunkX+i][numOfChunkY+j]=true;
+                }
+            }
+        }
+
+    }
+    private static void GenerateGround(int x, int y) {
+        int numX= (int) (Math.random()*16);
+        int numY= (int) (Math.random()*16);
+        int stepNum=(int) (Math.random()*5+3);
+        int rNum=(int)(Math.random()*20+20);
+        if(Math.sqrt(Math.pow(x*Chunk.numOfCubeX+numX,2)+Math.pow(y*Chunk.numOfCubeY+numY,2))>50)
+            drawMountain(x*Chunk.numOfCubeX+numX,y*Chunk.numOfCubeY+numY,2,rNum,stepNum);
+    }
+    private static void generateChunk(int x, int y) {
+          int numX= (int) (Math.random()*16);
+        int numY= (int) (Math.random()*16);
+        int heightNum=(int) (Math.random()*3);
+
+        if(Math.sqrt(Math.pow(x*Chunk.numOfCubeX+numX,2)+Math.pow(y*Chunk.numOfCubeY+numY,2))>50)
+        drawTree(x*Chunk.numOfCubeX+numX,y*Chunk.numOfCubeY+numY,2,4+heightNum);
+
+    }
+
     public void updateData(double deltaTime){
         if((newChunkIn[0]!=Player.chunkIn[0])||(newChunkIn[1]!=Player.chunkIn[1])){
             CreateNewChunks();
+          //  CreateNewGround();
+            //CreateNewStructure();
         }
         newChunkIn[0] = Player.chunkIn[0];
         newChunkIn[1] = Player.chunkIn[1];
@@ -728,7 +809,6 @@ public class CubeContainer {
     public static void setGameHeight(int gameHeight) {
         GAME_HEIGHT = gameHeight;
     }
-
     static int[] YAndXPositionToChunkPos(int x){
         if(Chunk.numOfCubeX!=Chunk.numOfCubeY)System.out.println("there is a problem");
 

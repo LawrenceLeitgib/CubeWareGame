@@ -11,7 +11,8 @@ public class Enemy {
     double newHeight;
     double newWidth;
     double newDepth;
-    double speed=1.5;
+    //double speed=1.5;
+    double speed=3;
     double newPosX;
     double newPosY;
     double MaxHP=100;
@@ -24,13 +25,14 @@ public class Enemy {
     double sizeRatio;
     double angleWithPlayer;
     double distanceWithPlayer;
-    static int diSpawnDistance=50;
+    static int diSpawnDistance=60;
     static int[] chunkIn=new int[2];
     double damage=1;
     Enemy(double x,double y,double z){
         xPosition=x;
         yPosition=y;
         zPosition=z;
+
         while(detectionCollisionWithBlocks(0)[0]){
             zPosition++;
         }
@@ -46,6 +48,7 @@ public class Enemy {
     private void setNewPositions(double deltaTime){
         xVelocity=-Math.cos(angleWithPlayer)*speed;
         yVelocity=-Math.sin(angleWithPlayer)*speed;
+        detectionCollisionWithOther(deltaTime);
         zVelocity-=GameGrid.gravityAcceleration*deltaTime;
         if(zVelocity<-90)zVelocity+=GameGrid.gravityAcceleration*deltaTime;
         zPosition+=zVelocity*deltaTime;
@@ -187,6 +190,7 @@ public class Enemy {
 
     }
     public void draw1(Graphics g){
+        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
 
         double correction=0.5;
         double difPosXA=(xPosition-correction-Player.xPosition);
@@ -231,6 +235,7 @@ public class Enemy {
 
     }
     public void draw2(Graphics g){
+        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
 
         double correction=0.5;
         double difPosXA=(xPosition-correction-Player.xPosition);
@@ -277,9 +282,24 @@ public class Enemy {
         }
 
     }
+
+    public void drawHealthBar(Graphics g){
+        if(HP>=MaxHP)return;
+
+        Rectangle healthRect=new Rectangle((int)( (corners[4][0]+corners[6][0])/2-newWidth/2), (int)((corners[4][1]+corners[6][1])/2-newWidth/5), (int) newWidth, (int) (newWidth/10));
+        Rectangle healthRect2=new Rectangle((int) ((corners[4][0]+corners[6][0])/2-newWidth/2), (int) ((corners[4][1]+corners[6][1])/2-newWidth/5), (int)( newWidth*HP/MaxHP), (int) (newWidth/10));
+
+        GamePanel.drawRectWithBorder2(g,healthRect,Color.red,Color.black,2);
+        GamePanel.drawRectWithBorder2(g,healthRect2,Color.GREEN,Color.black,2);
+
+    }
     public void draw3(Graphics g){
-        if((2-zPosition+cubeIn[2])*Cube.defaultSize>=height)return;
-        if(Math.round((zPosition-cubeIn[2])*100000)/100000.0==.2)return;
+        if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
+        if((2-zPosition+cubeIn[2])*Cube.defaultSize>=height||(Math.round((zPosition-cubeIn[2])*100000)/100000.0==.2)){
+            drawHealthBar(g);
+            return;
+        }
+
         double correction=0.5;
         double difPosXA=(xPosition-correction-Player.xPosition);
         double difPosYA= (yPosition+correction-Player.yPosition);
@@ -319,7 +339,7 @@ public class Enemy {
         g.drawLine((int) corners[5][0], (int) corners[5][1], (int) corners[13][0], (int) corners[13][1]);
         g.drawLine((int) corners[6][0], (int) corners[6][1], (int) corners[14][0], (int) corners[14][1]);
         g.drawLine((int) corners[7][0], (int) corners[7][1], (int) corners[15][0], (int) corners[15][1]);
-
+        drawHealthBar(g);
     }
     private boolean[] detectionCollisionWithBlocks(int num){
         boolean[] collision=new boolean[11];
@@ -586,6 +606,55 @@ public class Enemy {
 
         return collision;
     }
+    public boolean detectionCollisionWithOther(double deltaTime){
+            for(int i = 0; i< EntityContainer.enemies.size(); i++){
+                Enemy E=EntityContainer.enemies.get(i);
+                if(E.zPosition==zPosition&&E.yPosition==yPosition&&E.xPosition==xPosition)continue;
+                if(zPosition< E.zPosition+ E.height/Cube.defaultSize&&zPosition+height/Cube.defaultSize> E.zPosition)
+                    if(Math.sqrt(Math.pow(E.xPosition-xPosition,2)+Math.pow(E.yPosition-yPosition,2))<(E.width/2+width/2)/Cube.defaultSize){
+
+
+                        double angleWithOther=Math.atan((E.yPosition-yPosition)/(E.xPosition-xPosition));
+                        if(E.xPosition-xPosition>0){
+                            angleWithOther=Math.PI+angleWithOther;
+                        }else  if(E.xPosition-xPosition<0&&E.yPosition-yPosition>0){
+                            angleWithOther=2*Math.PI+angleWithOther;
+                        }
+                        if(E.xPosition-xPosition==0){
+                            if(E.yPosition-yPosition<=0)angleWithOther=Math.PI/2;
+                            if(E.yPosition-yPosition>0)angleWithOther=3*Math.PI/2;
+
+                        }
+                        xPosition+=Math.cos(angleWithOther)*speed*1*deltaTime;
+                        xVelocity=+Math.cos(angleWithOther)*speed*1*deltaTime;
+                        yPosition+=Math.sin(angleWithOther)*speed*1*deltaTime;
+                        yVelocity=+Math.sin(angleWithOther)*speed*1*deltaTime;
+                        detectionCollisionWithBlocks(3);
+                        detectionCollisionWithBlocks(4);
+                        detectionCollisionWithBlocks(5);
+                        detectionCollisionWithBlocks(6);
+
+                        E.xPosition-=Math.cos(angleWithOther)*speed*1*deltaTime;
+                        E.xVelocity=-Math.cos(angleWithOther)*speed*1*deltaTime;
+                        E.yPosition-=Math.sin(angleWithOther)*speed*1*deltaTime;
+                        E.yVelocity=-Math.sin(angleWithOther)*speed*1*deltaTime;
+                        E.detectionCollisionWithBlocks(3);
+                        E.detectionCollisionWithBlocks(4);
+                        E.detectionCollisionWithBlocks(5);
+                        E.detectionCollisionWithBlocks(6);
+
+
+
+
+                        return true;
+
+
+                    }
+            }
+        return false;
+
+    }
+
     private void rejectionFromSpawn(double deltaTime){
         double  distanceFromMiddle =Math.sqrt(Math.pow(xPosition,2)+Math.pow(yPosition,2));
         if(distanceFromMiddle<=GameGrid.safeZone) {

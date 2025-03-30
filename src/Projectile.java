@@ -101,7 +101,9 @@ public class Projectile {
         }
         if(CubeContainer.chunksPosition[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX]&&cubeIn[2]>=0&&cubeIn[2]<200){
             if(CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubePositions[newXpos][newYpos][cubeIn[2]]){
-               return true;
+               // CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubes[newXpos][newYpos][cubeIn[2]]=null;
+                //CubeContainer.chunks[xChunkNum+CubeContainer.numOfChunkX][yChunkNum+CubeContainer.numOfChunkX].cubePositions[newXpos][newYpos][cubeIn[2]]=false;
+                return true;
             }
         }
 

@@ -51,6 +51,7 @@ public class GamePanel extends JPanel implements Runnable {
         GameStates.put("Running",1);
         GameStates.put("Paused",2);
         GameStates.put("Dead",3);
+        GameStates.put("Stats",4);
         gameState=GameStates.get("Menu");
         rectForDraw[0]=new Rectangle(GameGrid.GAME_WIDTH/2-100,GameGrid.GAME_HEIGHT/3,200,40);
         rectForDraw[1]=new Rectangle(15,200,100,20);
@@ -69,23 +70,31 @@ public class GamePanel extends JPanel implements Runnable {
         g.drawImage(image,0,0,this);
 
     }
-    public boolean isInisdeRect(int xPos,int yPos,Rectangle rect){
+    static public boolean isInisdeRect(int xPos,int yPos,Rectangle rect){
 
         if(xPos>rect.getX()&&xPos< rect.getX()+ rect.getWidth()&&yPos>rect.getY()&&yPos<rect.getY()+rect.getHeight())return true;
         return false;
     }
-    public void drawRect(Graphics g, Rectangle rect,Color color){
+    static public void drawRect(Graphics g, Rectangle rect,Color color){
         g.setColor(color);
         g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
     }
-    public void drawRectWithBorder(Graphics g, Rectangle rect,Color color1,Color color2,int size){
+    static public void drawRectWithBorder(Graphics g, Rectangle rect,Color color1,Color color2,int size){
         g.setColor(color2);
         g.fillRect((int) rect.getX()-size/2, (int) rect.getY()-size/2, (int) rect.getWidth()+size, (int) rect.getHeight()+size);
         g.setColor(color1);
         g.fillRect((int) rect.getX()+size/2, (int) rect.getY()+size/2, (int) rect.getWidth()-size, (int) rect.getHeight()-size);
     }
 
-    public void drawRectWithContext(Graphics g, Rectangle rect,Color color1,Color color2,int size){
+    static public void drawRectWithBorder2(Graphics g, Rectangle rect,Color color1,Color color2,int size){
+        g.setColor(color2);
+        g.fillRect((int) rect.getX()-size, (int) rect.getY()-size, (int) rect.getWidth()+size*2, (int) rect.getHeight()+size*2);
+        g.setColor(color1);
+        g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
+    }
+
+
+    static public void drawRectWithContext(Graphics g, Rectangle rect,Color color1,Color color2,int size){
         if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
             drawRectWithBorder(g,rect,color1,color2,size);
         }else{
@@ -93,7 +102,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
     }
-    public void centerString(Graphics g, Rectangle r, String s,
+    static public void drawRectWithContext2(Graphics g, Rectangle rect,Color color1,Color color2,int size){
+        if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rect)){
+            drawRectWithBorder(g,rect,color1,color2,size);
+        }
+
+    }
+    static public void centerString(Graphics g, Rectangle r, String s,
                              Font font) {
         FontRenderContext frc =
                 new FontRenderContext(null, true, true);
@@ -180,6 +195,9 @@ public class GamePanel extends JPanel implements Runnable {
             centerString(g,rectForDraw[1],"Kill All entities",new Font("Arial",Font.PLAIN,16));
 
         }
+        if(gameState==GameStates.get("Stats")){
+            stats.drawE(g);
+        }
 
     }
     public void updateData(double deltaTime) {
@@ -208,6 +226,10 @@ public class GamePanel extends JPanel implements Runnable {
                 if(GameGrid.mouseLeftClickDown)gameGrid.player.respawn();
             }
             return;
+        }
+        if(gameState==GameStates.get("Stats")){
+           stats.updateDataE(deltaTime);
+           return;
         }
         if(gameState==GameStates.get("Running")){
             if(isInisdeRect(GameGrid.mousePositionX,GameGrid.mousePositionY,rectForDraw[1])){
@@ -271,6 +293,9 @@ public class GamePanel extends JPanel implements Runnable {
             if(e.getKeyCode()==27){
                 togglePause();
             }
+            if(e.getKeyCode()==69){
+                toggleState();
+            }
 
 
         }
@@ -288,6 +313,16 @@ public class GamePanel extends JPanel implements Runnable {
 
         }
         else if(gameState==GameStates.get("Paused")){
+            gameState=GameStates.get("Running");
+        }
+    }
+
+    private void toggleState() {
+        if(gameState==GameStates.get("Running")){
+            gameState=GameStates.get("Stats");
+
+        }
+        else if(gameState==GameStates.get("Stats")){
             gameState=GameStates.get("Running");
         }
     }

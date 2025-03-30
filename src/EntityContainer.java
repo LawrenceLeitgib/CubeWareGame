@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 public class EntityContainer {
     static ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-    static int numOfEntities =Enemy.diSpawnDistance+20;
+    static int numOfEntities =Enemy.diSpawnDistance+10;
     static ArrayList<Enemy>[][][] enemies3D = new ArrayList[numOfEntities *2][numOfEntities *2][200];
     boolean HaveBeenUpdated;
     static boolean[] zLayers=new boolean[Chunk.numOfCubeZ];
@@ -13,15 +13,12 @@ public class EntityContainer {
     double EnemyCreationSpawnTime=3;
     double EnemyCreationCount=3;
     public static void createEnemy(){
-
-
-        double r=Math.random()*32+12;
+        double r=Math.random()*40+20;
         double a=Math.random()*Math.PI*2;
         if(Math.sqrt(Math.pow(Math.cos(a) * r + Player.xPosition,2)+Math.pow(Math.sin(a) * r + Player.yPosition,2))>GameGrid.safeZone) {
             enemies.add(new Enemy(Math.cos(a) * r + Player.xPosition, Math.sin(a) * r + Player.yPosition, 2));
         }
        // enemies.add(new Enemy(10, 70, 2));
-
     }
     public void updateEnemies3D(){
         if(enemies.size()>0){
@@ -59,11 +56,14 @@ public class EntityContainer {
 
     }
     public void updateData(double deltaTime) {
-        EnemyCreationSpawnTime=0.0005*Math.pow(Player.distanceFromMiddle -150,2)+2;
+        EnemyCreationSpawnTime=0.0004*Math.pow(Player.distanceFromMiddle -200,2)+.9;
         if(Player.distanceFromMiddle>GameGrid.safeZone) {
-            EnemyCreationCount += deltaTime*10;
+            EnemyCreationCount += deltaTime*1000;
             if (EnemyCreationCount >= EnemyCreationSpawnTime) {
-                createEnemy();
+                if(enemies.size()<800){
+                    createEnemy();
+                }
+
                 EnemyCreationCount -= EnemyCreationSpawnTime;
             }
         }

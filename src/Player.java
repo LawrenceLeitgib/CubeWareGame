@@ -14,7 +14,7 @@ public class Player {
     static double height=1.8*Cube.defaultSize;
     static double depth=.8*Cube.defaultSize;
     static double[][] corners=new double[12][2];
-    double speed=4.2*20;
+    double speed=4.2;
     static double xVelocity;
     static double yVelocity;
     double zVelocity;
@@ -45,7 +45,7 @@ public class Player {
 
     static int[] chunkIn=new int[2];
 
-    static int numOfChunkToDraw=3;
+    static int numOfChunkToDraw=2;
 
     static boolean thirdPerspective=true;
     boolean[][][] megaChunkCubePositions =new boolean[Chunk.numOfCubeX*3][Chunk.numOfCubeY*3][Chunk.numOfCubeZ];
@@ -69,11 +69,11 @@ public class Player {
     Player(double positionX, double positionY, double positionZ){
         Player.xPosition=positionX;
         Player.yPosition=positionY;
-        Player.zPosition=positionZ+5;
+        Player.zPosition=positionZ+10;
         Player.GAME_WIDTH =GameGrid.GAME_WIDTH;
         Player.GAME_HEIGHT =GameGrid.GAME_HEIGHT;
         setCubeAndChunkIn();
-        newChunkAround();
+        //newChunkAround();
         SMH=new SpecialMoveHandler();
     }
     public void updateData(double deltaTime) {

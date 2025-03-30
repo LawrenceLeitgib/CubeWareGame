@@ -46,6 +46,7 @@ public class GameGrid {
    static boolean mouseRightClickDown=false;
 
 
+
    static double[] cameraPos =new double[2];
 
     GameGrid(){
@@ -73,12 +74,16 @@ public class GameGrid {
     public void newPlayer(){
         player = new Player(0,0,0);
 
-    }public double[] moveMouse(int x,int y) throws AWTException {
+    }
+    public double[] moveMouse(double x,double y) throws AWTException {
         double[] delta=new double[2];
         Robot robot = new Robot();
-        delta[0]=x-mousePositionX;
-        delta[1]=y-mousePositionY;
-        robot.mouseMove((int) (GamePanel.xPos+x), (int) (GamePanel.yPos+y));
+        delta[0]=x-mousePositionX-1;
+        //if( delta[0]==0)delta[0]=+.3;
+        //System.out.println(mousePositionX);
+        delta[1]=y-mousePositionY-1;
+        robot.mouseMove((int) (GamePanel.xPos+x-1), (int) (GamePanel.yPos+y-1));
+
         return delta;
     }
     public void updateData(double deltaTime){
@@ -235,9 +240,8 @@ public class GameGrid {
     public void mouseDragged(MouseEvent e) {
         if(!Player.thirdPerspective&&GamePanel.gameState==GamePanel.GameStates.get("Running")){
             try {
-                double delta[]=moveMouse((int) PFX, (int) PFY);
-                angleForXRotation-=delta[0]/200;
-                // System.out.println(delta[0]);
+                double[] delta =moveMouse( PFX,  PFY);
+                angleForXRotation-=delta[0]/200.0;
             } catch (AWTException e2) {
                 throw new RuntimeException(e2);
             }
@@ -246,6 +250,7 @@ public class GameGrid {
         }
         mousePositionX =e.getX();
         mousePositionY =e.getY();
+
 
 
         mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
@@ -258,22 +263,23 @@ public class GameGrid {
 
         if(!Player.thirdPerspective &&GamePanel.gameState==GamePanel.GameStates.get("Running")){
             try {
-                double delta[]=moveMouse((int) PFX, (int) PFY);
-                angleForXRotation-=delta[0]/200;
-               // System.out.println(delta[0]);
+                double[] delta =moveMouse((int) PFX, (int) PFY);
+                angleForXRotation-=delta[0]/200.0;
             } catch (AWTException e2) {
                 throw new RuntimeException(e2);
             }
-
-
         }
         mousePositionX =e.getX();
         mousePositionY =e.getY();
-
-
         mouseInGame= mousePosToGamePos(mousePositionX,mousePositionY);
         mouseAngleInGame=getMouseAngleInGame(mouseInGame[0],mouseInGame[1]);
-       // System.out.println("truc "+mouseAngleInGame+", "+mouseInGame[0]+","+mouseInGame[1]);
+
+
+
+
+
+
+        // System.out.println("truc "+mouseAngleInGame+", "+mouseInGame[0]+","+mouseInGame[1]);
     }
 
 

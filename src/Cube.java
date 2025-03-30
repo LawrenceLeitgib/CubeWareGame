@@ -69,7 +69,11 @@ public class Cube {
         GAME_HEIGHT = gameHeight;
     }
     public void draw(Graphics g){
-        if(!CheckToDraw())return;
+        if(!CheckToDraw()){
+            //chunk.cubes[xPosition- chunk.chunkToNormNumX][yPosition- chunk.chunkToNormNumY][zPosition]=null;
+           // chunk.cubePositions[xPosition- chunk.chunkToNormNumX][yPosition- chunk.chunkToNormNumY][zPosition]=false;
+            return;
+        }
         if(Math.sqrt(Math.pow(yPosition-Player.yPosition,2)+Math.pow(xPosition-Player.xPosition,2))>(Player.numOfChunkToDraw)*Chunk.numOfCubeX)return;
 
         colorTop=CubeContainer.colorsList[type][0];
@@ -159,10 +163,10 @@ public class Cube {
         }
     }
     private boolean CheckToDraw(){
-        int leftPosCheck=xPosition-1-chunk.chunkToNormNumX;
-        int rightPosCheck=xPosition+1-chunk.chunkToNormNumX;
-        int frontPosCheck=yPosition-1-chunk.chunkToNormNumY;
-        int backPosCheck=yPosition+1-chunk.chunkToNormNumY;
+        int leftPosCheck=xPosition-1- chunk.chunkToNormNumX;
+        int rightPosCheck=xPosition+1- chunk.chunkToNormNumX;
+        int frontPosCheck=yPosition-1- chunk.chunkToNormNumY;
+        int backPosCheck=yPosition+1- chunk.chunkToNormNumY;
         int topPosCheck=zPosition+1;
         int bottomPosCheck=zPosition-1;
         blockLeftEmpty=true;
@@ -188,7 +192,7 @@ public class Cube {
             }
         }
         if(rightPosCheck<Chunk.numOfCubeX) {
-            if(chunk.cubePositions[rightPosCheck][yPosition-chunk.chunkToNormNumY][zPosition]){
+            if(chunk.cubePositions[rightPosCheck][yPosition- chunk.chunkToNormNumY][zPosition]){
                 blockRightEmpty=false;
                 countForDrawing++;
             }
@@ -217,7 +221,7 @@ public class Cube {
 
         }
         if(backPosCheck<Chunk.numOfCubeY){
-            if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][backPosCheck][zPosition]) {
+            if(chunk.cubePositions[xPosition- chunk.chunkToNormNumX][backPosCheck][zPosition]) {
                 blockBackEmpty = false;
                 countForDrawing++;
             }
@@ -232,17 +236,18 @@ public class Cube {
 
         }
         if(topPosCheck<Chunk.numOfCubeZ){
-            if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][yPosition-chunk.chunkToNormNumY][topPosCheck]){
+            if(chunk.cubePositions[xPosition- chunk.chunkToNormNumX][yPosition- chunk.chunkToNormNumY][topPosCheck]){
                 blockTopEmpty=false;
                 countForDrawing++;
             }
         }
         if(bottomPosCheck>=0){
-            if(chunk.cubePositions[xPosition-chunk.chunkToNormNumX][yPosition-chunk.chunkToNormNumY][bottomPosCheck]){
+            if(chunk.cubePositions[xPosition- chunk.chunkToNormNumX][yPosition- chunk.chunkToNormNumY][bottomPosCheck]){
                 blockBottomEmpty=false;
                 countForDrawing++;
             }
         }
+        //if(countForDrawing==6)System.out.println(xPosition+","+yPosition+","+zPosition);
 
         return countForDrawing < 6;
     }

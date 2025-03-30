@@ -12,8 +12,8 @@ public class Chunk {
     Chunk(int positionX, int positionY) {
         this.xPosition = positionX;
         this.yPosition = positionY;
-        this.chunkToNormNumX = numOfCubeX * xPosition;
-        this.chunkToNormNumY = numOfCubeY * yPosition;
+        chunkToNormNumX = numOfCubeX * xPosition;
+        chunkToNormNumY = numOfCubeY * yPosition;
         createCubes();
     }
     public void newCube(int x, int y, int z) {
